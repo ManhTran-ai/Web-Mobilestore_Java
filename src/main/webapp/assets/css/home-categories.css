@@ -64,6 +64,8 @@
     font-size: 0.95rem;
 }
 
+
+
 @media (max-width: 640px) {
     .category-image {
         height: 140px;
