@@ -111,17 +111,38 @@
             margin-bottom: 0.5rem;
         }
 
-        .price {
-            font-weight: 700;
-            color: #000000;
-            margin-bottom: 0.5rem;
-        }
 
         .pagination {
             display: flex;
             justify-content: center;
             gap: 0.5rem;
             margin: 1.5rem 0;
+        }
+
+        .current-price {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+
+
+        .current-price.sale {
+            color: #ff3b30;
+        }
+
+        .discount-tag {
+            background: #000;
+            color: #fff;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .old-price{
+            font-size: 1.2rem;
+            color: #86868b;
+            text-decoration: line-through;
         }
 
         .btn {
@@ -136,6 +157,11 @@
         .btn.secondary {
             background: #e5e5ea;
             color: #1a1a1a;
+        }
+
+        .btn.add-to-cart-btn {
+            background: #000000;
+            color: #e5e5ea;
         }
 
         @media (max-width: 768px) {
@@ -236,7 +262,26 @@
                     </c:choose>
                     <div class="name">${product.productName}</div>
                     <div class="manufacturer">${product.manufacturer}</div>
-                    <div class="price"><fmt:formatNumber value="${product.price}" type="number" groupingUsed="true"/>₫
+                    <div class="product-info-price">
+                        <c:choose>
+                            <c:when test="${product.discount > 0}">
+                                <div class="current-price">
+                                    <fmt:formatNumber value="${product.price * (100 - product.discount) / 100}" type="number"/>₫
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 8px; margin-top: 2px;">
+                <span class="old-price">
+                    <fmt:formatNumber value="${product.price}" type="number"/>₫
+                </span>
+                                    <span class="discount-tag">-${product.discount}%</span>
+                                </div>
+                            </c:when>
+                            <c:otherwise>
+                                <div class="current-price">
+                                    <fmt:formatNumber value="${product.price}" type="number"/>₫
+                                </div>
+                                <div style="height: 21px;"></div>
+                            </c:otherwise>
+                        </c:choose>
                     </div>
                     <div style="color:#888; font-size:0.9rem;">
                         <c:choose>
