@@ -51,6 +51,9 @@ public class HomeServlet extends HttpServlet {
 
             java.util.List<com.mobilestore.entity.Product> products = productService.findByPage(1, 5).getContent();
 
+            java.util.List<com.mobilestore.entity.Product> saleProducts = productService.findSales(5);
+            request.setAttribute("saleProducts", saleProducts);
+
             request.setAttribute("products", products);
 
         } catch (Exception e) {
