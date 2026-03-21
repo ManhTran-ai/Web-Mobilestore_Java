@@ -75,7 +75,7 @@ public class CheckoutServlet extends HttpServlet {
         }
         
         double total = 0.0;
-        for (CartItem it : cart) total += it.getProduct().getPrice() * it.getQuantity();
+        for (CartItem it : cart) total += (it.getProduct().getPrice()*(100-it.getProduct().getDiscount())/100) * it.getQuantity();
 
         Integer orderId = orderService.createOrder(user.getId(), total, cart);
         if (orderId != null) {

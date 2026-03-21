@@ -13,7 +13,7 @@ public class CartDAO {
 
     public List<CartItem> findByUserId(Integer userId) {
         List<CartItem> items = new ArrayList<>();
-        String sql = "SELECT c.quantity, p.product_id, p.product_name, p.manufacturer, p.product_condition, p.price, p.image, p.product_info, p.quantity_in_stock, p.category_id, " +
+        String sql = "SELECT c.quantity, p.product_id, p.product_name, p.manufacturer, p.product_condition, p.price, p.discount, p.image, p.product_info, p.quantity_in_stock, p.category_id, " +
                 "cat.category_id as cat_id, cat.category_name " +
                 "FROM cart c JOIN products p ON c.product_id = p.product_id " +
                 "LEFT JOIN categories cat ON p.category_id = cat.category_id " +
@@ -28,6 +28,7 @@ public class CartDAO {
                     p.setProductName(rs.getString("product_name"));
                     p.setManufacturer(rs.getString("manufacturer"));
                     p.setProductCondition(rs.getString("product_condition"));
+                    p.setDiscount(rs.getLong("discount"));
                     p.setPrice(rs.getLong("price"));
                     p.setImage(rs.getString("image"));
                     p.setProductInfo(rs.getString("product_info"));
