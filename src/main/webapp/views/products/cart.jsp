@@ -211,12 +211,12 @@
                                         <button type="button" class="btn btn-update" onclick="updateQuantity(this)">Cập nhật</button>
                                     </div>
                                 </td>
-                                <td class="right item-total"><fmt:formatNumber value="${item.product.price * item.quantity}" type="number" groupingUsed="true"/>₫</td>
+                                <td class="right item-total"><fmt:formatNumber value="${(item.product.price*(100-item.product.discount)/100) * item.quantity}" type="number" groupingUsed="true"/>₫</td>
                                 <td>
                                     <button type="button" class="btn secondary btn-remove" onclick="removeItem(this)">Xóa</button>
                                 </td>
                             </tr>
-                            <c:set var="total" value="${total + (item.product.price * item.quantity)}" />
+                            <c:set var="total" value="${total + ((item.product.price*(100-item.product.discount)/100) * item.quantity)}" />
                         </c:forEach>
                     </tbody>
                 </table>

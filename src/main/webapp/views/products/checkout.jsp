@@ -451,10 +451,10 @@
                                         <div class="order-item-qty">SL: ${item.quantity}</div>
                                     </div>
                                     <div class="order-item-price">
-                                        <fmt:formatNumber value="${item.product.price * item.quantity}" type="number" groupingUsed="true"/>₫
+                                        <fmt:formatNumber value="${(item.product.price*(100-item.product.discount)/100) * item.quantity}" type="number" groupingUsed="true"/>₫
                                     </div>
                                 </div>
-                                <c:set var="total" value="${total + (item.product.price * item.quantity)}"/>
+                                <c:set var="total" value="${total + ((item.product.price*(100-item.product.discount)/100) * item.quantity)}"/>
                             </c:forEach>
 
                             <div class="order-totals">
