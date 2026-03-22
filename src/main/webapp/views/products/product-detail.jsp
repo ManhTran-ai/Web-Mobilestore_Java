@@ -75,6 +75,37 @@
             opacity: 0.7;
         }
 
+        .user-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .user-pill:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .user-avatar {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+        }
+
+        .user-name {
+            font-weight: 600;
+        }
+
         .product-detail {
             padding: 2rem 0;
             display: grid;
@@ -205,6 +236,7 @@
             cursor: not-allowed;
             opacity: 1;
         }
+
         .btn.add-to-cart-btn {
             background: #000000;
             color: #e5e5ea;
@@ -358,7 +390,7 @@
             text-decoration: line-through;
         }
 
-        .old-price{
+        .old-price {
             color: #86868b;
             text-decoration: line-through;
         }
@@ -396,7 +428,10 @@
                             <a href="${pageContext.request.contextPath}/admin/products" style="color:#0071e3;">Trang
                                 Quản Lý</a>
                         </c:if>
-                        <span style="color:#ccc;">Xin chào, ${sessionScope.user.username}</span>
+                        <a class="user-pill" href="${pageContext.request.contextPath}/profile">
+                            <span class="user-avatar">👤</span>
+                            <span class="user-name">${sessionScope.user.username}</span>
+                        </a>
                         <a href="${pageContext.request.contextPath}/logout">Đăng Xuất</a>
                     </c:when>
                     <c:otherwise>
@@ -430,7 +465,8 @@
                 <c:choose>
                     <c:when test="${product.discount > 0}">
             <span class="product-price-new">
-                <fmt:formatNumber value="${product.price * (100 - product.discount) / 100}" type="number" groupingUsed="true"/>₫
+                <fmt:formatNumber value="${product.price * (100 - product.discount) / 100}" type="number"
+                                  groupingUsed="true"/>₫
             </span>
 
                         <div class="price-old-group">
@@ -441,7 +477,8 @@
                         </div>
 
                         <div class="save-amount">
-                            (Tiết kiệm: <fmt:formatNumber value="${product.price * product.discount / 100}" type="number"/>₫)
+                            (Tiết kiệm: <fmt:formatNumber value="${product.price * product.discount / 100}"
+                                                          type="number"/>₫)
                         </div>
                     </c:when>
                     <c:otherwise>
@@ -469,7 +506,7 @@
                 <button class="btn add-to-cart-btn"
                         data-id="${product.productId}"
                         data-stock="${product.quantityInStock}"
-                        ${product.quantityInStock == 0 ? 'disabled' : ''}>
+                ${product.quantityInStock == 0 ? 'disabled' : ''}>
                     <c:choose>
                         <c:when test="${product.quantityInStock == 0}">Hết hàng</c:when>
                         <c:otherwise>Thêm vào giỏ hàng</c:otherwise>
@@ -504,7 +541,9 @@
                             <c:choose>
                                 <c:when test="${relatedProduct.discount > 0}">
                                     <div class="current-price">
-                                        <fmt:formatNumber value="${relatedProduct.price * (100 - relatedProduct.discount) / 100}" type="number"/>₫
+                                        <fmt:formatNumber
+                                                value="${relatedProduct.price * (100 - relatedProduct.discount) / 100}"
+                                                type="number"/>₫
                                     </div>
                                     <div style="display: flex; align-items: center; gap: 8px; margin-top: 2px;">
                 <span class="old-price">
@@ -550,10 +589,14 @@
             <div class="col-lg-3 col-md-6 mb-4">
                 <h5 class="text-uppercase fw-bold mb-4">Chính sách hỗ trợ</h5>
                 <ul class="list-unstyled">
-                    <li class="mb-2"><a href="policy.jsp?type=warranty" class="text-secondary text-decoration-none">Chính sách bảo hành</a></li>
-                    <li class="mb-2"><a href="policy.jsp?type=return" class="text-secondary text-decoration-none">Chính sách đổi trả</a></li>
-                    <li class="mb-2"><a href="policy.jsp?type=shipping" class="text-secondary text-decoration-none">Chính sách vận chuyển</a></li>
-                    <li class="mb-2"><a href="policy.jsp?type=privacy" class="text-secondary text-decoration-none">Bảo mật thông tin</a></li>
+                    <li class="mb-2"><a href="policy.jsp?type=warranty" class="text-secondary text-decoration-none">Chính
+                        sách bảo hành</a></li>
+                    <li class="mb-2"><a href="policy.jsp?type=return" class="text-secondary text-decoration-none">Chính
+                        sách đổi trả</a></li>
+                    <li class="mb-2"><a href="policy.jsp?type=shipping" class="text-secondary text-decoration-none">Chính
+                        sách vận chuyển</a></li>
+                    <li class="mb-2"><a href="policy.jsp?type=privacy" class="text-secondary text-decoration-none">Bảo
+                        mật thông tin</a></li>
                 </ul>
             </div>
         </div>
