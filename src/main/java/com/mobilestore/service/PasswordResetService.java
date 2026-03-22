@@ -75,7 +75,7 @@ public class PasswordResetService {
         String hashedPassword = PasswordUtil.hashPassword(newPassword);
         user.setPassword(hashedPassword);
 
-        boolean updated = userDAO.update(user);
+        boolean updated = userDAO.updatePassword(user.getId(), hashedPassword);
 
         if (updated) {
             tokenDAO.markAsUsed(token);
