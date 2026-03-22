@@ -13,7 +13,7 @@ public class ProductDAO {
     public Product findById(Integer id) {
         String sql = "SELECT p.product_id, p.product_name, " +
                      "p.manufacturer, p.product_condition, " +
-                     "p.price, p.image, p.product_info, p.quantity_in_stock, p.category_id, " +
+                     "p.price,p.discount,p.product_info, p.image, p.quantity_in_stock, p.category_id, " +
                      "c.category_name " +
                      "FROM products p " +
                      "LEFT JOIN categories c ON p.category_id = c.category_id " +
@@ -38,13 +38,12 @@ public class ProductDAO {
     
     public List<Product> findAll() {
         List<Product> products = new ArrayList<>();
-        String sql = "SELECT p.product_id, p.product_name, " +
-                     "p.manufacturer, p.product_condition, " +
-                     "p.price, p.image, p.product_info, p.quantity_in_stock, p.category_id, " +
-                     "c.category_name " +
-                     "FROM products p " +
-                     "LEFT JOIN categories c ON p.category_id = c.category_id " +
-                     "ORDER BY p.product_id";
+        String sql = "SELECT p.product_id, p.product_name, p.manufacturer, p.product_condition, " +
+                "p.price, p.discount, p.image, p.product_info, p.quantity_in_stock, p.category_id, " +
+                "c.category_name " +
+                "FROM products p " +
+                "LEFT JOIN categories c ON p.category_id = c.category_id " +
+                "ORDER BY p.product_id";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
@@ -64,7 +63,7 @@ public class ProductDAO {
         List<Product> products = new ArrayList<>();
         String sql = "SELECT p.product_id, p.product_name, " +
                      "p.manufacturer, p.product_condition, " +
-                     "p.price, p.image, p.product_info, p.quantity_in_stock, p.category_id, " +
+                     "p.price,p.discount,p.product_info, p.image, p.product_info, p.quantity_in_stock, p.category_id, " +
                      "c.category_name " +
                      "FROM products p " +
                      "LEFT JOIN categories c ON p.category_id = c.category_id " +
@@ -92,7 +91,7 @@ public class ProductDAO {
         List<Product> products = new ArrayList<>();
         String sql = "SELECT p.product_id, p.product_name, " +
                      "p.manufacturer, p.product_condition, " +
-                     "p.price, p.image, p.product_info, p.quantity_in_stock, p.category_id, " +
+                     "p.price,p.discount,p.product_info, p.image, p.product_info, p.quantity_in_stock, p.category_id, " +
                      "c.category_name " +
                      "FROM products p " +
                      "LEFT JOIN categories c ON p.category_id = c.category_id " +
@@ -161,6 +160,7 @@ public class ProductDAO {
         StringBuilder sql = new StringBuilder("SELECT p.product_id, p.product_name, ")
                 .append("p.manufacturer, p.product_condition, ")
                 .append("p.price, p.image, p.product_info, p.quantity_in_stock, p.category_id, ")
+                .append("p.discount, ")
                 .append("c.category_name ")
                 .append("FROM products p ")
                 .append("LEFT JOIN categories c ON p.category_id = c.category_id ")
@@ -224,13 +224,13 @@ public class ProductDAO {
     public List<Product> findPage(int offset, int limit) {
         List<Product> products = new ArrayList<>();
         String sql = "SELECT p.product_id, p.product_name, " +
-                     "p.manufacturer, p.product_condition, " +
-                     "p.price, p.image, p.product_info, p.quantity_in_stock, p.category_id, " +
-                     "c.category_name " +
-                     "FROM products p " +
-                     "LEFT JOIN categories c ON p.category_id = c.category_id " +
-                     "ORDER BY p.product_id DESC " +
-                     "LIMIT ? OFFSET ?";
+                "p.manufacturer, p.product_condition, " +
+                "p.price, p.discount, p.image, p.product_info, p.quantity_in_stock, p.category_id, " +
+                "c.category_name " +
+                "FROM products p " +
+                "LEFT JOIN categories c ON p.category_id = c.category_id " +
+                "ORDER BY p.product_id DESC " +
+                "LIMIT ? OFFSET ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -250,9 +250,9 @@ public class ProductDAO {
     }
     
     public Product create(Product product) {
-        String sql = "INSERT INTO products (product_name, manufacturer, product_condition, price, " +
-                     "image, product_info, quantity_in_stock, category_id) " +
-                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO products (product_name, manufacturer, product_condition, price," +
+                     "image, product_info, quantity_in_stock, category_id, discount) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -273,6 +273,7 @@ public class ProductDAO {
             } else {
                 ps.setNull(8, java.sql.Types.INTEGER);
             }
+            ps.setLong(9, product.getDiscount());
 
             int affectedRows = ps.executeUpdate();
             
@@ -293,7 +294,7 @@ public class ProductDAO {
     
     public boolean update(Product product) {
         String sql = "UPDATE products SET product_name = ?, manufacturer = ?, product_condition = ?, " +
-                     "price = ?, image = ?, product_info = ?, quantity_in_stock = ?, category_id = ? " +
+                     "price = ?,discount = ?, image = ?, product_info = ?, quantity_in_stock = ?, category_id = ? " +
                      "WHERE product_id = ?";
         
         try (Connection conn = DatabaseConnection.getConnection();
@@ -303,15 +304,16 @@ public class ProductDAO {
             ps.setString(2, product.getManufacturer());
             ps.setString(3, product.getProductCondition());
             ps.setLong(4, product.getPrice());
-            ps.setString(5, product.getImage());
-            ps.setString(6, product.getProductInfo());
-            ps.setInt(7, product.getQuantityInStock());
+            ps.setLong(5, product.getDiscount());
+            ps.setString(6, product.getImage());
+            ps.setString(7, product.getProductInfo());
+            ps.setInt(8, product.getQuantityInStock());
             if (product.getCategory() != null && product.getCategory().getCategoryId() != null) {
-                ps.setInt(8, product.getCategory().getCategoryId());
+                ps.setInt(9, product.getCategory().getCategoryId());
             } else {
-                ps.setNull(8, java.sql.Types.INTEGER);
+                ps.setNull(9, java.sql.Types.INTEGER);
             }
-            ps.setInt(9, product.getProductId());
+            ps.setInt(10, product.getProductId());
             
             int affectedRows = ps.executeUpdate();
             return affectedRows > 0;
@@ -340,7 +342,7 @@ public class ProductDAO {
 
     public Product findByUniqueKey(String productName, String manufacturer, String productCondition, Integer categoryId) {
         StringBuilder sql = new StringBuilder("SELECT p.product_id, p.product_name, p.manufacturer, p.product_condition, ")
-                .append("p.price, p.image, p.product_info, p.quantity_in_stock, p.category_id, c.category_name ")
+                .append("p.price, p.discount, p.image, p.product_info, p.quantity_in_stock, p.category_id, c.category_name ")
                 .append("FROM products p LEFT JOIN categories c ON p.category_id = c.category_id WHERE p.product_name = ? AND p.manufacturer = ? AND p.product_condition = ? ");
 
         if (categoryId == null) {
@@ -370,6 +372,32 @@ public class ProductDAO {
         }
         return null;
     }
+    public List<Product> findSales(int limit) {
+        List<Product> products = new ArrayList<>();
+        String sql = "SELECT p.product_id, p.product_name, p.manufacturer, p.product_condition, " +
+                "p.price, p.discount, p.image, p.product_info, p.quantity_in_stock, p.category_id, " +
+                "c.category_name " +
+                "FROM products p " +
+                "LEFT JOIN categories c ON p.category_id = c.category_id " +
+                "WHERE p.discount > 0 " +
+                "ORDER BY p.discount DESC LIMIT ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, limit);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    products.add(mapResultSetToProduct(rs));
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Lỗi khi lấy danh sách sản phẩm sale: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return products;
+    }
     
     private Product mapResultSetToProduct(ResultSet rs) throws SQLException {
         Product product = new Product();
@@ -395,6 +423,8 @@ public class ProductDAO {
             category.setCategoryName(rs.getString("category_name"));
             product.setCategory(category);
         }
+            product.setDiscount(rs.getLong("discount"));
+
         
         return product;
     }

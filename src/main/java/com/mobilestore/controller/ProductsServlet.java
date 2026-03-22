@@ -37,7 +37,7 @@ public class ProductsServlet extends HttpServlet {
         }
 
         int page = 1;
-        int pageSize = 12;
+        int pageSize = 15;
         String pageParam = request.getParameter("page");
         String sizeParam = request.getParameter("size");
         String searchKeyword = request.getParameter("search");
@@ -123,7 +123,7 @@ public class ProductsServlet extends HttpServlet {
                 relatedProducts = productService.findByCategory(product.getCategory().getCategoryId())
                     .stream()
                     .filter(p -> !p.getProductId().equals(product.getProductId()))
-                    .limit(10)
+                    .limit(7)
                     .toList();
             }
 

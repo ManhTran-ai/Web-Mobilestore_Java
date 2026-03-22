@@ -136,12 +136,6 @@
             margin-bottom: 1.5rem;
         }
 
-        .product-price {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #000000;
-            margin-bottom: 1rem;
-        }
 
         .product-stock {
             font-size: 1rem;
@@ -211,18 +205,11 @@
             cursor: not-allowed;
             opacity: 1;
         }
-
-        .back-link {
-            margin-bottom: 2rem;
-            display: inline-block;
-            color: #666;
-            text-decoration: none;
-            font-size: 0.95rem;
+        .btn.add-to-cart-btn {
+            background: #000000;
+            color: #e5e5ea;
         }
 
-        .back-link:hover {
-            color: #1a1a1a;
-        }
 
         @media (max-width: 768px) {
             .container {
@@ -238,9 +225,6 @@
                 font-size: 1.5rem;
             }
 
-            .product-price {
-                font-size: 2rem;
-            }
 
             .actions {
                 flex-direction: column;
@@ -345,6 +329,56 @@
             color: #000;
             font-size: 0.8rem;
         }
+
+        .price-wrapper {
+            margin-bottom: 1.5rem;
+            padding: 1rem 0;
+            border-top: 1px solid #f5f5f7;
+            border-bottom: 1px solid #f5f5f7;
+        }
+
+        .product-price-new {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #000;
+            display: block;
+            line-height: 1;
+        }
+
+        .price-old-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .product-price-old {
+            font-size: 1.2rem;
+            color: #86868b;
+            text-decoration: line-through;
+        }
+
+        .old-price{
+            color: #86868b;
+            text-decoration: line-through;
+        }
+
+        .discount-tag {
+            background: #000;
+            color: #fff;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .save-amount {
+            font-size: 0.95rem;
+            color: #1d1d1f;
+            margin-top: 8px;
+            font-style: italic;
+        }
+
     </style>
 </head>
 <body>
@@ -392,8 +426,30 @@
             <h1 class="product-title">${product.productName}</h1>
             <div class="product-manufacturer">${product.manufacturer}</div>
             <div class="product-condition">${product.productCondition}</div>
-            <div class="product-price">
+            <div class="price-wrapper">
+                <c:choose>
+                    <c:when test="${product.discount > 0}">
+            <span class="product-price-new">
+                <fmt:formatNumber value="${product.price * (100 - product.discount) / 100}" type="number" groupingUsed="true"/>₫
+            </span>
+
+                        <div class="price-old-group">
+                <span class="product-price-old">
+                    <fmt:formatNumber value="${product.price}" type="number" groupingUsed="true"/>₫
+                </span>
+                            <span class="discount-tag">Giảm ${product.discount}%</span>
+                        </div>
+
+                        <div class="save-amount">
+                            (Tiết kiệm: <fmt:formatNumber value="${product.price * product.discount / 100}" type="number"/>₫)
+                        </div>
+                    </c:when>
+                    <c:otherwise>
+            <span class="product-price-new" style="color: #1d1d1f;">
                 <fmt:formatNumber value="${product.price}" type="number" groupingUsed="true"/>₫
+            </span>
+                    </c:otherwise>
+                </c:choose>
             </div>
             <div class="product-stock ${product.quantityInStock > 0 ? 'in-stock' : 'out-of-stock'}">
                 <c:choose>
@@ -444,8 +500,26 @@
                         </c:choose>
                         <div class="name">${relatedProduct.productName}</div>
                         <div class="manufacturer">${relatedProduct.manufacturer}</div>
-                        <div class="price">
-                            <fmt:formatNumber value="${relatedProduct.price}" type="number" groupingUsed="true"/>₫
+                        <div class="product-info-price">
+                            <c:choose>
+                                <c:when test="${relatedProduct.discount > 0}">
+                                    <div class="current-price">
+                                        <fmt:formatNumber value="${relatedProduct.price * (100 - relatedProduct.discount) / 100}" type="number"/>₫
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 8px; margin-top: 2px;">
+                <span class="old-price">
+                    <fmt:formatNumber value="${relatedProduct.price}" type="number"/>₫
+                </span>
+                                        <span class="discount-tag">-${relatedProduct.discount}%</span>
+                                    </div>
+                                </c:when>
+                                <c:otherwise>
+                                    <div class="current-price">
+                                        <fmt:formatNumber value="${relatedProduct.price}" type="number"/>₫
+                                    </div>
+                                    <div style="height: 21px;"></div>
+                                </c:otherwise>
+                            </c:choose>
                         </div>
                     </a>
                 </c:forEach>

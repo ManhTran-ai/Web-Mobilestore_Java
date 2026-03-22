@@ -167,7 +167,7 @@ public class CartServlet extends HttpServlet {
                     cartService.deleteCartItem(user.getId(), productId);
                     int cartTotal = 0;
                     for (CartItem item : cart) {
-                        cartTotal += item.getProduct().getPrice() * item.getQuantity();
+                        cartTotal += (item.getProduct().getPrice()*(100-item.getProduct().getDiscount())/100) * item.getQuantity();
                     }
                     
                     if (isAjax) {
@@ -267,9 +267,9 @@ public class CartServlet extends HttpServlet {
                 request.getSession().setAttribute("cart", cart);
 
                 double cartTotal = 0;
-                double itemTotal = cart.get(idx).getProduct().getPrice() * qty;
+                double itemTotal = (cart.get(idx).getProduct().getPrice()*(100-cart.get(idx).getProduct().getDiscount())/100) * qty;
                 for (CartItem item : cart) {
-                    cartTotal += item.getProduct().getPrice() * item.getQuantity();
+                    cartTotal += (item.getProduct().getPrice()*(100-item.getProduct().getDiscount())/100) * item.getQuantity();
                 }
 
                 if (isAjax) {

@@ -80,4 +80,9 @@ public class ProductServiceImpl implements ProductService {
     public Product findByUniqueKey(String productName, String manufacturer, String productCondition, Integer categoryId) {
         return productDAO.findByUniqueKey(productName, manufacturer, productCondition, categoryId);
     }
+
+    @Override
+    public List<Product> findSales(int i) {
+        return productDAO.findSales(i);
+    }
 }

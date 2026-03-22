@@ -154,6 +154,7 @@ public class AdminProductServlet extends HttpServlet {
             product.setManufacturer(formData.getManufacturer());
             product.setProductCondition(formData.getProductCondition());
             product.setPrice(formData.getPrice());
+            product.setDiscount(formData.getDiscount());
             product.setQuantityInStock(formData.getQuantityInStock());
             product.setProductInfo(formData.getProductInfo());
             product.setImage(uploadResult.getFilePath());
@@ -242,6 +243,7 @@ public class AdminProductServlet extends HttpServlet {
             existingProduct.setManufacturer(formData.getManufacturer());
             existingProduct.setProductCondition(formData.getProductCondition());
             existingProduct.setPrice(formData.getPrice());
+            existingProduct.setDiscount(formData.getDiscount());
             existingProduct.setQuantityInStock(formData.getQuantityInStock());
             existingProduct.setProductInfo(formData.getProductInfo());
             existingProduct.setImage(imagePath);
@@ -421,6 +423,7 @@ public class AdminProductServlet extends HttpServlet {
         String manufacturer = request.getParameter("manufacturer");
         String productCondition = request.getParameter("productCondition");
         String priceStr = request.getParameter("price");
+        String discountStr = request.getParameter("discount");
         String quantityStr = request.getParameter("quantityInStock");
         String productInfo = request.getParameter("productInfo");
         String categoryIdStr = request.getParameter("categoryId");
@@ -461,6 +464,21 @@ public class AdminProductServlet extends HttpServlet {
             } catch (NumberFormatException e) {
                 formData.addError("Giá không hợp lệ. Vui lòng nhập số");
             }
+        }
+
+        if (discountStr != null && !discountStr.trim().isEmpty()) {
+            try {
+                Long discount = Long.parseLong(discountStr.trim());
+                if (discount < 0 || discount > 100) {
+                    formData.addError("Giảm giá phải nằm trong khoảng từ 0 đến 100%");
+                } else {
+                    formData.setDiscount(discount);
+                }
+            } catch (NumberFormatException e) {
+                formData.addError("Giảm giá không hợp lệ. Vui lòng nhập số nguyên");
+            }
+        } else {
+            formData.setDiscount(0L);
         }
 
         if (quantityStr == null || quantityStr.trim().isEmpty()) {
@@ -575,6 +593,7 @@ public class AdminProductServlet extends HttpServlet {
         product.setManufacturer(formData.getManufacturer());
         product.setProductCondition(formData.getProductCondition());
         product.setPrice(formData.getPrice());
+        product.setDiscount(formData.getDiscount());
         product.setQuantityInStock(formData.getQuantityInStock());
         product.setProductInfo(formData.getProductInfo());
 
