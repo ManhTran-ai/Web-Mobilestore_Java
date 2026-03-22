@@ -48,7 +48,7 @@ public class VNPayServlet extends HttpServlet {
         
         double total = 0.0;
         for (CartItem item : cart) {
-            total += item.getProduct().getPrice() * item.getQuantity();
+            total += (item.getProduct().getPrice()*(100-item.getProduct().getDiscount())/100)* item.getQuantity();
         }
         
         String orderId = "ORDER_" + System.currentTimeMillis();

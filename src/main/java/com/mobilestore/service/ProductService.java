@@ -18,4 +18,6 @@ public interface ProductService {
     int countAll();
     int countSearch(String keyword, Integer categoryId);
     Product findByUniqueKey(String productName, String manufacturer, String productCondition, Integer categoryId);
+
+    List<Product> findSales(int i);
 }

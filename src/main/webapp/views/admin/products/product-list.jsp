@@ -686,7 +686,8 @@
                                     <th>Hình ảnh</th>
                                     <th>Sản phẩm</th>
                                     <th>Danh mục</th>
-                                    <th>Giá</th>
+                                    <th>Giá gốc</th>
+                                    <th>Giảm giá</th>
                                     <th>Tồn kho</th>
                                     <th>Tình trạng</th>
                                     <th>Thao tác</th>
@@ -716,8 +717,25 @@
                                             <div class="product-manufacturer">${product.manufacturer}</div>
                                         </td>
                                         <td>${product.category.categoryName}</td>
+
                                         <td class="price format-number">
                                             <fmt:formatNumber value="${product.price}" type="number" groupingUsed="true"/>₫
+                                        </td>
+
+                                        <td>
+                                            <c:choose>
+                                                <c:when test="${product.discount > 0}">
+                                                <span class="discount-badge" style="background: #ff3b30; color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; font-weight: 700;">
+                                                 -${product.discount}%
+                                                </span>
+                                                    <div style="font-size: 0.75rem; color: #888; margin-top: 4px;">
+                                                        Bán: <fmt:formatNumber value="${product.price * (100 - product.discount) / 100}" type="number"/>₫
+                                                    </div>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <span style="color: #ccc; font-size: 0.85rem;">—</span>
+                                                </c:otherwise>
+                                            </c:choose>
                                         </td>
                                         <td>
                                             <c:choose>

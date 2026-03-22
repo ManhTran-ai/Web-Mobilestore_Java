@@ -209,12 +209,6 @@
             display: block;
         }
 
-        .valid-feedback {
-            display: none;
-            color: #34c759;
-            font-size: 0.85rem;
-            margin-top: 0.375rem;
-        }
 
         .char-counter {
             font-size: 0.8rem;
@@ -570,6 +564,38 @@
                         </div>
 
                         <div class="form-group">
+                            <label class="form-label" for="price">
+                                Giá (VNĐ) <span class="required">*</span>
+                            </label>
+                            <input type="number"
+                                   id="price"
+                                   name="price"
+                                   class="form-control"
+                                   placeholder="VD: 25000000"
+                                   min="0"
+                                   max="999999999"
+                                   value="${product.price != null ? product.price.intValue() : ''}"
+                                   required>
+                            <div class="invalid-feedback" id="priceError">Giá không hợp lệ</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="discount">
+                                Giảm giá (%)
+                            </label>
+                            <input type="number"
+                                   id="discount"
+                                   name="discount"
+                                   class="form-control"
+                                   placeholder="VD: 10, 20..."
+                                   min="0"
+                                   max="100"
+                                   value="${product.discount != null ? product.discount : 0}">
+                            <div class="invalid-feedback" id="discountError">Phần trăm giảm giá phải từ 0 - 100</div>
+                            <p class="help-text">Nhập % giảm giá (0 nếu không giảm)</p>
+                        </div>
+
+                        <div class="form-group">
                             <label class="form-label" for="quantityInStock">
                                 Số lượng tồn kho <span class="required">*</span>
                             </label>
@@ -696,6 +722,7 @@
             maxProductNameLength: 255,
             maxProductInfoLength: 1000,
             maxPrice: 999999999,
+            maxDiscount: 100,
             maxQuantity: 99999
         };
 
@@ -707,6 +734,7 @@
         const productNameInput = document.getElementById('productName');
         const manufacturerInput = document.getElementById('manufacturer');
         const priceInput = document.getElementById('price');
+        const discountInput = document.getElementById('discount');
         const quantityInput = document.getElementById('quantityInStock');
         const categorySelect = document.getElementById('categoryId');
         const productInfoInput = document.getElementById('productInfo');
@@ -777,6 +805,22 @@
             }
 
             setValid(priceInput);
+            return true;
+        }
+
+        function validateDiscount() {
+            const value = discountInput.value.trim();
+            const errorEl = document.getElementById('discountError');
+
+            if (value === "") return true;
+
+            const discount = parseInt(value);
+            if (isNaN(discount) || discount < 0 || discount > 100) {
+                setInvalid(discountInput, errorEl, 'Giảm giá phải là số nguyên từ 0 đến 100');
+                return false;
+            }
+
+            setValid(discountInput);
             return true;
         }
 
@@ -947,6 +991,7 @@
 
         manufacturerInput.addEventListener('input', validateManufacturer);
         priceInput.addEventListener('input', validatePrice);
+        discountInput.addEventListener('input', validateDiscount);
         quantityInput.addEventListener('input', validateQuantity);
         categorySelect.addEventListener('change', validateCategory);
 
@@ -957,6 +1002,7 @@
         productNameInput.addEventListener('blur', validateProductName);
         manufacturerInput.addEventListener('blur', validateManufacturer);
         priceInput.addEventListener('blur', validatePrice);
+        discountInput.addEventListener('blur', validateDiscount);
         quantityInput.addEventListener('blur', validateQuantity);
         categorySelect.addEventListener('blur', validateCategory);
 
@@ -1005,6 +1051,9 @@
             }
             if (!validatePrice()) {
                 errors.push('Giá: ' + document.getElementById('priceError').textContent);
+            }
+            if (!validateDiscount()) {
+                errors.push('Giảm giá: ' + document.getElementById('discountError').textContent);
             }
             if (!validateQuantity()) {
                 errors.push('Số lượng: ' + document.getElementById('quantityError').textContent);
