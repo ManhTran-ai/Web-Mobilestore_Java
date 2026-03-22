@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <!DOCTYPE html>
@@ -76,6 +76,37 @@
 
         .nav a:hover {
             opacity: 0.7;
+        }
+
+        .user-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .user-pill:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .user-avatar {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+        }
+
+        .user-name {
+            font-weight: 600;
         }
 
         .checkout-grid {
@@ -250,7 +281,9 @@
             font-size: 1.5rem;
         }
 
-        .right { text-align: right; }
+        .right {
+            text-align: right;
+        }
 
         .btn {
             padding: 12px 20px;
@@ -268,9 +301,18 @@
             transition: opacity 0.2s;
         }
 
-        .btn:hover { opacity: 0.9; }
-        .btn-secondary { background: #e5e5ea; color: #1a1a1a; }
-        .btn-vnpay { background: #0066cc; }
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .btn-secondary {
+            background: #e5e5ea;
+            color: #1a1a1a;
+        }
+
+        .btn-vnpay {
+            background: #0066cc;
+        }
 
         .btn-group {
             display: flex;
@@ -278,7 +320,9 @@
             margin-top: 1rem;
         }
 
-        .btn-group .btn { flex: 1; }
+        .btn-group .btn {
+            flex: 1;
+        }
 
         .back-link {
             display: inline-block;
@@ -288,10 +332,19 @@
             font-size: 0.95rem;
         }
 
-        .back-link:hover { color: #1a1a1a; }
+        .back-link:hover {
+            color: #1a1a1a;
+        }
 
-        .empty-cart { text-align: center; padding: 4rem 2rem; }
-        .empty-cart-icon { font-size: 4rem; margin-bottom: 1rem; }
+        .empty-cart {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .empty-cart-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
 
         .payment-option {
             display: flex;
@@ -305,30 +358,78 @@
             transition: all 0.2s;
         }
 
-        .payment-option:hover { border-color: #ccc; }
+        .payment-option:hover {
+            border-color: #ccc;
+        }
+
         .payment-option.selected {
             border-color: #0071e3;
             background: #f0f7ff;
         }
 
-        .payment-option input { width: 18px; height: 18px; }
+        .payment-option input {
+            width: 18px;
+            height: 18px;
+        }
 
-        .payment-option-content div:first-child { font-weight: 600; }
-        .payment-option-content div:last-child { font-size: 0.85rem; color: #666; }
+        .payment-option-content div:first-child {
+            font-weight: 600;
+        }
+
+        .payment-option-content div:last-child {
+            font-size: 0.85rem;
+            color: #666;
+        }
 
         @media (max-width: 768px) {
-            .checkout-grid { grid-template-columns: 1fr; }
-            .order-summary { position: static; }
-            .form-row { grid-template-columns: 1fr; }
-            .header-content { padding: 0 12px; }
-            .nav { gap: 1rem; }
-            .nav a { font-size: 0.9rem; }
-            .container { padding: 0 12px; }
-            main.container { padding-top: 80px; }
-            table { font-size: 14px; }
-            th, td { padding: 8px 4px; }
-            .btn { padding: 10px 16px; font-size: 14px; }
-            h1 { font-size: 1.5rem !important; }
+            .checkout-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .order-summary {
+                position: static;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .header-content {
+                padding: 0 12px;
+            }
+
+            .nav {
+                gap: 1rem;
+            }
+
+            .nav a {
+                font-size: 0.9rem;
+            }
+
+            .container {
+                padding: 0 12px;
+            }
+
+            main.container {
+                padding-top: 80px;
+            }
+
+            table {
+                font-size: 14px;
+            }
+
+            th, td {
+                padding: 8px 4px;
+            }
+
+            .btn {
+                padding: 10px 16px;
+                font-size: 14px;
+            }
+
+            h1 {
+                font-size: 1.5rem !important;
+            }
         }
     </style>
 </head>
@@ -343,9 +444,13 @@
             <c:choose>
                 <c:when test="${not empty sessionScope.user}">
                     <c:if test="${sessionScope.user.roleName == 'ADMIN'}">
-                        <a href="${pageContext.request.contextPath}/admin/products" style="color:#0071e3;">Trang Quản Lý</a>
+                        <a href="${pageContext.request.contextPath}/admin/products" style="color:#0071e3;">Trang Quản
+                            Lý</a>
                     </c:if>
-                    <span style="color:#ccc;">Xin chào, ${sessionScope.user.username}</span>
+                    <a class="user-pill" href="${pageContext.request.contextPath}/profile">
+                        <span class="user-avatar">👤</span>
+                        <span class="user-name">${sessionScope.user.username}</span>
+                    </a>
                     <a href="${pageContext.request.contextPath}/logout">Đăng Xuất</a>
                 </c:when>
                 <c:otherwise>
@@ -374,7 +479,8 @@
                     <div class="empty-cart-icon">🛒</div>
                     <h2 style="font-size: 1.5rem; margin-bottom: 0.5rem;">Giỏ hàng trống</h2>
                     <p style="color: #666; margin-bottom: 1.5rem;">Không có sản phẩm nào để thanh toán.</p>
-                    <a class="btn" href="${pageContext.request.contextPath}/products" style="width: auto; display: inline-block;">Tiếp tục mua sắm</a>
+                    <a class="btn" href="${pageContext.request.contextPath}/products"
+                       style="width: auto; display: inline-block;">Tiếp tục mua sắm</a>
                 </div>
             </c:when>
             <c:otherwise>
@@ -451,10 +557,13 @@
                                         <div class="order-item-qty">SL: ${item.quantity}</div>
                                     </div>
                                     <div class="order-item-price">
-                                        <fmt:formatNumber value="${(item.product.price*(100-item.product.discount)/100) * item.quantity}" type="number" groupingUsed="true"/>₫
+                                        <fmt:formatNumber
+                                                value="${(item.product.price*(100-item.product.discount)/100) * item.quantity}"
+                                                type="number" groupingUsed="true"/>₫
                                     </div>
                                 </div>
-                                <c:set var="total" value="${total + ((item.product.price*(100-item.product.discount)/100) * item.quantity)}"/>
+                                <c:set var="total"
+                                       value="${total + ((item.product.price*(100-item.product.discount)/100) * item.quantity)}"/>
                             </c:forEach>
 
                             <div class="order-totals">
@@ -468,7 +577,8 @@
                                 </div>
                                 <div class="order-total-row final">
                                     <span>Tổng cộng:</span>
-                                    <span class="amount"><fmt:formatNumber value="${total}" type="number" groupingUsed="true"/>₫</span>
+                                    <span class="amount"><fmt:formatNumber value="${total}" type="number"
+                                                                           groupingUsed="true"/>₫</span>
                                 </div>
                             </div>
 
@@ -477,8 +587,9 @@
                             </div>
 
                             <div class="btn-group">
-                                <button type="submit" class="btn" name="action" value="cod">Thanh toán khi nhận hàng</button>
-                                <button class="btn" type="button" onclick="payWithVNPay()" >Thanh toán qua VNPay</button>
+                                <button type="submit" class="btn" name="action" value="cod">Thanh toán khi nhận hàng
+                                </button>
+                                <button class="btn" type="button" onclick="payWithVNPay()">Thanh toán qua VNPay</button>
                             </div>
                         </div>
                     </div>
@@ -510,10 +621,14 @@
             <div class="col-lg-3 col-md-6 mb-4">
                 <h5 class="text-uppercase fw-bold mb-4">Chính sách hỗ trợ</h5>
                 <ul class="list-unstyled">
-                    <li class="mb-2"><a href="policy.jsp?type=warranty" class="text-secondary text-decoration-none">Chính sách bảo hành</a></li>
-                    <li class="mb-2"><a href="policy.jsp?type=return" class="text-secondary text-decoration-none">Chính sách đổi trả</a></li>
-                    <li class="mb-2"><a href="policy.jsp?type=shipping" class="text-secondary text-decoration-none">Chính sách vận chuyển</a></li>
-                    <li class="mb-2"><a href="policy.jsp?type=privacy" class="text-secondary text-decoration-none">Bảo mật thông tin</a></li>
+                    <li class="mb-2"><a href="policy.jsp?type=warranty" class="text-secondary text-decoration-none">Chính
+                        sách bảo hành</a></li>
+                    <li class="mb-2"><a href="policy.jsp?type=return" class="text-secondary text-decoration-none">Chính
+                        sách đổi trả</a></li>
+                    <li class="mb-2"><a href="policy.jsp?type=shipping" class="text-secondary text-decoration-none">Chính
+                        sách vận chuyển</a></li>
+                    <li class="mb-2"><a href="policy.jsp?type=privacy" class="text-secondary text-decoration-none">Bảo
+                        mật thông tin</a></li>
                 </ul>
             </div>
         </div>
@@ -535,7 +650,8 @@
             .then(data => {
                 const el = document.getElementById('cartCount');
                 if (el) el.textContent = data.count;
-            }).catch(() => {});
+            }).catch(() => {
+        });
     }
 
     function validateForm() {
@@ -599,13 +715,13 @@
     }
 
     document.querySelectorAll('.payment-option').forEach(option => {
-        option.addEventListener('click', function() {
+        option.addEventListener('click', function () {
             document.querySelectorAll('.payment-option').forEach(o => o.classList.remove('selected'));
             this.classList.add('selected');
         });
     });
 
-    document.getElementById('checkoutForm').addEventListener('submit', function(e) {
+    document.getElementById('checkoutForm').addEventListener('submit', function (e) {
         const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
 
         if (paymentMethod === 'COD') {
@@ -613,14 +729,14 @@
                 e.preventDefault();
                 const firstError = document.querySelector('.form-group.error');
                 if (firstError) {
-                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    firstError.scrollIntoView({behavior: 'smooth', block: 'center'});
                 }
             }
         }
     });
 
     document.querySelectorAll('.form-control').forEach(input => {
-        input.addEventListener('input', function() {
+        input.addEventListener('input', function () {
             this.classList.remove('error');
             this.closest('.form-group').classList.remove('error');
         });
