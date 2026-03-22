@@ -22,4 +22,5 @@ public class Product {
     private String productInfo;
     private Integer quantityInStock;
     private Category category;
+    private Long discount;
 }

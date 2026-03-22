@@ -30,6 +30,11 @@ public class ProductFormData {
     @Min(value = 1, message = "Price must be greater than 0")
     private Long price;
 
+    @NotNull(message = "Discount is required")
+    @Min(value = 0, message = "Discount cannot be negative")
+    @Max(value = 100, message = "Discount cannot exceed 100%")
+    private Long discount;
+
     @NotNull(message = "Quantity in stock is required")
     @Min(value = 0, message = "Quantity cannot be negative")
     private Integer quantityInStock;

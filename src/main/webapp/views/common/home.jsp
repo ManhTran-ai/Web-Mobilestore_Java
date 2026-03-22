@@ -291,6 +291,49 @@
             border-radius: 8px;
             font-size: 0.95rem;
         }
+
+        .sale-products {
+            padding:3rem 0;
+            background: #ffffff;
+        }
+
+        .price-container {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            margin-top: 4px;
+        }
+
+        .sale-price {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: #000000;
+        }
+
+        .original-price {
+            font-size: 0.9rem;
+            color: #86868b;
+            text-decoration: line-through;
+            font-weight: 400;
+        }
+
+        .sale-badge {
+            background: #000;
+            color: #fff;
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .product-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+        }
     </style>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/slider.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/home-categories.css">
@@ -405,7 +448,50 @@
         </div>
     </div>
 </section>
+<section class="sale-products" style="padding: 3rem 0; background:#ffffff; border-bottom: 1px solid #f5f5f7;">
+<c:if test="${not empty saleProducts}">
+        <div class="container">
+            <h2 style="text-align:center; margin-bottom:1.25rem;">Ưu đãi đặc biệt</h2>
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap:1.5rem;">
+                <c:forEach var="p" items="${saleProducts}">
+                    <div class="product-card" style="border:1px solid #e5e5ea; border-radius:12px; padding:1rem; text-align:left; background:#fff; position: relative;">
+                        <span class="sale-badge" style="position: absolute; top: 10px; right: 10px; z-index: 1;">-${p.discount}%</span>
 
+                        <a href="${pageContext.request.contextPath}/products/view?id=${p.productId}" style="text-decoration:none; color:inherit;">
+                            <div style="height:160px; display:flex; align-items:center; justify-content:center; overflow:hidden; margin-bottom:0.75rem;">
+                                <c:choose>
+                                    <c:when test="${not empty p.image}">
+                                        <img src="${pageContext.request.contextPath}/${p.image}" alt="${p.productName}" style="max-width:100%; max-height:100%; object-fit:contain;">
+                                    </c:when>
+                                    <c:otherwise>
+                                        <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:#888;">📱</div>
+                                    </c:otherwise>
+                                </c:choose>
+                            </div>
+                            <div style="font-weight:600; margin-bottom:0.25rem; font-size:1rem; line-height:1.3;">${p.productName}</div>
+                            <div style="color:#666; font-size:0.9rem; margin-bottom:0.25rem;">${p.manufacturer}</div>
+
+                            <div class="price-container">
+                                <span class="sale-price" style="color:#0071e3; font-weight:700;">
+                                    <fmt:formatNumber value="${p.price * (100 - p.discount) / 100}" type="number" groupingUsed="true"/>₫
+                                </span>
+                                <span class="original-price" style="color:#86868b; text-decoration:line-through; font-size:0.85rem; margin-left:5px;">
+                                    <fmt:formatNumber value="${p.price}" type="number" groupingUsed="true"/>₫
+                                </span>
+                            </div>
+
+                            <div style="font-size:0.9rem; color:#888; margin-top:0.5rem;">
+                                <c:choose>
+                                    <c:when test="${p.quantityInStock == 0}">Hết hàng</c:when>
+                                </c:choose>
+                            </div>
+                        </a>
+                    </div>
+                </c:forEach>
+            </div>
+        </div>
+</c:if>
+</section>
 <section class="products" style="padding: 3rem 0; background:#ffffff;">
     <div class="container">
         <h2 style="text-align:center; margin-bottom:1.25rem;">Sản phẩm mới</h2>
@@ -426,7 +512,7 @@
                         <div style="font-weight:600; margin-bottom:0.25rem; font-size:1rem; line-height:1.3;">${product.productName}</div>
                         <div style="color:#666; font-size:0.9rem; margin-bottom:0.25rem;">${product.manufacturer}</div>
                         <div style="font-weight:700; font-size:1.1rem; color:#0071e3; margin-bottom:0.5rem; display:flex; align-items:center;">
-                            <fmt:formatNumber value="${product.price}" type="number" groupingUsed="true"/>₫
+                            <fmt:formatNumber value="${product.price*(100-product.discount)/100}" type="number" groupingUsed="true"/>₫
                         </div>
                         <div style="font-size:0.9rem; color:#888; margin-bottom:0.75rem;">
                             <c:choose>
