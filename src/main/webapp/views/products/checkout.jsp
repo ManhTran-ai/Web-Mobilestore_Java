@@ -6,6 +6,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <title>Thanh toán - Mobile Store</title>
     <style>
         * {
@@ -507,7 +509,7 @@
                                     <input type="tel" id="phone" name="phone" class="form-control"
                                            required pattern="[0-9]{10,11}"
                                            placeholder="Nhập số điện thoại"
-                                           value="${sessionScope.user != null && sessionScope.user.customerPhone != null ? sessionScope.user.phone : ''}">
+                                           value="${sessionScope.user != null && sessionScope.user.customerPhone != null ? sessionScope.user.customerPhone : ''}">
                                     <div class="error-message" id="phoneError">Vui lòng nhập số điện thoại hợp lệ</div>
                                 </div>
 
@@ -528,7 +530,7 @@
                                     </label>
                                     <textarea id="address" name="address" class="form-control"
                                               required minlength="10" maxlength="500"
-                                              placeholder="Nhập địa chỉ chi tiết (số nhà, đường, phường/xã, quận/huyện, tỉnh/thành phố)"></textarea>
+                                              placeholder="Nhập địa chỉ chi tiết (số nhà, đường, phường/xã, quận/huyện, tỉnh/thành phố)">${sessionScope.user != null && sessionScope.user.shippingAddress != null ? sessionScope.user.shippingAddress : ''}</textarea>
                                     <div class="error-message" id="addressError">Vui lòng nhập địa chỉ giao hàng</div>
                                 </div>
 
@@ -599,9 +601,6 @@
     </div>
 </main>
 
-
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <footer class="text-light pt-5 pb-3 mt-5" style="background-color: #000000;">
     <div class="container">
