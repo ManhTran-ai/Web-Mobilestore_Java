@@ -249,8 +249,8 @@ public class CartServlet extends HttpServlet {
                 Product fresh = productService.findById(productId);
                 if (fresh != null && fresh.getQuantityInStock() < qty) {
                     String msg;
-                    if (fresh.getQuantityInStock() <= 0) msg = "Sß║ún phß║⌐m ─æ├ú hß║┐t h├áng";
-                    else msg = "Chß╗ë c├▓n " + fresh.getQuantityInStock() + " sß║ún phß║⌐m trong kho";
+                    if (fresh.getQuantityInStock() <= 0) msg = "Sản phẩm đã hết hàng";
+                    else msg = "Chỉ còn" + fresh.getQuantityInStock() + "Sản phẩm trong kho";
                     if (isAjax) {
                         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                         response.setContentType("application/json;charset=UTF-8");
@@ -281,7 +281,7 @@ public class CartServlet extends HttpServlet {
                 if (isAjax) {
                     response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                     response.setContentType("application/json;charset=UTF-8");
-                    response.getWriter().print("{\"success\":false,\"message\":\"Dß╗» liß╗çu kh├┤ng hß╗úp lß╗ç\"}");
+                    response.getWriter().print("{\"success\":false,\"message\":\"Dữ liệu không hợp lệ\"}");
                     return;
                 }
             } catch (Exception e) {
@@ -289,7 +289,7 @@ public class CartServlet extends HttpServlet {
                 if (isAjax) {
                     response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                     response.setContentType("application/json;charset=UTF-8");
-                    response.getWriter().print("{\"success\":false,\"message\":\"Lß╗ùi server: " + e.getMessage() + "\"}");
+                    response.getWriter().print("{\"success\":false,\"message\":\"Lỗi sever: " + e.getMessage() + "\"}");
                     return;
                 }
             }
