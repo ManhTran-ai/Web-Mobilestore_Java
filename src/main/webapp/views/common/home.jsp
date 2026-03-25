@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <!DOCTYPE html>
@@ -74,6 +74,33 @@
 
         .nav a:hover {
             opacity: 0.7;
+        }
+
+        .user-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 10px;
+            text-decoration: none;
+        }
+
+        .user-pill:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .user-avatar {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+        }
+
+        .user-name {
+            font-weight: 600;
         }
 
         .hero {
@@ -293,7 +320,7 @@
         }
 
         .sale-products {
-            padding:3rem 0;
+            padding: 3rem 0;
             background: #ffffff;
         }
 
@@ -332,7 +359,7 @@
 
         .product-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
         }
     </style>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/slider.css">
@@ -350,9 +377,13 @@
                 <c:choose>
                     <c:when test="${not empty sessionScope.user}">
                         <c:if test="${sessionScope.user.roleName == 'ADMIN'}">
-                            <a href="${pageContext.request.contextPath}/admin/products" style="color: #0071e3;">Trang Quản Lý</a>
+                            <a href="${pageContext.request.contextPath}/admin/products" style="color: #0071e3;">Trang
+                                Quản Lý</a>
                         </c:if>
-                        <span style="color: #888;">Xin chào, ${sessionScope.user.username}</span>
+                        <a class="user-pill" href="${pageContext.request.contextPath}/profile">
+                            <span class="user-avatar">👤</span>
+                            <span class="user-name">${sessionScope.user.username}</span>
+                        </a>
                         <a href="${pageContext.request.contextPath}/logout">Đăng Xuất</a>
                     </c:when>
                     <c:otherwise>
@@ -383,10 +414,10 @@
     <div class="carousel-container">
         <div class="carousel-slides" id="carouselSlides">
             <div class="carousel-slide">
-                <img src="${pageContext.request.contextPath}/images/iPhone.png" />
+                <img src="${pageContext.request.contextPath}/images/iPhone.png"/>
             </div>
             <div class="carousel-slide">
-                <img src="${pageContext.request.contextPath}/images/macbook.png" />
+                <img src="${pageContext.request.contextPath}/images/macbook.png"/>
             </div>
             <div class="carousel-slide">
                 <img src="${pageContext.request.contextPath}/images/iPad.png"/>
@@ -449,22 +480,28 @@
     </div>
 </section>
 <section class="sale-products" style="padding: 3rem 0; background:#ffffff; border-bottom: 1px solid #f5f5f7;">
-<c:if test="${not empty saleProducts}">
+    <c:if test="${not empty saleProducts}">
         <div class="container">
             <h2 style="text-align:center; margin-bottom:1.25rem;">Ưu đãi đặc biệt</h2>
             <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap:1.5rem;">
                 <c:forEach var="p" items="${saleProducts}">
-                    <div class="product-card" style="border:1px solid #e5e5ea; border-radius:12px; padding:1rem; text-align:left; background:#fff; position: relative;">
-                        <span class="sale-badge" style="position: absolute; top: 10px; right: 10px; z-index: 1;">-${p.discount}%</span>
+                    <div class="product-card"
+                         style="border:1px solid #e5e5ea; border-radius:12px; padding:1rem; text-align:left; background:#fff; position: relative;">
+                        <span class="sale-badge"
+                              style="position: absolute; top: 10px; right: 10px; z-index: 1;">-${p.discount}%</span>
 
-                        <a href="${pageContext.request.contextPath}/products/view?id=${p.productId}" style="text-decoration:none; color:inherit;">
+                        <a href="${pageContext.request.contextPath}/products/view?id=${p.productId}"
+                           style="text-decoration:none; color:inherit;">
                             <div style="height:160px; display:flex; align-items:center; justify-content:center; overflow:hidden; margin-bottom:0.75rem;">
                                 <c:choose>
                                     <c:when test="${not empty p.image}">
-                                        <img src="${pageContext.request.contextPath}/${p.image}" alt="${p.productName}" style="max-width:100%; max-height:100%; object-fit:contain;">
+                                        <img src="${pageContext.request.contextPath}/${p.image}" alt="${p.productName}"
+                                             style="max-width:100%; max-height:100%; object-fit:contain;">
                                     </c:when>
                                     <c:otherwise>
-                                        <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:#888;">📱</div>
+                                        <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:#888;">
+                                            📱
+                                        </div>
                                     </c:otherwise>
                                 </c:choose>
                             </div>
@@ -473,9 +510,11 @@
 
                             <div class="price-container">
                                 <span class="sale-price" style="color:#0071e3; font-weight:700;">
-                                    <fmt:formatNumber value="${p.price * (100 - p.discount) / 100}" type="number" groupingUsed="true"/>₫
+                                    <fmt:formatNumber value="${p.price * (100 - p.discount) / 100}" type="number"
+                                                      groupingUsed="true"/>₫
                                 </span>
-                                <span class="original-price" style="color:#86868b; text-decoration:line-through; font-size:0.85rem; margin-left:5px;">
+                                <span class="original-price"
+                                      style="color:#86868b; text-decoration:line-through; font-size:0.85rem; margin-left:5px;">
                                     <fmt:formatNumber value="${p.price}" type="number" groupingUsed="true"/>₫
                                 </span>
                             </div>
@@ -490,7 +529,7 @@
                 </c:forEach>
             </div>
         </div>
-</c:if>
+    </c:if>
 </section>
 <section class="products" style="padding: 3rem 0; background:#ffffff;">
     <div class="container">
@@ -498,21 +537,27 @@
         <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap:1.5rem;">
             <c:forEach var="product" items="${products}">
                 <div style="border:1px solid #e5e5ea; border-radius:12px; padding:1rem; text-align:left; background:#fff;">
-                    <a href="${pageContext.request.contextPath}/products/view?id=${product.productId}" style="text-decoration:none; color:inherit;">
+                    <a href="${pageContext.request.contextPath}/products/view?id=${product.productId}"
+                       style="text-decoration:none; color:inherit;">
                         <div style="height:160px; display:flex; align-items:center; justify-content:center; overflow:hidden; margin-bottom:0.75rem;">
                             <c:choose>
                                 <c:when test="${not empty product.image}">
-                                    <img src="${pageContext.request.contextPath}/${product.image}" alt="${product.productName}" style="max-width:100%; max-height:100%; object-fit:contain;">
+                                    <img src="${pageContext.request.contextPath}/${product.image}"
+                                         alt="${product.productName}"
+                                         style="max-width:100%; max-height:100%; object-fit:contain;">
                                 </c:when>
                                 <c:otherwise>
-                                    <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:#888;">📱</div>
+                                    <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:#888;">
+                                        📱
+                                    </div>
                                 </c:otherwise>
                             </c:choose>
                         </div>
                         <div style="font-weight:600; margin-bottom:0.25rem; font-size:1rem; line-height:1.3;">${product.productName}</div>
                         <div style="color:#666; font-size:0.9rem; margin-bottom:0.25rem;">${product.manufacturer}</div>
                         <div style="font-weight:700; font-size:1.1rem; color:#0071e3; margin-bottom:0.5rem; display:flex; align-items:center;">
-                            <fmt:formatNumber value="${product.price*(100-product.discount)/100}" type="number" groupingUsed="true"/>₫
+                            <fmt:formatNumber value="${product.price*(100-product.discount)/100}" type="number"
+                                              groupingUsed="true"/>₫
                         </div>
                         <div style="font-size:0.9rem; color:#888; margin-bottom:0.75rem;">
                             <c:choose>
@@ -547,10 +592,14 @@
             <div class="col-lg-3 col-md-6 mb-4">
                 <h5 class="text-uppercase fw-bold mb-4">Chính sách hỗ trợ</h5>
                 <ul class="list-unstyled">
-                    <li class="mb-2"><a href="policy.jsp?type=warranty" class="text-secondary text-decoration-none">Chính sách bảo hành</a></li>
-                    <li class="mb-2"><a href="policy.jsp?type=return" class="text-secondary text-decoration-none">Chính sách đổi trả</a></li>
-                    <li class="mb-2"><a href="policy.jsp?type=shipping" class="text-secondary text-decoration-none">Chính sách vận chuyển</a></li>
-                    <li class="mb-2"><a href="policy.jsp?type=privacy" class="text-secondary text-decoration-none">Bảo mật thông tin</a></li>
+                    <li class="mb-2"><a href="policy.jsp?type=warranty" class="text-secondary text-decoration-none">Chính
+                        sách bảo hành</a></li>
+                    <li class="mb-2"><a href="policy.jsp?type=return" class="text-secondary text-decoration-none">Chính
+                        sách đổi trả</a></li>
+                    <li class="mb-2"><a href="policy.jsp?type=shipping" class="text-secondary text-decoration-none">Chính
+                        sách vận chuyển</a></li>
+                    <li class="mb-2"><a href="policy.jsp?type=privacy" class="text-secondary text-decoration-none">Bảo
+                        mật thông tin</a></li>
                 </ul>
             </div>
         </div>
@@ -572,7 +621,8 @@
             .then(data => {
                 const el = document.getElementById('cartCount');
                 if (el) el.textContent = data.count;
-            }).catch(() => {});
+            }).catch(() => {
+        });
     }
 
     document.querySelectorAll('.add-to-cart-btn').forEach(btn => {

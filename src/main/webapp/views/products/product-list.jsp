@@ -75,6 +75,32 @@
             opacity: 0.7;
         }
 
+        .user-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 10px;
+        }
+
+        .user-pill:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .user-avatar {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+        }
+
+        .user-name {
+            font-weight: 600;
+        }
+
         .page-title {
             padding: 2rem 0;
         }
@@ -139,7 +165,7 @@
             font-weight: 600;
         }
 
-        .old-price{
+        .old-price {
             font-size: 1.2rem;
             color: #86868b;
             text-decoration: line-through;
@@ -186,7 +212,10 @@
                             <a href="${pageContext.request.contextPath}/admin/products" style="color:#0071e3;">Trang
                                 Quản Lý</a>
                         </c:if>
-                        <span style="color:#ccc;">Xin chào, ${sessionScope.user.username}</span>
+                        <a class="user-pill" href="${pageContext.request.contextPath}/profile">
+                            <span class="user-avatar">👤</span>
+                            <span class="user-name">${sessionScope.user.username}</span>
+                        </a>
                         <a href="${pageContext.request.contextPath}/logout">Đăng Xuất</a>
                     </c:when>
                     <c:otherwise>
@@ -205,25 +234,28 @@
     </div>
 
     <div style="margin-bottom: 2rem; padding: 1.5rem; background: #f8f9fa; border-radius: 12px;">
-        <form method="GET" action="${pageContext.request.contextPath}/products" style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+        <form method="GET" action="${pageContext.request.contextPath}/products"
+              style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
             <div style="flex: 1; min-width: 200px;">
                 <input type="text" name="search" value="${searchKeyword}"
                        placeholder="Tìm kiếm sản phẩm..."
                        style="width: 100%; padding: 0.75rem; border: 1px solid #e5e5ea; border-radius: 8px; font-size: 0.95rem;">
             </div>
             <div style="min-width: 150px;">
-                <select name="category" style="width: 100%; padding: 0.75rem; border: 1px solid #e5e5ea; border-radius: 8px; font-size: 0.95rem;">
+                <select name="category"
+                        style="width: 100%; padding: 0.75rem; border: 1px solid #e5e5ea; border-radius: 8px; font-size: 0.95rem;">
                     <option value="">Tất cả danh mục</option>
                     <c:forEach var="category" items="${categories}">
                         <option value="${category.categoryId}" ${selectedCategory == category.categoryId ? 'selected' : ''}>
-                            ${category.categoryName}
+                                ${category.categoryName}
                         </option>
                     </c:forEach>
                 </select>
             </div>
             <div style="display: flex; gap: 0.5rem;">
                 <button type="submit" class="btn" style="padding: 0.75rem 1.5rem;">Tìm kiếm</button>
-                <a href="${pageContext.request.contextPath}/products" class="btn secondary" style="padding: 0.75rem 1.5rem; text-decoration: none;">Xóa bộ lọc</a>
+                <a href="${pageContext.request.contextPath}/products" class="btn secondary"
+                   style="padding: 0.75rem 1.5rem; text-decoration: none;">Xóa bộ lọc</a>
             </div>
         </form>
     </div>
@@ -236,10 +268,10 @@
             <c:if test="${not empty selectedCategory and not empty searchKeyword}"> | </c:if>
             <c:if test="${not empty selectedCategory}">
                 Danh mục: <strong>
-                    <c:forEach var="category" items="${categories}">
-                        <c:if test="${category.categoryId == selectedCategory}">${category.categoryName}</c:if>
-                    </c:forEach>
-                </strong>
+                <c:forEach var="category" items="${categories}">
+                    <c:if test="${category.categoryId == selectedCategory}">${category.categoryName}</c:if>
+                </c:forEach>
+            </strong>
             </c:if>
             - Tìm thấy <strong>${totalItems}</strong> sản phẩm
         </div>
@@ -266,7 +298,8 @@
                         <c:choose>
                             <c:when test="${product.discount > 0}">
                                 <div class="current-price">
-                                    <fmt:formatNumber value="${product.price * (100 - product.discount) / 100}" type="number"/>₫
+                                    <fmt:formatNumber value="${product.price * (100 - product.discount) / 100}"
+                                                      type="number"/>₫
                                 </div>
                                 <div style="display: flex; align-items: center; gap: 8px; margin-top: 2px;">
                 <span class="old-price">
@@ -302,7 +335,9 @@
     <c:if test="${totalPages > 1}">
         <div class="pagination">
             <c:if test="${currentPage > 1}">
-                <a class="btn" href="${pageContext.request.contextPath}/products?page=${currentPage - 1}${not empty searchKeyword ? '&search=' : ''}${searchKeyword}${not empty selectedCategory ? '&category=' : ''}${selectedCategory}">« Trước</a>
+                <a class="btn"
+                   href="${pageContext.request.contextPath}/products?page=${currentPage - 1}${not empty searchKeyword ? '&search=' : ''}${searchKeyword}${not empty selectedCategory ? '&category=' : ''}${selectedCategory}">«
+                    Trước</a>
             </c:if>
             <c:forEach var="p" begin="1" end="${totalPages}">
                 <c:choose>
@@ -310,12 +345,15 @@
                         <span class="btn secondary">${p}</span>
                     </c:when>
                     <c:otherwise>
-                        <a class="btn" href="${pageContext.request.contextPath}/products?page=${p}${not empty searchKeyword ? '&search=' : ''}${searchKeyword}${not empty selectedCategory ? '&category=' : ''}${selectedCategory}">${p}</a>
+                        <a class="btn"
+                           href="${pageContext.request.contextPath}/products?page=${p}${not empty searchKeyword ? '&search=' : ''}${searchKeyword}${not empty selectedCategory ? '&category=' : ''}${selectedCategory}">${p}</a>
                     </c:otherwise>
                 </c:choose>
             </c:forEach>
             <c:if test="${currentPage < totalPages}">
-                <a class="btn" href="${pageContext.request.contextPath}/products?page=${currentPage + 1}${not empty searchKeyword ? '&search=' : ''}${searchKeyword}${not empty selectedCategory ? '&category=' : ''}${selectedCategory}">Tiếp »</a>
+                <a class="btn"
+                   href="${pageContext.request.contextPath}/products?page=${currentPage + 1}${not empty searchKeyword ? '&search=' : ''}${searchKeyword}${not empty selectedCategory ? '&category=' : ''}${selectedCategory}">Tiếp
+                    »</a>
             </c:if>
         </div>
     </c:if>
@@ -343,10 +381,14 @@
             <div class="col-lg-3 col-md-6 mb-4">
                 <h5 class="text-uppercase fw-bold mb-4">Chính sách hỗ trợ</h5>
                 <ul class="list-unstyled">
-                    <li class="mb-2"><a href="policy.jsp?type=warranty" class="text-secondary text-decoration-none">Chính sách bảo hành</a></li>
-                    <li class="mb-2"><a href="policy.jsp?type=return" class="text-secondary text-decoration-none">Chính sách đổi trả</a></li>
-                    <li class="mb-2"><a href="policy.jsp?type=shipping" class="text-secondary text-decoration-none">Chính sách vận chuyển</a></li>
-                    <li class="mb-2"><a href="policy.jsp?type=privacy" class="text-secondary text-decoration-none">Bảo mật thông tin</a></li>
+                    <li class="mb-2"><a href="policy.jsp?type=warranty" class="text-secondary text-decoration-none">Chính
+                        sách bảo hành</a></li>
+                    <li class="mb-2"><a href="policy.jsp?type=return" class="text-secondary text-decoration-none">Chính
+                        sách đổi trả</a></li>
+                    <li class="mb-2"><a href="policy.jsp?type=shipping" class="text-secondary text-decoration-none">Chính
+                        sách vận chuyển</a></li>
+                    <li class="mb-2"><a href="policy.jsp?type=privacy" class="text-secondary text-decoration-none">Bảo
+                        mật thông tin</a></li>
                 </ul>
             </div>
         </div>
