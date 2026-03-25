@@ -10,7 +10,7 @@ import java.util.List;
 public class UserDAO {
     
     public User findByUsername(String username) {
-        String sql = "SELECT id, username, password, role_name, oauth_provider, oauth_id, email " +
+        String sql = "SELECT id, username, password, role_name, oauth_provider, oauth_id, email, shipping_address, customer_phone, note " +
                      "FROM users " +
                      "WHERE username = ?";
         
@@ -32,7 +32,7 @@ public class UserDAO {
     }
     
     public User findById(Integer id) {
-        String sql = "SELECT id, username, password, role_name, oauth_provider, oauth_id, email " +
+        String sql = "SELECT id, username, password, role_name, oauth_provider, oauth_id, email, shipping_address, customer_phone, note " +
                      "FROM users " +
                      "WHERE id = ?";
         
@@ -55,7 +55,7 @@ public class UserDAO {
     
     public List<User> findAll() {
         List<User> users = new ArrayList<>();
-        String sql = "SELECT id, username, password, role_name, oauth_provider, oauth_id, email " +
+        String sql = "SELECT id, username, password, role_name, oauth_provider, oauth_id, email, shipping_address, customer_phone, note " +
                      "FROM users";
         
         try (Connection conn = DatabaseConnection.getConnection();
@@ -101,7 +101,7 @@ public class UserDAO {
     }
     
     public boolean update(User user) {
-        String sql = "UPDATE users SET username = ?, password = ?, role_name = ? WHERE id = ?";
+        String sql = "UPDATE users SET username = ?, password = ?, role_name = ?, email = ?, shipping_address = ?, customer_phone = ?, note = ? WHERE id = ?";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -109,12 +109,56 @@ public class UserDAO {
             ps.setString(1, user.getUsername());
             ps.setString(2, user.getPassword());
             ps.setString(3, user.getRoleName() != null ? user.getRoleName() : "CUSTOMER");
-            ps.setInt(4, user.getId());
+            ps.setString(4, user.getEmail());
+            ps.setString(5, user.getShippingAddress());
+            ps.setString(6, user.getCustomerPhone());
+            ps.setString(7, user.getNote());
+            ps.setInt(8, user.getId());
             
             int affectedRows = ps.executeUpdate();
             return affectedRows > 0;
         } catch (SQLException e) {
             System.err.println("Lỗi khi cập nhật user: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean updateProfile(User user) {
+        String sql = "UPDATE users SET username = ?, email = ?, shipping_address = ?, customer_phone = ?, note = ? WHERE id = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, user.getUsername());
+            ps.setString(2, user.getEmail());
+            ps.setString(3, user.getShippingAddress());
+            ps.setString(4, user.getCustomerPhone());
+            ps.setString(5, user.getNote());
+            ps.setInt(6, user.getId());
+
+            int affectedRows = ps.executeUpdate();
+            return affectedRows > 0;
+        } catch (SQLException e) {
+            System.err.println("Lỗi khi cập nhật hồ sơ user: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean updatePassword(Integer id, String hashedPassword) {
+        String sql = "UPDATE users SET password = ? WHERE id = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, hashedPassword);
+            ps.setInt(2, id);
+
+            int affectedRows = ps.executeUpdate();
+            return affectedRows > 0;
+        } catch (SQLException e) {
+            System.err.println("Lỗi khi cập nhật mật khẩu user: " + e.getMessage());
             e.printStackTrace();
             return false;
         }
@@ -145,12 +189,15 @@ public class UserDAO {
         user.setOauthProvider(rs.getString("oauth_provider"));
         user.setOauthId(rs.getString("oauth_id"));
         user.setEmail(rs.getString("email"));
+        user.setShippingAddress(rs.getString("shipping_address"));
+        user.setCustomerPhone(rs.getString("customer_phone"));
+        user.setNote(rs.getString("note"));
         
         return user;
     }
     
     public User findByOauthId(String oauthId, String oauthProvider) {
-        String sql = "SELECT id, username, password, role_name, oauth_provider, oauth_id, email " +
+        String sql = "SELECT id, username, password, role_name, oauth_provider, oauth_id, email, shipping_address, customer_phone, note " +
                      "FROM users " +
                      "WHERE oauth_id = ? AND oauth_provider = ?";
         
@@ -173,7 +220,7 @@ public class UserDAO {
     }
 
     public User findByEmail(String email) {
-        String sql = "SELECT id, username, password, role_name, oauth_provider, oauth_id, email " +
+        String sql = "SELECT id, username, password, role_name, oauth_provider, oauth_id, email, shipping_address, customer_phone, note " +
                      "FROM users " +
                      "WHERE email = ?";
 
