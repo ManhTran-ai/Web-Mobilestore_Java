@@ -471,7 +471,7 @@
 
         <c:if test="${not empty error}">
             <div style="color:#c62828; background: #fdecea; padding: 1rem; border-radius: 8px; margin-bottom: 2rem; border: 1px solid #f5c6cb;">
-                <strong>❌ Lỗi:</strong> ${error}
+                <strong>Lỗi:</strong> ${error}
             </div>
         </c:if>
 
@@ -549,23 +549,29 @@
 
                             <c:set var="total" value="0"/>
                             <c:forEach var="item" items="${cartItems}">
+                                <c:set var="itemPrice" value="${item.variant != null ? item.variant.price : item.product.displayPrice}"/>
+                                <c:set var="itemDiscount" value="${item.product != null ? item.product.discount : 0}"/>
+                                <c:set var="itemImg" value="${item.variant != null ? item.variant.variantImage : item.product.displayImage}"/>
                                 <div class="order-item">
-                                    <img src="${pageContext.request.contextPath}/${item.product.image}"
+                                    <img src="${pageContext.request.contextPath}/${itemImg}"
                                          alt="${item.product.productName}"
                                          class="order-item-image"
                                          onerror="this.style.display='none'">
                                     <div class="order-item-info">
                                         <div class="order-item-name">${item.product.productName}</div>
+                                        <c:if test="${item.variant != null}">
+                                            <div class="order-item-qty" style="color:#888; font-size:0.8rem;">${item.variant.color} / ${item.variant.storage}</div>
+                                        </c:if>
                                         <div class="order-item-qty">SL: ${item.quantity}</div>
                                     </div>
                                     <div class="order-item-price">
                                         <fmt:formatNumber
-                                                value="${(item.product.price*(100-item.product.discount)/100) * item.quantity}"
+                                                value="${(itemPrice * (100 - itemDiscount) / 100) * item.quantity}"
                                                 type="number" groupingUsed="true"/>₫
                                     </div>
                                 </div>
                                 <c:set var="total"
-                                       value="${total + ((item.product.price*(100-item.product.discount)/100) * item.quantity)}"/>
+                                       value="${total + ((itemPrice * (100 - itemDiscount) / 100) * item.quantity)}"/>
                             </c:forEach>
 
                             <div class="order-totals">
