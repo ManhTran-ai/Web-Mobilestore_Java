@@ -17,4 +17,5 @@ public class OrderDetail {
     private Integer quantity;
     private Order order;
     private Product product;
+    private ProductVariant variant;
 }
