@@ -403,161 +403,167 @@
     </style>
 </head>
 <body>
-    <div class="admin-container">
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <h2>Mobile Store</h2>
-                <span>Trang quản lý</span>
+<div class="admin-container">
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h2>Mobile Store</h2>
+            <span>Trang quản lý</span>
+        </div>
+        <nav>
+            <ul class="sidebar-nav">
+                <li>
+                    <a href="${pageContext.request.contextPath}/">
+                        Trang chủ
+                    </a>
+                </li>
+                <li>
+                    <a href="${pageContext.request.contextPath}/admin/products">
+                        Sản phẩm
+                    </a>
+                </li>
+                <li>
+                    <a href="${pageContext.request.contextPath}/admin/orders" class="active">
+                        Đơn hàng
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <div class="breadcrumb">
+            <a href="${pageContext.request.contextPath}/admin/orders">Đơn hàng</a>
+            <span>/</span>
+            <span>Chi tiết đơn hàng #${order.orderId}</span>
+        </div>
+
+        <c:if test="${param.success == 'updated'}">
+            <div class="alert alert-success">
+                <span>✓</span> Cập nhật trạng thái thành công!
             </div>
-            <nav>
-                <ul class="sidebar-nav">
-                    <li>
-                        <a href="${pageContext.request.contextPath}/">
-                            Trang chủ
-                        </a>
-                    </li>
-                    <li>
-                        <a href="${pageContext.request.contextPath}/admin/products">
-                            Sản phẩm
-                        </a>
-                    </li>
-                    <li>
-                        <a href="${pageContext.request.contextPath}/admin/orders" class="active">
-                            Đơn hàng
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-        </aside>
+        </c:if>
 
-        <main class="main-content">
-            <div class="breadcrumb">
-                <a href="${pageContext.request.contextPath}/admin/orders">Đơn hàng</a>
-                <span>/</span>
-                <span>Chi tiết đơn hàng #${order.orderId}</span>
+        <div class="page-header">
+            <div>
+                <h1>Chi tiết đơn hàng #${order.orderId}</h1>
             </div>
+        </div>
 
-            <c:if test="${param.success == 'updated'}">
-                <div class="alert alert-success">
-                    <span>✓</span> Cập nhật trạng thái thành công!
-                </div>
-            </c:if>
-
-            <div class="page-header">
+        <div class="order-card">
+            <div class="order-header">
                 <div>
-                    <h1>Chi tiết đơn hàng #${order.orderId}</h1>
+                    <div class="order-id">Đơn hàng #${order.orderId}</div>
+                    <div class="order-date">Ngày đặt: <fmt:formatDate value="${order.orderDate}" pattern="dd/MM/yyyy HH:mm"/></div>
+                </div>
+                <span class="status-badge ${order.orderStatus == 'PENDING' ? 'pending' : order.orderStatus == 'PROCESSING' ? 'processing' : order.orderStatus == 'SHIPPED' ? 'shipped' : order.orderStatus == 'COMPLETED' ? 'completed' : 'cancelled'}">
+                    ${order.orderStatus}
+                </span>
+            </div>
+
+            <div class="info-grid">
+                <div>
+                    <div class="info-item">
+                        <div class="info-label">Khách hàng</div>
+                        <div class="info-value">${order.user != null ? order.user.username : 'Khách'}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Email</div>
+                        <div class="info-value">${order.user != null && order.user.email != null ? order.user.email : 'Chưa cập nhật'}</div>
+                    </div>
+                </div>
+                <div>
+                    <div class="info-item">
+                        <div class="info-label">Ngày đặt hàng</div>
+                        <div class="info-value"><fmt:formatDate value="${order.orderDate}" pattern="dd/MM/yyyy HH:mm"/></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Trạng thái thanh toán</div>
+                        <div class="info-value">
+                            <c:choose>
+                                <c:when test="${order.paymentStatus == 'PAID'}">
+                                    <span style="color: #28a745;">Đã thanh toán</span>
+                                </c:when>
+                                <c:otherwise>
+                                    <span style="color: #ffc107;">Chờ thanh toán</span>
+                                </c:otherwise>
+                            </c:choose>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="order-card">
-                <div class="order-header">
-                    <div>
-                        <div class="order-id">Đơn hàng #${order.orderId}</div>
-                        <div class="order-date">Ngày đặt: <fmt:formatDate value="${order.orderDate}" pattern="dd/MM/yyyy HH:mm"/></div>
-                    </div>
-                    <span class="status-badge ${order.orderStatus == 'PENDING' ? 'pending' : order.orderStatus == 'PROCESSING' ? 'processing' : order.orderStatus == 'SHIPPED' ? 'shipped' : order.orderStatus == 'COMPLETED' ? 'completed' : 'cancelled'}">
-                        ${order.orderStatus}
-                    </span>
-                </div>
+            <form method="post" action="${pageContext.request.contextPath}/admin/orders/update" class="order-status-select">
+                <input type="hidden" name="id" value="${order.orderId}" />
+                <label for="status" style="font-weight: 500;">Cập nhật trạng thái:</label>
+                <select name="status" id="status">
+                    <option value="PENDING" ${order.orderStatus=='PENDING' ? 'selected' : ''}>PENDING - Chờ xử lý</option>
+                    <option value="PROCESSING" ${order.orderStatus=='PROCESSING' ? 'selected' : ''}>PROCESSING - Đang xử lý</option>
+                    <option value="SHIPPED" ${order.orderStatus=='SHIPPED' ? 'selected' : ''}>SHIPPED - Đang giao hàng</option>
+                    <option value="COMPLETED" ${order.orderStatus=='COMPLETED' ? 'selected' : ''}>COMPLETED - Hoàn thành</option>
+                    <option value="CANCELLED" ${order.orderStatus=='CANCELLED' ? 'selected' : ''}>CANCELLED - Đã hủy</option>
+                </select>
+                <button type="submit" class="btn btn-primary">Cập nhật</button>
+            </form>
+        </div>
 
-                <div class="info-grid">
-                    <div>
-                        <div class="info-item">
-                            <div class="info-label">Khách hàng</div>
-                            <div class="info-value">${order.user != null ? order.user.username : 'Khách'}</div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-label">Email</div>
-                            <div class="info-value">${order.user != null && order.user.email != null ? order.user.email : 'Chưa cập nhật'}</div>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="info-item">
-                            <div class="info-label">Ngày đặt hàng</div>
-                            <div class="info-value"><fmt:formatDate value="${order.orderDate}" pattern="dd/MM/yyyy HH:mm"/></div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-label">Trạng thái thanh toán</div>
-                            <div class="info-value">
+        <div class="table-container">
+            <div class="table-header">
+                <h3>Chi tiết sản phẩm</h3>
+            </div>
+            <table class="data-table">
+                <thead>
+                <tr>
+                    <th>Sản phẩm</th>
+                    <th>Giá</th>
+                    <th>Số lượng</th>
+                    <th class="right">Thành tiền</th>
+                </tr>
+                </thead>
+                <tbody>
+                <c:forEach var="d" items="${order.details}">
+                    <tr>
+                        <td>
+                            <div class="product-info">
                                 <c:choose>
-                                    <c:when test="${order.paymentStatus == 'PAID'}">
-                                        <span style="color: #28a745;">Đã thanh toán</span>
+                                    <c:when test="${not empty d.variant.variantImage}">
+                                        <img src="${pageContext.request.contextPath}/${d.variant.variantImage}" alt="${d.product.productName}" class="product-image">
+                                    </c:when>
+                                    <c:when test="${not empty d.product.displayImage}">
+                                        <img src="${pageContext.request.contextPath}/${d.product.displayImage}" alt="${d.product.productName}" class="product-image">
                                     </c:when>
                                     <c:otherwise>
-                                        <span style="color: #ffc107;">Chờ thanh toán</span>
+                                        <div class="product-image" style="display:flex;align-items:center;justify-content:center;font-size:1.5rem;">&#128241;</div>
                                     </c:otherwise>
                                 </c:choose>
+                                <div>
+                                    <div class="product-name">${d.product.productName}</div>
+                                    <div class="product-manufacturer">${d.product.manufacturer}</div>
+                                    <c:if test="${not empty d.variant.color || not empty d.variant.storage}">
+                                        <div style="font-size:0.8rem; color:#888;">${d.variant.color}${not empty d.variant.color && not empty d.variant.storage ? ' / ' : ''}${d.variant.storage}</div>
+                                    </c:if>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
+                        </td>
+                        <td class="price"><fmt:formatNumber value="${d.price}" type="number" groupingUsed="true"/>₫</td>
+                        <td>${d.quantity}</td>
+                        <td class="right price"><fmt:formatNumber value="${d.price * d.quantity}" type="number" groupingUsed="true"/>₫</td>
+                    </tr>
+                </c:forEach>
+                <tr class="total-row">
+                    <td colspan="3" class="right">Tổng cộng:</td>
+                    <td class="right total-amount"><fmt:formatNumber value="${order.totalAmount}" type="number" groupingUsed="true"/>₫</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
 
-                <form method="post" action="${pageContext.request.contextPath}/admin/orders/update" class="order-status-select">
-                    <input type="hidden" name="id" value="${order.orderId}" />
-                    <label for="status" style="font-weight: 500;">Cập nhật trạng thái:</label>
-                    <select name="status" id="status">
-                        <option value="PENDING" ${order.orderStatus=='PENDING' ? 'selected' : ''}>PENDING - Chờ xử lý</option>
-                        <option value="PROCESSING" ${order.orderStatus=='PROCESSING' ? 'selected' : ''}>PROCESSING - Đang xử lý</option>
-                        <option value="SHIPPED" ${order.orderStatus=='SHIPPED' ? 'selected' : ''}>SHIPPED - Đang giao hàng</option>
-                        <option value="COMPLETED" ${order.orderStatus=='COMPLETED' ? 'selected' : ''}>COMPLETED - Hoàn thành</option>
-                        <option value="CANCELLED" ${order.orderStatus=='CANCELLED' ? 'selected' : ''}>CANCELLED - Đã hủy</option>
-                    </select>
-                    <button type="submit" class="btn btn-primary">Cập nhật</button>
-                </form>
-            </div>
-
-            <div class="table-container">
-                <div class="table-header">
-                    <h3>Chi tiết sản phẩm</h3>
-                </div>
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>Sản phẩm</th>
-                            <th>Giá</th>
-                            <th>Số lượng</th>
-                            <th class="right">Thành tiền</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <c:forEach var="d" items="${order.details}">
-                            <tr>
-                                <td>
-                                    <div class="product-info">
-                                        <c:choose>
-                                            <c:when test="${not empty d.product.image}">
-                                                <img src="${pageContext.request.contextPath}/${d.product.image}" alt="${d.product.productName}" class="product-image">
-                                            </c:when>
-                                            <c:otherwise>
-                                                <div class="product-image" style="display:flex;align-items:center;justify-content:center;font-size:1.5rem;">📱</div>
-                                            </c:otherwise>
-                                        </c:choose>
-                                        <div>
-                                            <div class="product-name">${d.product.productName}</div>
-                                            <div class="product-manufacturer">${d.product.manufacturer}</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="price"><fmt:formatNumber value="${d.price}" type="number" groupingUsed="true"/>₫</td>
-                                <td>${d.quantity}</td>
-                                <td class="right price"><fmt:formatNumber value="${d.price * d.quantity}" type="number" groupingUsed="true"/>₫</td>
-                            </tr>
-                        </c:forEach>
-                        <tr class="total-row">
-                            <td colspan="3" class="right">Tổng cộng:</td>
-                            <td class="right total-amount"><fmt:formatNumber value="${order.totalAmount}" type="number" groupingUsed="true"/>₫</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="action-buttons">
-                <a href="${pageContext.request.contextPath}/admin/orders" class="btn btn-secondary">
-                    ← Quay lại danh sách
-                </a>
-            </div>
-        </main>
-    </div>
+        <div class="action-buttons">
+            <a href="${pageContext.request.contextPath}/admin/orders" class="btn btn-secondary">
+                ← Quay lại danh sách
+            </a>
+        </div>
+    </main>
+</div>
 </body>
 </html>
 
