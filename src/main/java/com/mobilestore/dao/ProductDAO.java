@@ -2,6 +2,7 @@ package com.mobilestore.dao;
 
 import com.mobilestore.entity.Product;
 import com.mobilestore.entity.Category;
+import com.mobilestore.entity.ProductVariant;
 import com.mobilestore.util.DatabaseConnection;
 
 import java.sql.*;
@@ -9,24 +10,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProductDAO {
-    
+
     public Product findById(Integer id) {
         String sql = "SELECT p.product_id, p.product_name, " +
-                     "p.manufacturer, p.product_condition, " +
-                     "p.price,p.discount,p.product_info, p.image, p.quantity_in_stock, p.category_id, " +
-                     "c.category_name " +
-                     "FROM products p " +
-                     "LEFT JOIN categories c ON p.category_id = c.category_id " +
-                     "WHERE p.product_id = ?";
-        
+                "p.manufacturer, p.product_condition, " +
+                "p.discount, p.product_info, p.category_id, " +
+                "c.category_name " +
+                "FROM products p " +
+                "LEFT JOIN categories c ON p.category_id = c.category_id " +
+                "WHERE p.product_id = ?";
+
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-            
+
             ps.setInt(1, id);
-            
+
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return mapResultSetToProduct(rs);
+                    Product product = mapResultSetToProduct(rs);
+                    product.setVariants(findVariantsByProductId(id));
+                    return product;
                 }
             }
         } catch (SQLException e) {
@@ -35,22 +38,24 @@ public class ProductDAO {
         }
         return null;
     }
-    
+
     public List<Product> findAll() {
         List<Product> products = new ArrayList<>();
         String sql = "SELECT p.product_id, p.product_name, p.manufacturer, p.product_condition, " +
-                "p.price, p.discount, p.image, p.product_info, p.quantity_in_stock, p.category_id, " +
+                "p.discount, p.product_info, p.category_id, " +
                 "c.category_name " +
                 "FROM products p " +
                 "LEFT JOIN categories c ON p.category_id = c.category_id " +
                 "ORDER BY p.product_id";
-        
+
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
-            
+
             while (rs.next()) {
-                products.add(mapResultSetToProduct(rs));
+                Product product = mapResultSetToProduct(rs);
+                product.setVariants(findVariantsByProductId(product.getProductId()));
+                products.add(product);
             }
         } catch (SQLException e) {
             System.err.println("Lỗi khi lấy tất cả products: " + e.getMessage());
@@ -58,26 +63,28 @@ public class ProductDAO {
         }
         return products;
     }
-    
+
     public List<Product> findByCategory(Integer categoryId) {
         List<Product> products = new ArrayList<>();
         String sql = "SELECT p.product_id, p.product_name, " +
-                     "p.manufacturer, p.product_condition, " +
-                     "p.price,p.discount,p.product_info, p.image, p.product_info, p.quantity_in_stock, p.category_id, " +
-                     "c.category_name " +
-                     "FROM products p " +
-                     "LEFT JOIN categories c ON p.category_id = c.category_id " +
-                     "WHERE p.category_id = ? " +
-                     "ORDER BY p.product_id";
-        
+                "p.manufacturer, p.product_condition, " +
+                "p.discount, p.product_info, p.category_id, " +
+                "c.category_name " +
+                "FROM products p " +
+                "LEFT JOIN categories c ON p.category_id = c.category_id " +
+                "WHERE p.category_id = ? " +
+                "ORDER BY p.product_id";
+
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-            
+
             ps.setInt(1, categoryId);
-            
+
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    products.add(mapResultSetToProduct(rs));
+                    Product product = mapResultSetToProduct(rs);
+                    product.setVariants(findVariantsByProductId(product.getProductId()));
+                    products.add(product);
                 }
             }
         } catch (SQLException e) {
@@ -86,17 +93,17 @@ public class ProductDAO {
         }
         return products;
     }
-    
+
     public List<Product> searchByName(String keyword) {
         List<Product> products = new ArrayList<>();
         String sql = "SELECT p.product_id, p.product_name, " +
-                     "p.manufacturer, p.product_condition, " +
-                     "p.price,p.discount,p.product_info, p.image, p.product_info, p.quantity_in_stock, p.category_id, " +
-                     "c.category_name " +
-                     "FROM products p " +
-                     "LEFT JOIN categories c ON p.category_id = c.category_id " +
-                     "WHERE p.product_name LIKE ? OR p.product_info LIKE ? " +
-                     "ORDER BY p.product_id";
+                "p.manufacturer, p.product_condition, " +
+                "p.discount, p.product_info, p.category_id, " +
+                "c.category_name " +
+                "FROM products p " +
+                "LEFT JOIN categories c ON p.category_id = c.category_id " +
+                "WHERE p.product_name LIKE ? OR p.product_info LIKE ? " +
+                "ORDER BY p.product_id";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -107,7 +114,9 @@ public class ProductDAO {
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    products.add(mapResultSetToProduct(rs));
+                    Product product = mapResultSetToProduct(rs);
+                    product.setVariants(findVariantsByProductId(product.getProductId()));
+                    products.add(product);
                 }
             }
         } catch (SQLException e) {
@@ -159,8 +168,7 @@ public class ProductDAO {
         List<Product> products = new ArrayList<>();
         StringBuilder sql = new StringBuilder("SELECT p.product_id, p.product_name, ")
                 .append("p.manufacturer, p.product_condition, ")
-                .append("p.price, p.image, p.product_info, p.quantity_in_stock, p.category_id, ")
-                .append("p.discount, ")
+                .append("p.discount, p.product_info, p.category_id, ")
                 .append("c.category_name ")
                 .append("FROM products p ")
                 .append("LEFT JOIN categories c ON p.category_id = c.category_id ")
@@ -196,7 +204,9 @@ public class ProductDAO {
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    products.add(mapResultSetToProduct(rs));
+                    Product product = mapResultSetToProduct(rs);
+                    product.setVariants(findVariantsByProductId(product.getProductId()));
+                    products.add(product);
                 }
             }
         } catch (SQLException e) {
@@ -205,7 +215,7 @@ public class ProductDAO {
         }
         return products;
     }
-    
+
     public int countAll() {
         String sql = "SELECT COUNT(*) AS total FROM products";
         try (Connection conn = DatabaseConnection.getConnection();
@@ -225,7 +235,7 @@ public class ProductDAO {
         List<Product> products = new ArrayList<>();
         String sql = "SELECT p.product_id, p.product_name, " +
                 "p.manufacturer, p.product_condition, " +
-                "p.price, p.discount, p.image, p.product_info, p.quantity_in_stock, p.category_id, " +
+                "p.discount, p.product_info, p.category_id, " +
                 "c.category_name " +
                 "FROM products p " +
                 "LEFT JOIN categories c ON p.category_id = c.category_id " +
@@ -239,7 +249,9 @@ public class ProductDAO {
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    products.add(mapResultSetToProduct(rs));
+                    Product product = mapResultSetToProduct(rs);
+                    product.setVariants(findVariantsByProductId(product.getProductId()));
+                    products.add(product);
                 }
             }
         } catch (SQLException e) {
@@ -248,35 +260,28 @@ public class ProductDAO {
         }
         return products;
     }
-    
+
     public Product create(Product product) {
-        String sql = "INSERT INTO products (product_name, manufacturer, product_condition, price," +
-                     "image, product_info, quantity_in_stock, category_id, discount) " +
-                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        
+        String sql = "INSERT INTO products (product_name, manufacturer, product_condition, " +
+                "product_info, category_id, discount) " +
+                "VALUES (?, ?, ?, ?, ?, ?)";
+
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            
+
             ps.setString(1, product.getProductName());
             ps.setString(2, product.getManufacturer());
             ps.setString(3, product.getProductCondition());
-            ps.setLong(4, product.getPrice());
-            String imageToStore = product.getImage();
-            if (imageToStore != null && imageToStore.startsWith("/")) {
-                imageToStore = imageToStore.substring(1);
-            }
-            ps.setString(5, imageToStore);
-            ps.setString(6, product.getProductInfo());
-            ps.setInt(7, product.getQuantityInStock());
+            ps.setString(4, product.getProductInfo());
             if (product.getCategory() != null && product.getCategory().getCategoryId() != null) {
-                ps.setInt(8, product.getCategory().getCategoryId());
+                ps.setInt(5, product.getCategory().getCategoryId());
             } else {
-                ps.setNull(8, java.sql.Types.INTEGER);
+                ps.setNull(5, java.sql.Types.INTEGER);
             }
-            ps.setLong(9, product.getDiscount());
+            ps.setLong(6, product.getDiscount());
 
             int affectedRows = ps.executeUpdate();
-            
+
             if (affectedRows > 0) {
                 try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
                     if (generatedKeys.next()) {
@@ -291,30 +296,27 @@ public class ProductDAO {
         }
         return null;
     }
-    
+
     public boolean update(Product product) {
         String sql = "UPDATE products SET product_name = ?, manufacturer = ?, product_condition = ?, " +
-                     "price = ?,discount = ?, image = ?, product_info = ?, quantity_in_stock = ?, category_id = ? " +
-                     "WHERE product_id = ?";
-        
+                "discount = ?, product_info = ?, category_id = ? " +
+                "WHERE product_id = ?";
+
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-            
+
             ps.setString(1, product.getProductName());
             ps.setString(2, product.getManufacturer());
             ps.setString(3, product.getProductCondition());
-            ps.setLong(4, product.getPrice());
-            ps.setLong(5, product.getDiscount());
-            ps.setString(6, product.getImage());
-            ps.setString(7, product.getProductInfo());
-            ps.setInt(8, product.getQuantityInStock());
+            ps.setLong(4, product.getDiscount());
+            ps.setString(5, product.getProductInfo());
             if (product.getCategory() != null && product.getCategory().getCategoryId() != null) {
-                ps.setInt(9, product.getCategory().getCategoryId());
+                ps.setInt(6, product.getCategory().getCategoryId());
             } else {
-                ps.setNull(9, java.sql.Types.INTEGER);
+                ps.setNull(6, java.sql.Types.INTEGER);
             }
-            ps.setInt(10, product.getProductId());
-            
+            ps.setInt(7, product.getProductId());
+
             int affectedRows = ps.executeUpdate();
             return affectedRows > 0;
         } catch (SQLException e) {
@@ -323,13 +325,13 @@ public class ProductDAO {
             return false;
         }
     }
-    
+
     public boolean delete(Integer id) {
         String sql = "DELETE FROM products WHERE product_id = ?";
-        
+
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-            
+
             ps.setInt(1, id);
             int affectedRows = ps.executeUpdate();
             return affectedRows > 0;
@@ -342,8 +344,9 @@ public class ProductDAO {
 
     public Product findByUniqueKey(String productName, String manufacturer, String productCondition, Integer categoryId) {
         StringBuilder sql = new StringBuilder("SELECT p.product_id, p.product_name, p.manufacturer, p.product_condition, ")
-                .append("p.price, p.discount, p.image, p.product_info, p.quantity_in_stock, p.category_id, c.category_name ")
-                .append("FROM products p LEFT JOIN categories c ON p.category_id = c.category_id WHERE p.product_name = ? AND p.manufacturer = ? AND p.product_condition = ? ");
+                .append("p.discount, p.product_info, p.category_id, c.category_name ")
+                .append("FROM products p LEFT JOIN categories c ON p.category_id = c.category_id ")
+                .append("WHERE p.product_name = ? AND p.manufacturer = ? AND p.product_condition = ? ");
 
         if (categoryId == null) {
             sql.append("AND p.category_id IS NULL");
@@ -363,7 +366,9 @@ public class ProductDAO {
 
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return mapResultSetToProduct(rs);
+                    Product product = mapResultSetToProduct(rs);
+                    product.setVariants(findVariantsByProductId(product.getProductId()));
+                    return product;
                 }
             }
         } catch (SQLException e) {
@@ -372,10 +377,11 @@ public class ProductDAO {
         }
         return null;
     }
+
     public List<Product> findSales(int limit) {
         List<Product> products = new ArrayList<>();
-        String sql = "SELECT p.product_id, p.product_name, p.manufacturer, p.product_condition, " +
-                "p.price, p.discount, p.image, p.product_info, p.quantity_in_stock, p.category_id, " +
+        String sql = "SELECT DISTINCT p.product_id, p.product_name, p.manufacturer, p.product_condition, " +
+                "p.discount, p.product_info, p.category_id, " +
                 "c.category_name " +
                 "FROM products p " +
                 "LEFT JOIN categories c ON p.category_id = c.category_id " +
@@ -389,7 +395,9 @@ public class ProductDAO {
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    products.add(mapResultSetToProduct(rs));
+                    Product product = mapResultSetToProduct(rs);
+                    product.setVariants(findVariantsByProductId(product.getProductId()));
+                    products.add(product);
                 }
             }
         } catch (SQLException e) {
@@ -398,34 +406,54 @@ public class ProductDAO {
         }
         return products;
     }
-    
+
+    private List<ProductVariant> findVariantsByProductId(Integer productId) {
+        List<ProductVariant> variants = new ArrayList<>();
+        String sql = "SELECT variant_id, product_id, color, storage, price, quantity_in_stock, variant_image " +
+                "FROM product_variants WHERE product_id = ? ORDER BY price ASC";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, productId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    ProductVariant variant = new ProductVariant();
+                    variant.setVariantId(rs.getInt("variant_id"));
+                    variant.setColor(rs.getString("color"));
+                    variant.setStorage(rs.getString("storage"));
+                    variant.setPrice(rs.getLong("price"));
+                    variant.setQuantityInStock(rs.getInt("quantity_in_stock"));
+                    String img = rs.getString("variant_image");
+                    if (img != null && img.startsWith("/")) {
+                        img = img.substring(1);
+                    }
+                    variant.setVariantImage(img);
+                    variants.add(variant);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Lỗi khi lấy variants: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return variants;
+    }
+
     private Product mapResultSetToProduct(ResultSet rs) throws SQLException {
         Product product = new Product();
         product.setProductId(rs.getInt("product_id"));
         product.setProductName(rs.getString("product_name"));
         product.setManufacturer(rs.getString("manufacturer"));
         product.setProductCondition(rs.getString("product_condition"));
-        product.setPrice(rs.getLong("price"));
-        String img = rs.getString("image");
-        if (img != null) {
-            if (img.startsWith("/")) {
-                img = img.substring(1);
-            }
-        }
-        product.setImage(img);
         product.setProductInfo(rs.getString("product_info"));
-        product.setQuantityInStock(rs.getInt("quantity_in_stock"));
-        
+        product.setDiscount(rs.getLong("discount"));
+
         Integer categoryId = rs.getInt("category_id");
-        if (categoryId != null && !rs.wasNull()) {
+        if (!rs.wasNull()) {
             Category category = new Category();
             category.setCategoryId(categoryId);
             category.setCategoryName(rs.getString("category_name"));
             product.setCategory(category);
         }
-            product.setDiscount(rs.getLong("discount"));
 
-        
         return product;
     }
 }

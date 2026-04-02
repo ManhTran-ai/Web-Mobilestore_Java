@@ -494,13 +494,13 @@
                            style="text-decoration:none; color:inherit;">
                             <div style="height:160px; display:flex; align-items:center; justify-content:center; overflow:hidden; margin-bottom:0.75rem;">
                                 <c:choose>
-                                    <c:when test="${not empty p.image}">
-                                        <img src="${pageContext.request.contextPath}/${p.image}" alt="${p.productName}"
+                                    <c:when test="${not empty p.displayImage}">
+                                        <img src="${pageContext.request.contextPath}/${p.displayImage}" alt="${p.productName}"
                                              style="max-width:100%; max-height:100%; object-fit:contain;">
                                     </c:when>
                                     <c:otherwise>
                                         <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:#888;">
-                                            📱
+                                            &#128241;
                                         </div>
                                     </c:otherwise>
                                 </c:choose>
@@ -510,18 +510,18 @@
 
                             <div class="price-container">
                                 <span class="sale-price" style="color:#0071e3; font-weight:700;">
-                                    <fmt:formatNumber value="${p.price * (100 - p.discount) / 100}" type="number"
+                                    <fmt:formatNumber value="${p.displayPrice}" type="number"
                                                       groupingUsed="true"/>₫
                                 </span>
                                 <span class="original-price"
                                       style="color:#86868b; text-decoration:line-through; font-size:0.85rem; margin-left:5px;">
-                                    <fmt:formatNumber value="${p.price}" type="number" groupingUsed="true"/>₫
+                                    <fmt:formatNumber value="${p.displayOriginalPrice}" type="number" groupingUsed="true"/>₫
                                 </span>
                             </div>
 
                             <div style="font-size:0.9rem; color:#888; margin-top:0.5rem;">
                                 <c:choose>
-                                    <c:when test="${p.quantityInStock == 0}">Hết hàng</c:when>
+                                    <c:when test="${p.totalStock == 0}">Hết hàng</c:when>
                                 </c:choose>
                             </div>
                         </a>
@@ -541,14 +541,14 @@
                        style="text-decoration:none; color:inherit;">
                         <div style="height:160px; display:flex; align-items:center; justify-content:center; overflow:hidden; margin-bottom:0.75rem;">
                             <c:choose>
-                                <c:when test="${not empty product.image}">
-                                    <img src="${pageContext.request.contextPath}/${product.image}"
+                                <c:when test="${not empty product.displayImage}">
+                                    <img src="${pageContext.request.contextPath}/${product.displayImage}"
                                          alt="${product.productName}"
                                          style="max-width:100%; max-height:100%; object-fit:contain;">
                                 </c:when>
                                 <c:otherwise>
                                     <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:#888;">
-                                        📱
+                                        &#128241;
                                     </div>
                                 </c:otherwise>
                             </c:choose>
@@ -556,12 +556,12 @@
                         <div style="font-weight:600; margin-bottom:0.25rem; font-size:1rem; line-height:1.3;">${product.productName}</div>
                         <div style="color:#666; font-size:0.9rem; margin-bottom:0.25rem;">${product.manufacturer}</div>
                         <div style="font-weight:700; font-size:1.1rem; color:#0071e3; margin-bottom:0.5rem; display:flex; align-items:center;">
-                            <fmt:formatNumber value="${product.price*(100-product.discount)/100}" type="number"
+                            <fmt:formatNumber value="${product.displayPrice}" type="number"
                                               groupingUsed="true"/>₫
                         </div>
                         <div style="font-size:0.9rem; color:#888; margin-bottom:0.75rem;">
                             <c:choose>
-                                <c:when test="${product.quantityInStock == 0}">Hết hàng</c:when>
+                                <c:when test="${product.totalStock == 0}">Hết hàng</c:when>
                             </c:choose>
                         </div>
                     </a>
