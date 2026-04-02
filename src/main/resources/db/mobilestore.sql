@@ -33,7 +33,7 @@ CREATE TABLE `cart` (
   KEY `idx_cart_user` (`user_id`),
   CONSTRAINT `FKg5uhi8vpsuy0lgloxk2h4w5o6` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
   CONSTRAINT `FKpu4bcbluhsxagirmbdn7dilm5` FOREIGN KEY (`product_id`) REFERENCES `products` (`product_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=64 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=95 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -42,7 +42,7 @@ CREATE TABLE `cart` (
 
 LOCK TABLES `cart` WRITE;
 /*!40000 ALTER TABLE `cart` DISABLE KEYS */;
-INSERT INTO `cart` VALUES (58,1,10,9),(62,3,10,8),(63,1,31,8);
+INSERT INTO `cart` VALUES (62,3,10,8);
 /*!40000 ALTER TABLE `cart` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -161,7 +161,7 @@ CREATE TABLE `password_reset_tokens` (
   UNIQUE KEY `UK_token` (`token`),
   KEY `FK_password_reset_user` (`user_id`),
   CONSTRAINT `FK_password_reset_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -170,7 +170,7 @@ CREATE TABLE `password_reset_tokens` (
 
 LOCK TABLES `password_reset_tokens` WRITE;
 /*!40000 ALTER TABLE `password_reset_tokens` DISABLE KEYS */;
-INSERT INTO `password_reset_tokens` VALUES (1,'7011a61cd08847b2a5f5de5274470af2',13,'manht7000@gmail.com','2026-03-15 16:08:47',1,'2026-03-15 15:38:46');
+INSERT INTO `password_reset_tokens` VALUES (3,'a1ce838268d745b8a067c3d1780e5b94',13,'manht7000@gmail.com','2026-03-29 05:15:13',0,'2026-03-29 04:45:13');
 /*!40000 ALTER TABLE `password_reset_tokens` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -283,7 +283,7 @@ CREATE TABLE `users` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `UKr43af9ap4edm43mmtq01oddj6` (`username`),
   KEY `FK6e7f1kfvvn2k48olww485qvo3` (`role_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -292,7 +292,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (5,'$2a$10$342ro1UObsU/8YP0Dy1HNOQ92Fxy3hYI/KLTc0ygh7j5Q6NyeIyP6','levantai','ADMIN',NULL,NULL,NULL,NULL,NULL,NULL),(6,'$2a$10$w0KzLYHDgs5PI0Q4r3BjRu9RM3UbNa4IHSnfIb74KrHsTAlOnRfzW','mạnh','CUSTOMER',NULL,NULL,NULL,NULL,NULL,NULL),(7,'$2a$10$bj4SkPMUK3jTJ7FD.9blzeYmCo.bUF5vd1wJVh2ldpIxQ8F5DHetG','Hưng','CUSTOMER',NULL,NULL,NULL,NULL,NULL,NULL),(8,NULL,'Tài','CUSTOMER','google','116054212909485433236','levantai066@gmail.com',NULL,NULL,NULL),(9,NULL,'Tài Lê Văn','CUSTOMER','google','110613103348013667969','23130283@st.hcmuaf.edu.vn',NULL,NULL,NULL),(13,'$2a$10$KmcjsGN/04htrhRedfIIO.RqacQC3kU9NuhK0Dk84F6P0z7ifEP4K','manh1','CUSTOMER',NULL,NULL,'manht7000@gmail.com',NULL,NULL,NULL);
+INSERT INTO `users` VALUES (5,'$2a$10$342ro1UObsU/8YP0Dy1HNOQ92Fxy3hYI/KLTc0ygh7j5Q6NyeIyP6','levantai','ADMIN',NULL,NULL,NULL,NULL,NULL,NULL),(6,'$2a$10$w0KzLYHDgs5PI0Q4r3BjRu9RM3UbNa4IHSnfIb74KrHsTAlOnRfzW','mạnh','CUSTOMER',NULL,NULL,NULL,NULL,NULL,NULL),(7,'$2a$10$bj4SkPMUK3jTJ7FD.9blzeYmCo.bUF5vd1wJVh2ldpIxQ8F5DHetG','Hưng','CUSTOMER',NULL,NULL,NULL,NULL,NULL,NULL),(8,NULL,'Tài','CUSTOMER','google','116054212909485433236','levantai066@gmail.com',NULL,NULL,NULL),(9,NULL,'Tài Lê Văn','CUSTOMER','google','110613103348013667969','23130283@st.hcmuaf.edu.vn',NULL,'0978120646',NULL),(13,'$2a$10$eHRScb1D4/5SgSDVsxo5neWu.85Z9I.3bnpXSkv1JFrEkMVPtvbTu','manh1','CUSTOMER',NULL,NULL,'manht7000@gmail.com',NULL,NULL,NULL),(14,'$2a$10$iS8lPvSyUq7Czo6rC.2FwOFt.tbWA/cLAFhotl8QeyOKdnLVFF3Sa','tai2','CUSTOMER',NULL,NULL,'levantai06+6@gmail.com',NULL,NULL,NULL);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -305,4 +305,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-03-22  1:56:50
+-- Dump completed on 2026-04-02 21:11:22
