@@ -7,246 +7,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Giỏ hàng - Mobile Store</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
-            background: #fff;
-            color: #1a1a1a;
-        }
-
-        .container {
-            max-width: 976px;
-            margin: 0 auto;
-            padding: 0 24px;
-        }
-
-        .header {
-            background: #1a1a1a;
-            border-bottom: none;
-            height: 72px;
-            padding: 0;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            height: 100%;
-        }
-
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #ffffff;
-            letter-spacing: -0.5px;
-            display: flex;
-            align-items: center;
-            height: 72px;
-        }
-
-        .nav {
-            display: flex;
-            gap: 2rem;
-            align-items: center;
-        }
-
-        .nav a {
-            color: #ffffff;
-            text-decoration: none;
-            font-size: 0.95rem;
-            font-weight: 400;
-            transition: opacity 0.2s;
-            display: inline-flex;
-            align-items: center;
-            height: 72px;
-            line-height: normal;
-        }
-
-        .nav a:hover {
-            opacity: 0.7;
-        }
-
-        .user-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 10px;
-
-        }
-
-        .user-pill:hover {
-            background: rgba(255, 255, 255, 0.15);
-        }
-
-        .user-avatar {
-            width: 26px;
-            height: 26px;
-            border-radius: 50%;
-            border: 1px solid rgba(255, 255, 255, 0.35);
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 13px;
-        }
-
-        .user-name {
-            font-weight: 600;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px
-        }
-
-        th, td {
-            padding: 12px;
-            border: 1px solid #ddd;
-            text-align: left
-        }
-
-        th {
-            font-weight: 600
-        }
-
-        .qty-controls {
-            display: flex;
-            gap: 8px;
-            align-items: center
-        }
-
-        .qty-input {
-            width: 60px;
-            padding: 8px;
-            border: 1px solid #e5e5ea;
-            border-radius: 6px;
-            text-align: center;
-            font-size: 14px;
-        }
-
-        .qty-input:focus {
-            outline: none;
-            border-color: #0071e3;
-        }
-
-        .btn {
-            padding: 8px 12px;
-            border-radius: 6px;
-            background: #111;
-            color: #fff;
-            text-decoration: none;
-            border: none;
-            cursor: pointer;
-            transition: opacity 0.2s
-        }
-
-        .btn:hover {
-            opacity: 0.8
-        }
-
-        .btn.secondary {
-            background: #e5e5ea;
-            color: #111
-        }
-
-        .btn.danger {
-            background: #dc3545;
-            color: #fff
-        }
-
-        .btn.danger:hover {
-            background: #c82333
-        }
-
-        .btn-update {
-            padding: 6px 10px;
-            font-size: 13px
-        }
-
-        .btn-remove {
-            padding: 6px 10px;
-            font-size: 13px
-        }
-
-        .right {
-            text-align: right
-        }
-
-        .cart-item-image {
-            height: 60px;
-            vertical-align: middle;
-            margin-right: 8px;
-            border-radius: 4px;
-            object-fit: contain
-        }
-
-        .empty-cart {
-            text-align: center;
-            padding: 4rem 2rem
-        }
-
-        .empty-cart-icon {
-            font-size: 4rem;
-            margin-bottom: 1rem
-        }
-
-        .empty-cart h2 {
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-            color: #1a1a1a
-        }
-
-        .empty-cart p {
-            color: #666;
-            margin-bottom: 1.5rem
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; background: #fff; color: #1a1a1a; }
+        .container { max-width: 976px; margin: 0 auto; padding: 0 24px; }
+        .header { background: #1a1a1a; height: 72px; padding: 0; position: sticky; top: 0; z-index: 100; }
+        .header-content { display: flex; justify-content: space-between; align-items: center; height: 100%; }
+        .logo { font-size: 1.5rem; font-weight: 600; color: #fff; letter-spacing: -0.5px; display: flex; align-items: center; height: 72px; }
+        .nav { display: flex; gap: 2rem; align-items: center; }
+        .nav a { color: #fff; text-decoration: none; font-size: 0.95rem; font-weight: 400; transition: opacity 0.2s; display: inline-flex; align-items: center; height: 72px; line-height: normal; }
+        .nav a:hover { opacity: 0.7; }
+        .user-pill { display: inline-flex; align-items: center; gap: 8px; padding: 8px 10px; }
+        .user-pill:hover { background: rgba(255,255,255,0.15); }
+        .user-avatar { width: 26px; height: 26px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.35); display: inline-flex; align-items: center; justify-content: center; font-size: 13px; }
+        .user-name { font-weight: 600; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px }
+        th, td { padding: 12px; border: 1px solid #ddd; text-align: left }
+        th { font-weight: 600 }
+        .qty-controls { display: flex; gap: 8px; align-items: center }
+        .qty-input { width: 60px; padding: 8px; border: 1px solid #e5e5ea; border-radius: 6px; text-align: center; font-size: 14px; }
+        .qty-input:focus { outline: none; border-color: #0071e3; }
+        .btn { padding: 8px 12px; border-radius: 6px; background: #111; color: #fff; text-decoration: none; border: none; cursor: pointer; transition: opacity 0.2s }
+        .btn:hover { opacity: 0.8 }
+        .btn.secondary { background: #e5e5ea; color: #111 }
+        .btn.danger { background: #dc3545; color: #fff }
+        .btn.danger:hover { background: #c82333 }
+        .right { text-align: right }
+        .cart-item-image { height: 60px; vertical-align: middle; margin-right: 8px; border-radius: 4px; object-fit: contain }
+        .empty-cart { text-align: center; padding: 4rem 2rem }
+        .empty-cart-icon { font-size: 4rem; margin-bottom: 1rem }
+        .empty-cart h2 { font-size: 1.5rem; margin-bottom: 0.5rem; color: #1a1a1a }
+        .empty-cart p { color: #666; margin-bottom: 1.5rem }
         @media (max-width: 768px) {
-            .container {
-                padding: 0 12px;
-            }
-
-            main.container {
-                padding-top: 80px;
-            }
-
-            table {
-                font-size: 14px;
-            }
-
-            th, td {
-                padding: 8px 4px;
-            }
-
-            .qty-controls {
-                flex-direction: column;
-                gap: 4px;
-            }
-
-            .btn {
-                padding: 6px 10px;
-                font-size: 14px;
-            }
-
-            .container > div:last-child {
-                padding: 16px;
-            }
-
-            .container > div:last-child > div:first-child {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 8px;
-                margin-bottom: 12px;
-            }
+            .container { padding: 0 12px; }
+            main.container { padding-top: 80px; }
+            table { font-size: 14px; }
+            th, td { padding: 8px 4px; }
+            .qty-controls { flex-direction: column; gap: 4px; }
+            .btn { padding: 6px 10px; font-size: 14px; }
         }
     </style>
 </head>
@@ -258,16 +58,14 @@
             <nav class="nav">
                 <a href="${pageContext.request.contextPath}/">Trang Chủ</a>
                 <a href="${pageContext.request.contextPath}/products">Sản Phẩm</a>
-                <a href="${pageContext.request.contextPath}/cart" style="color:#fff; font-weight:600;">Giỏ Hàng(<span
-                        id="cartCount">0</span>)</a>
+                <a href="${pageContext.request.contextPath}/cart" style="color:#fff; font-weight:600;">Giỏ Hàng(<span id="cartCount">0</span>)</a>
                 <c:choose>
                     <c:when test="${not empty sessionScope.user}">
                         <c:if test="${sessionScope.user.roleName == 'ADMIN'}">
-                            <a href="${pageContext.request.contextPath}/admin/products" style="color:#0071e3;">Trang
-                                Quản Lý</a>
+                            <a href="${pageContext.request.contextPath}/admin/products" style="color:#0071e3;">Trang Quản Lý</a>
                         </c:if>
                         <a class="user-pill" href="${pageContext.request.contextPath}/profile">
-                            <span class="user-avatar">👤</span>
+                            <span class="user-avatar">&#128100;</span>
                             <span class="user-name">${sessionScope.user.username}</span>
                         </a>
                         <a href="${pageContext.request.contextPath}/logout">Đăng Xuất</a>
@@ -288,7 +86,7 @@
         <c:choose>
         <c:when test="${empty cartItems}">
         <div class="empty-cart">
-            <div class="empty-cart-icon">🛒</div>
+            <div class="empty-cart-icon">&#128722;</div>
             <h2>Giỏ hàng trống</h2>
             <p>Không có sản phẩm nào trong giỏ hàng của bạn.</p>
             <a class="btn" href="${pageContext.request.contextPath}/products">Tiếp tục mua sắm</a>
@@ -299,6 +97,7 @@
             <thead>
             <tr>
                 <th>Sản Phẩm</th>
+                <th>Phiên bản</th>
                 <th>Giá</th>
                 <th>Số Lượng</th>
                 <th>Thành Tiền</th>
@@ -308,44 +107,48 @@
             <tbody>
             <c:set var="total" value="0"/>
             <c:forEach var="item" items="${cartItems}" varStatus="st">
+                <c:set var="itemPrice" value="${item.variant != null ? item.variant.price : item.product.displayPrice}"/>
+                <c:set var="itemDiscount" value="${item.product != null ? item.product.discount : 0}"/>
+                <c:set var="itemTotal" value="${(itemPrice * (100 - itemDiscount) / 100) * item.quantity}"/>
                 <tr data-index="${st.index}">
                     <td>
-                        <img src="${pageContext.request.contextPath}/${item.product.image}"
+                        <img src="${pageContext.request.contextPath}/${item.variant != null ? item.variant.variantImage : item.product.displayImage}"
                              alt="${item.product.productName}" class="cart-item-image"
                              onerror="this.style.display='none'">
                         <span>${item.product.productName}</span><br>
                         <small style="color:#666;">${item.product.manufacturer}</small>
                     </td>
-                    <td class="unit-price"><fmt:formatNumber value="${item.product.price}" type="number"
-                                                             groupingUsed="true"/>₫
+                    <td>
+                        <c:if test="${item.variant != null}">
+                            <small>${item.variant.color} / ${item.variant.storage}</small>
+                        </c:if>
+                    </td>
+                    <td class="unit-price"><fmt:formatNumber value="${itemPrice}" type="number" groupingUsed="true"/>₫
                     </td>
                     <td>
                         <div class="qty-controls">
                             <input type="number" name="quantity" value="${item.quantity}" min="1"
-                                   max="${item.product.quantityInStock}" class="qty-input" data-index="${st.index}"
-                                   data-stock="${item.product.quantityInStock}">
-                            <button type="button" class="btn btn-update" onclick="updateQuantity(this)">Cập nhật
-                            </button>
+                                   max="${item.variant != null ? item.variant.quantityInStock : item.product.totalStock}"
+                                   class="qty-input" data-index="${st.index}"
+                                   data-stock="${item.variant != null ? item.variant.quantityInStock : item.product.totalStock}">
+                            <button type="button" class="btn" onclick="updateQuantity(this)">Cập nhật</button>
                         </div>
                     </td>
-                    <td class="right item-total"><fmt:formatNumber
-                            value="${(item.product.price*(100-item.product.discount)/100) * item.quantity}"
-                            type="number" groupingUsed="true"/>₫
+                    <td class="right item-total"><fmt:formatNumber value="${itemTotal}" type="number" groupingUsed="true"/>₫
                     </td>
                     <td>
-                        <button type="button" class="btn secondary btn-remove" onclick="removeItem(this)">Xóa</button>
+                        <button type="button" class="btn danger" onclick="removeItem(this)">Xóa</button>
                     </td>
                 </tr>
-                <c:set var="total"
-                       value="${total + ((item.product.price*(100-item.product.discount)/100) * item.quantity)}"/>
+                <c:set var="total" value="${total + itemTotal}"/>
             </c:forEach>
             </tbody>
         </table>
 
-        <div class="cart-summary" style="margin-top:20px;padding:20px;background:#f8f8f8;border-radius:8px;">
+        <div style="margin-top:20px;padding:20px;background:#f8f8f8;border-radius:8px;">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
                 <span style="font-size:1.2rem;font-weight:600;">Tạm tính:</span>
-                <span class="total-amount" style="font-size:1.4rem;font-weight:700;color:#0071e3;">
+                <span style="font-size:1.4rem;font-weight:700;color:#0071e3;">
                             <fmt:formatNumber value="${total}" type="number" groupingUsed="true"/>₫
                         </span>
             </div>
@@ -358,10 +161,6 @@
         </c:choose>
 </main>
 
-
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
 <footer class="text-light pt-5 pb-3 mt-5" style="background-color: #000000;">
     <div class="container">
         <div class="row">
@@ -370,30 +169,9 @@
                 <p><i class="fas fa-map-marker-alt me-2"></i> 123 Đường ABC, Quận 1, TP.HCM</p>
                 <p><i class="fas fa-phone-alt me-2"></i> Hotline: 1800.1234</p>
                 <p><i class="fas fa-envelope me-2"></i> support@mobilestore.com</p>
-                <div class="mt-3">
-                    <a href="#" class="text-light me-3"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" class="text-light me-3"><i class="fab fa-youtube"></i></a>
-                    <a href="#" class="text-light me-3"><i class="fab fa-tiktok"></i></a>
-                </div>
-            </div>
-
-            <div class="col-lg-3 col-md-6 mb-4">
-                <h5 class="text-uppercase fw-bold mb-4">Chính sách hỗ trợ</h5>
-                <ul class="list-unstyled">
-                    <li class="mb-2"><a href="policy.jsp?type=warranty" class="text-secondary text-decoration-none">Chính
-                        sách bảo hành</a></li>
-                    <li class="mb-2"><a href="policy.jsp?type=return" class="text-secondary text-decoration-none">Chính
-                        sách đổi trả</a></li>
-                    <li class="mb-2"><a href="policy.jsp?type=shipping" class="text-secondary text-decoration-none">Chính
-                        sách vận chuyển</a></li>
-                    <li class="mb-2"><a href="policy.jsp?type=privacy" class="text-secondary text-decoration-none">Bảo
-                        mật thông tin</a></li>
-                </ul>
             </div>
         </div>
-
         <hr class="my-4 border-secondary">
-
         <div class="row align-items-center">
             <div class="col-md-12 text-center">
                 <p class="mb-0 text-secondary">&copy; 2026 Mobile Store. Thiết kế bởi Sinh viên IT.</p>
@@ -401,19 +179,19 @@
         </div>
     </div>
 </footer>
+
 <script>
     function refreshCartCount() {
         fetch('${pageContext.request.contextPath}/cart/count')
-            .then(r => r.json())
-            .then(data => {
-                const el = document.getElementById('cartCount');
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                var el = document.getElementById('cartCount');
                 if (el) el.textContent = data.count;
-            }).catch(() => {
-        });
+            }).catch(function() {});
     }
 
-    function showToast(message, isSuccess = true) {
-        let t = document.getElementById('toastMessage');
+    function showToast(message, isSuccess) {
+        var t = document.getElementById('toastMessage');
         if (!t) {
             t = document.createElement('div');
             t.id = 'toastMessage';
@@ -430,28 +208,21 @@
         t.style.background = isSuccess ? '#28a745' : '#dc3545';
         t.style.color = '#fff';
         t.style.opacity = '1';
-        setTimeout(() => {
-            t.style.opacity = '0';
-        }, 2500);
-    }
-
-    function formatNumber(num) {
-        return new Intl.NumberFormat('vi-VN').format(num);
+        setTimeout(function() { t.style.opacity = '0'; }, 2500);
     }
 
     function updateQuantity(btn) {
-        const row = btn.closest('tr');
-        const input = row.querySelector('.qty-input');
-        const index = input.dataset.index;
-        const quantity = parseInt(input.value);
-        const stock = parseInt(input.dataset.stock);
+        var row = btn.closest('tr');
+        var input = row.querySelector('.qty-input');
+        var index = input.dataset.index;
+        var quantity = parseInt(input.value);
+        var stock = parseInt(input.dataset.stock);
 
         if (quantity < 1) {
             showToast('Số lượng phải lớn hơn 0', false);
             input.value = 1;
             return;
         }
-
         if (quantity > stock) {
             showToast('Số lượng vượt quá tồn kho (' + stock + ')', false);
             input.value = stock;
@@ -467,27 +238,27 @@
             credentials: 'same-origin',
             body: 'index=' + index + '&quantity=' + quantity
         })
-            .then(res => {
+            .then(function(res) {
                 if (!res.ok) throw new Error('Cập nhật thất bại');
                 return res.json();
             })
-            .then(json => {
+            .then(function(json) {
                 if (json.success) {
                     location.reload();
                 } else {
                     showToast(json.message || 'Cập nhật thất bại', false);
                 }
             })
-            .catch(err => {
+            .catch(function(err) {
                 console.error(err);
                 showToast('Lỗi khi cập nhật', false);
             });
     }
 
     function removeItem(btn) {
-        const row = btn.closest('tr');
-        const input = row.querySelector('.qty-input');
-        const index = input.dataset.index;
+        var row = btn.closest('tr');
+        var input = row.querySelector('.qty-input');
+        var index = input.dataset.index;
 
         if (!confirm('Bạn có chắc muốn xóa sản phẩm này khỏi giỏ hàng?')) {
             return;
@@ -502,33 +273,30 @@
             credentials: 'same-origin',
             body: 'index=' + index
         })
-            .then(res => {
+            .then(function(res) {
                 if (!res.ok) throw new Error('Xóa thất bại');
                 return res.json();
             })
-            .then(json => {
+            .then(function(json) {
                 if (json.success) {
-                    const row = document.querySelector(`tr[data-index="${index}"]`);
                     row.style.transition = 'opacity 0.3s';
                     row.style.opacity = '0';
-                    setTimeout(() => {
-                        location.reload();
-                    }, 300);
+                    setTimeout(function() { location.reload(); }, 300);
                 } else {
                     showToast(json.message || 'Xóa thất bại', false);
                 }
             })
-            .catch(err => {
+            .catch(function(err) {
                 console.error(err);
                 showToast('Lỗi khi xóa', false);
             });
     }
 
-    document.querySelectorAll('.qty-input').forEach(input => {
-        input.addEventListener('keypress', function (e) {
+    document.querySelectorAll('.qty-input').forEach(function(input) {
+        input.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 e.preventDefault();
-                const btn = this.closest('.qty-controls').querySelector('.btn-update');
+                var btn = this.closest('.qty-controls').querySelector('.btn');
                 updateQuantity(btn);
             }
         });
