@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 8.0.38, for Win64 (x86_64)
 --
--- Host: 127.0.0.1    Database: mobilestore
+-- Host: 127.0.0.1    Database: mobilestoreTest
 -- ------------------------------------------------------
 -- Server version	8.0.42
 
@@ -25,15 +25,15 @@ DROP TABLE IF EXISTS `cart`;
 CREATE TABLE `cart` (
   `id` int NOT NULL AUTO_INCREMENT,
   `quantity` int DEFAULT NULL,
-  `product_id` int DEFAULT NULL,
+  `variant_id` int DEFAULT NULL,
   `user_id` int DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `FKpu4bcbluhsxagirmbdn7dilm5` (`product_id`),
+  KEY `FKpu4bcbluhsxagirmbdn7dilm5` (`variant_id`),
   KEY `FKg5uhi8vpsuy0lgloxk2h4w5o6` (`user_id`),
   KEY `idx_cart_user` (`user_id`),
-  CONSTRAINT `FKg5uhi8vpsuy0lgloxk2h4w5o6` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
-  CONSTRAINT `FKpu4bcbluhsxagirmbdn7dilm5` FOREIGN KEY (`product_id`) REFERENCES `products` (`product_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=95 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  CONSTRAINT `FK_cart_variant` FOREIGN KEY (`variant_id`) REFERENCES `product_variants` (`variant_id`),
+  CONSTRAINT `FKg5uhi8vpsuy0lgloxk2h4w5o6` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -42,7 +42,7 @@ CREATE TABLE `cart` (
 
 LOCK TABLES `cart` WRITE;
 /*!40000 ALTER TABLE `cart` DISABLE KEYS */;
-INSERT INTO `cart` VALUES (62,3,10,8);
+INSERT INTO `cart` VALUES (3,2,1,6),(4,1,28,6);
 /*!40000 ALTER TABLE `cart` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -82,15 +82,14 @@ CREATE TABLE `order_details` (
   `price` double DEFAULT NULL,
   `quantity` int DEFAULT NULL,
   `order_id` int NOT NULL,
-  `product_id` int NOT NULL,
+  `variant_id` int NOT NULL,
   PRIMARY KEY (`id`),
   KEY `FKjyu2qbqt8gnvno9oe9j2s2ldk` (`order_id`),
-  KEY `FK4q98utpd73imf4yhttm3w0eax` (`product_id`),
   KEY `idx_order_details_order` (`order_id`),
-  KEY `idx_order_details_product` (`product_id`),
-  CONSTRAINT `FK4q98utpd73imf4yhttm3w0eax` FOREIGN KEY (`product_id`) REFERENCES `products` (`product_id`),
+  KEY `FK_order_variant` (`variant_id`),
+  CONSTRAINT `FK_order_variant` FOREIGN KEY (`variant_id`) REFERENCES `product_variants` (`variant_id`),
   CONSTRAINT `FKjyu2qbqt8gnvno9oe9j2s2ldk` FOREIGN KEY (`order_id`) REFERENCES `orders` (`order_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -99,7 +98,6 @@ CREATE TABLE `order_details` (
 
 LOCK TABLES `order_details` WRITE;
 /*!40000 ALTER TABLE `order_details` DISABLE KEYS */;
-INSERT INTO `order_details` VALUES (15,15000000,3,10,31),(16,12500000,1,10,30),(17,25000000,1,10,29),(18,17000000,1,10,27),(19,15000000,1,11,31),(20,15000000,2,12,31),(21,12500000,2,12,30),(22,14500000,1,12,24),(23,15000000,1,13,28),(24,25000000,1,13,29),(25,29000000,1,13,26),(26,14500000,2,14,24),(27,15000000,1,14,31),(28,17000000,1,14,27),(29,20000000,3,15,33),(30,12500000,1,16,30),(31,20000000,1,17,33),(32,20000000,1,18,33),(33,15000000,1,19,31);
 /*!40000 ALTER TABLE `order_details` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -138,7 +136,7 @@ CREATE TABLE `orders` (
 
 LOCK TABLES `orders` WRITE;
 /*!40000 ALTER TABLE `orders` DISABLE KEYS */;
-INSERT INTO `orders` VALUES (10,'PENDING','2025-12-30 13:31:16.216000',99500000,6,NULL,NULL,NULL,'CASH','PENDING',NULL,NULL),(11,'PENDING','2026-01-10 18:04:13.043000',15000000,5,NULL,NULL,NULL,'CASH','PENDING',NULL,NULL),(12,'PENDING','2026-01-15 05:34:24.770000',69500000,6,NULL,NULL,NULL,'CASH','PENDING',NULL,NULL),(13,'PENDING','2026-01-15 05:40:28.878000',69000000,6,NULL,NULL,NULL,'CASH','PENDING',NULL,NULL),(14,'PENDING','2026-01-15 06:46:16.934000',61000000,6,NULL,NULL,NULL,'CASH','PENDING',NULL,NULL),(15,'PROCESSING','2026-01-16 08:25:12.955000',60000000,6,NULL,NULL,NULL,'CASH','PENDING',NULL,NULL),(16,'PENDING','2026-03-10 18:48:09.529000',12500000,9,NULL,NULL,NULL,'CASH','PENDING','15445629','ORDER_1773168450094'),(17,'PENDING','2026-03-11 04:43:35.762000',20000000,8,NULL,NULL,NULL,'CASH','PENDING','15446140','ORDER_1773204156553'),(18,'PENDING','2026-03-14 03:39:01.843000',20000000,9,NULL,NULL,NULL,'CASH','PENDING','15450276','ORDER_1773459490787'),(19,'PENDING','2026-03-16 04:16:34.581000',15000000,9,NULL,NULL,NULL,'CASH','PENDING',NULL,NULL);
+INSERT INTO `orders` VALUES (10,'PENDING','2025-12-30 13:31:16.216000',99500000,6,NULL,NULL,NULL,'CASH','PENDING',NULL,NULL),(11,'PENDING','2026-01-10 18:04:13.043000',15000000,5,NULL,NULL,NULL,'CASH','PENDING',NULL,NULL),(12,'PENDING','2026-01-15 05:34:24.770000',69500000,6,NULL,NULL,NULL,'CASH','PENDING',NULL,NULL),(13,'PENDING','2026-01-15 05:40:28.878000',69000000,6,NULL,NULL,NULL,'CASH','PENDING',NULL,NULL),(14,'PENDING','2026-01-15 06:46:16.934000',61000000,6,NULL,NULL,NULL,'CASH','PENDING',NULL,NULL),(15,'COMPLETED','2026-01-16 08:25:12.955000',60000000,6,NULL,NULL,NULL,'CASH','PENDING',NULL,NULL),(16,'PENDING','2026-03-10 18:48:09.529000',12500000,9,NULL,NULL,NULL,'CASH','PENDING','15445629','ORDER_1773168450094'),(17,'PENDING','2026-03-11 04:43:35.762000',20000000,8,NULL,NULL,NULL,'CASH','PENDING','15446140','ORDER_1773204156553'),(18,'PENDING','2026-03-14 03:39:01.843000',20000000,9,NULL,NULL,NULL,'CASH','PENDING','15450276','ORDER_1773459490787'),(19,'PENDING','2026-03-16 04:16:34.581000',15000000,9,NULL,NULL,NULL,'CASH','PENDING',NULL,NULL);
 /*!40000 ALTER TABLE `orders` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -161,7 +159,7 @@ CREATE TABLE `password_reset_tokens` (
   UNIQUE KEY `UK_token` (`token`),
   KEY `FK_password_reset_user` (`user_id`),
   CONSTRAINT `FK_password_reset_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -170,8 +168,39 @@ CREATE TABLE `password_reset_tokens` (
 
 LOCK TABLES `password_reset_tokens` WRITE;
 /*!40000 ALTER TABLE `password_reset_tokens` DISABLE KEYS */;
-INSERT INTO `password_reset_tokens` VALUES (3,'a1ce838268d745b8a067c3d1780e5b94',13,'manht7000@gmail.com','2026-03-29 05:15:13',0,'2026-03-29 04:45:13');
+INSERT INTO `password_reset_tokens` VALUES (1,'7011a61cd08847b2a5f5de5274470af2',13,'manht7000@gmail.com','2026-03-15 16:08:47',1,'2026-03-15 15:38:46');
 /*!40000 ALTER TABLE `password_reset_tokens` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `product_variants`
+--
+
+DROP TABLE IF EXISTS `product_variants`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `product_variants` (
+  `variant_id` int NOT NULL AUTO_INCREMENT,
+  `product_id` int NOT NULL,
+  `color` varchar(50) DEFAULT NULL,
+  `storage` varchar(50) DEFAULT NULL,
+  `price` bigint NOT NULL,
+  `quantity_in_stock` int NOT NULL,
+  `variant_image` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`variant_id`),
+  KEY `FK_variant_product` (`product_id`),
+  CONSTRAINT `FK_variant_product` FOREIGN KEY (`product_id`) REFERENCES `products` (`product_id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=79 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `product_variants`
+--
+
+LOCK TABLES `product_variants` WRITE;
+/*!40000 ALTER TABLE `product_variants` DISABLE KEYS */;
+INSERT INTO `product_variants` VALUES (1,10,'Natural Titanium','128GB',12000000,5,'images/products/e0dd45b7-58e3-4382-8612-ff268fe06921.png'),(9,11,'Natural Titanium','128GB',25000000,3,'images/products/a773815c-3857-4466-86d5-84209c7f2b37.png'),(10,11,'Blue Titanium','128GB',25000000,3,'images/products/a773815c-3857-4466-86d5-84209c7f2b37.png'),(11,11,'White Titanium','128GB',25000000,2,'images/products/a773815c-3857-4466-86d5-84209c7f2b37.png'),(12,11,'Black Titanium','128GB',25000000,2,'images/products/a773815c-3857-4466-86d5-84209c7f2b37.png'),(13,12,'Black','64GB',7000000,20,'images/products/01d57027-ac66-4333-9098-38ee7861c181.png'),(14,12,'White','64GB',7000000,15,'images/products/01d57027-ac66-4333-9098-38ee7861c181.png'),(15,12,'Blue','64GB',7000000,15,'images/products/01d57027-ac66-4333-9098-38ee7861c181.png'),(16,13,'Black','64GB',9000000,20,'images/products/2ff2f283-7386-4e96-a91c-6d89ef259bbe.png'),(17,13,'White','64GB',9000000,15,'images/products/2ff2f283-7386-4e96-a91c-6d89ef259bbe.png'),(18,13,'Green','64GB',9000000,15,'images/products/2ff2f283-7386-4e96-a91c-6d89ef259bbe.png'),(19,14,'Midnight','128GB',13000000,15,'images/products/2d5c3d94-c977-4dc8-b2fa-2192fe1eb282.png'),(20,14,'Starlight','128GB',13000000,10,'images/products/2d5c3d94-c977-4dc8-b2fa-2192fe1eb282.png'),(21,14,'Blue','128GB',13000000,8,'images/products/2d5c3d94-c977-4dc8-b2fa-2192fe1eb282.png'),(22,14,'Pink','128GB',13000000,7,'images/products/2d5c3d94-c977-4dc8-b2fa-2192fe1eb282.png'),(23,14,'Midnight','256GB',15500000,5,'images/products/2d5c3d94-c977-4dc8-b2fa-2192fe1eb282.png'),(24,15,'Midnight','128GB',15000000,8,'images/products/1693a3e0-f704-43e2-b735-d1b45b8bc5b9.png'),(25,15,'Purple','128GB',15000000,8,'images/products/1693a3e0-f704-43e2-b735-d1b45b8bc5b9.png'),(26,15,'Blue','128GB',15000000,7,'images/products/1693a3e0-f704-43e2-b735-d1b45b8bc5b9.png'),(27,15,'Starlight','128GB',15000000,7,'images/products/1693a3e0-f704-43e2-b735-d1b45b8bc5b9.png'),(28,15,'Midnight','256GB',18000000,5,'images/products/1693a3e0-f704-43e2-b735-d1b45b8bc5b9.png'),(29,15,'Purple','256GB',18000000,5,'images/products/1693a3e0-f704-43e2-b735-d1b45b8bc5b9.png'),(30,15,'Blue','256GB',18000000,4,'images/products/1693a3e0-f704-43e2-b735-d1b45b8bc5b9.png'),(31,15,'Yellow','256GB',18000000,3,'images/products/1693a3e0-f704-43e2-b735-d1b45b8bc5b9.png'),(32,16,'Deep Purple','128GB',19000000,10,'images/products/51319fad-853d-4cd3-9f65-2da560db816a.png'),(33,16,'Gold','128GB',19000000,8,'images/products/51319fad-853d-4cd3-9f65-2da560db816a.png'),(34,16,'Silver','128GB',19000000,7,'images/products/51319fad-853d-4cd3-9f65-2da560db816a.png'),(35,17,'Black','128GB',18000000,10,'images/products/0b7a70ec-43ce-48d4-b1f4-acf7a28b2ab3.png'),(36,17,'Pink','128GB',18000000,10,'images/products/0b7a70ec-43ce-48d4-b1f4-acf7a28b2ab3.png'),(37,17,'Green','128GB',18000000,10,'images/products/0b7a70ec-43ce-48d4-b1f4-acf7a28b2ab3.png'),(38,18,'Natural Titanium','256GB',28000000,8,'images/products/33aca89a-fbc1-4921-829c-4e5b9137d9eb.png'),(39,18,'Blue Titanium','256GB',28000000,7,'images/products/33aca89a-fbc1-4921-829c-4e5b9137d9eb.png'),(40,18,'White Titanium','256GB',28000000,5,'images/products/33aca89a-fbc1-4921-829c-4e5b9137d9eb.png'),(41,19,'Black','128GB',22000000,15,'images/products/0f11c558-01e9-4d63-a30c-77f597d98238.png'),(42,19,'White','128GB',22000000,15,'images/products/0f11c558-01e9-4d63-a30c-77f597d98238.png'),(43,19,'Blue','128GB',22000000,10,'images/products/0f11c558-01e9-4d63-a30c-77f597d98238.png'),(44,19,'Teal','128GB',22000000,10,'images/products/0f11c558-01e9-4d63-a30c-77f597d98238.png'),(45,20,'Black','128GB',24000000,10,'images/products/5a37c593-51bf-4b7b-adbc-d0bfcd620f8e.png'),(46,20,'White','128GB',24000000,10,'images/products/5a37c593-51bf-4b7b-adbc-d0bfcd620f8e.png'),(47,20,'Blue','128GB',24000000,10,'images/products/5a37c593-51bf-4b7b-adbc-d0bfcd620f8e.png'),(48,21,'Black','128GB',26000000,30,'images/products/37d3c899-1025-4bc7-9ee8-7be45be18952.png'),(49,21,'White','128GB',26000000,25,'images/products/1ecdc28a-6a10-4bec-a7d6-6ad8a89af80a.png'),(50,21,'Blue','128GB',26000000,25,'images/products/09dea404-f0c6-444e-b1f0-9578f30c96f6.png'),(51,21,'Teal','128GB',26000000,20,'images/products/1ecdc28a-6a10-4bec-a7d6-6ad8a89af80a.png'),(52,23,'Silver','64GB',10500000,20,'images/products/b6dc74a6-da46-467d-aaa5-533b18c859fa.png'),(53,23,'Blue','64GB',10500000,20,'images/products/b6dc74a6-da46-467d-aaa5-533b18c859fa.png'),(54,24,'Space Gray','64GB',14500000,10,'images/products/0af0a633-b612-4218-b042-ef822e99264f.png'),(55,24,'Starlight','64GB',14500000,7,'images/products/0af0a633-b612-4218-b042-ef822e99264f.png'),(56,24,'Blue','64GB',14500000,5,'images/products/0af0a633-b612-4218-b042-ef822e99264f.png'),(57,25,'Space Gray','64GB',7500000,25,'images/products/de33773e-bc38-46c8-a7f0-cd1e7e71d655.png'),(58,25,'Silver','64GB',7500000,25,'images/products/de33773e-bc38-46c8-a7f0-cd1e7e71d655.png'),(59,26,'Silver','256GB',29000000,7,'images/products/prom4.png'),(60,26,'Space Black','256GB',29000000,7,'images/products/prom4.png'),(61,27,'Space Gray','128GB',17000000,8,'images/products/0c334961-a3e2-4b40-93f1-b45bce5ce52a.png'),(62,27,'Starlight','128GB',17000000,5,'images/products/0c334961-a3e2-4b40-93f1-b45bce5ce52a.png'),(63,27,'Blue','128GB',17000000,5,'images/products/0c334961-a3e2-4b40-93f1-b45bce5ce52a.png'),(64,28,'Space Gray','128GB',15000000,10,'images/products/mini7.png'),(65,28,'Starlight','128GB',15000000,9,'images/products/mini7.png'),(66,29,'Space Gray','64GB',25000000,15,'images/products/mini_6.png'),(67,29,'Purple','64GB',25000000,13,'images/products/mini_6.png'),(68,30,'Blue','64GB',12500000,10,'images/products/12.png'),(69,30,'Black','64GB',12500000,8,'images/products/12.png'),(70,30,'White','64GB',12500000,8,'images/products/12.png'),(71,31,'Black','128GB',15000000,4,'images/products/16e.png'),(72,31,'White','128GB',15000000,4,'images/products/16e.png'),(73,31,'Red','128GB',15000000,4,'images/products/16e.png'),(74,32,'Silver','256GB',50000000,50,'images/products/4eef0b69-5658-4014-b9ff-d65881d378b3.png'),(75,32,'Space Black','256GB',50000000,50,'images/products/4eef0b69-5658-4014-b9ff-d65881d378b3.png'),(76,33,'Silver','128GB',20000000,20,'images/products/07fb6758-a24f-4993-8141-92dcbe635838.png'),(77,33,'Space Black','128GB',20000000,25,'images/products/07fb6758-a24f-4993-8141-92dcbe635838.png'),(78,10,'BlueTitanium','128GB',12000000,10,'images/products/96aee917-a333-496d-94e3-4a30eb4c2930.png');
+/*!40000 ALTER TABLE `product_variants` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -183,13 +212,10 @@ DROP TABLE IF EXISTS `products`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `products` (
   `product_id` int NOT NULL AUTO_INCREMENT,
-  `image` varchar(255) DEFAULT NULL,
   `manufacturer` varchar(255) NOT NULL,
-  `price` bigint NOT NULL,
   `product_name` varchar(255) NOT NULL,
   `product_condition` varchar(255) NOT NULL,
   `product_info` varchar(255) DEFAULT NULL,
-  `quantity_in_stock` int NOT NULL,
   `category_id` int NOT NULL,
   `discount` int DEFAULT '0',
   PRIMARY KEY (`product_id`),
@@ -206,7 +232,7 @@ CREATE TABLE `products` (
 
 LOCK TABLES `products` WRITE;
 /*!40000 ALTER TABLE `products` DISABLE KEYS */;
-INSERT INTO `products` VALUES (10,'images/products/963928d2-cfb7-4960-8d3b-eee890c82d72.png','APPLE',12000000,'iPhone 17 pro','Mới','',20,1,20),(11,'images/products/a773815c-3857-4466-86d5-84209c7f2b37.png','APPLE',25000000,'iPhone 15 pro','Mới','',10,1,30),(12,'images/products/01d57027-ac66-4333-9098-38ee7861c181.png','APPLE',7000000,'iPhone XR','Mới','',50,1,50),(13,'images/products/2ff2f283-7386-4e96-a91c-6d89ef259bbe.png','APPLE',9000000,'iPhone 11','Mới','',50,1,60),(14,'images/products/2d5c3d94-c977-4dc8-b2fa-2192fe1eb282.png','APPLE',13000000,'iPhone 13','Mới','',40,1,30),(15,'images/products/1693a3e0-f704-43e2-b735-d1b45b8bc5b9.png','APPLE',15000000,'iPhone 14','Mới','',30,1,20),(16,'images/products/51319fad-853d-4cd3-9f65-2da560db816a.png','APPLE',19000000,'iPhone 14 Pro','Mới','',25,1,0),(17,'images/products/0b7a70ec-43ce-48d4-b1f4-acf7a28b2ab3.png','APPLE',18000000,'iPhone 15','Mới','',30,1,0),(18,'images/products/33aca89a-fbc1-4921-829c-4e5b9137d9eb.png','APPLE',28000000,'iPhone 15 Pro Max','Mới','',20,1,0),(19,'images/products/0f11c558-01e9-4d63-a30c-77f597d98238.png','APPLE',22000000,'iPhone 16','Mới','',50,1,0),(20,'images/products/5a37c593-51bf-4b7b-adbc-d0bfcd620f8e.png','APPLE',24000000,'iPhone 16 Plus','Mới','',30,1,0),(21,'images/products/1ecdc28a-6a10-4bec-a7d6-6ad8a89af80a.png','APPLE',26000000,'iPhone 17','Mới','',100,1,0),(23,'images/products/b6dc74a6-da46-467d-aaa5-533b18c859fa.png','APPLE',10500000,'iPad Gen 10','Mới','',40,2,0),(24,'images/products/0af0a633-b612-4218-b042-ef822e99264f.png','APPLE',14500000,'iPad Air 5 M1','Mới','',22,2,0),(25,'images/products/de33773e-bc38-46c8-a7f0-cd1e7e71d655.png','APPLE',7500000,'iPad Gen 9','Mới','',50,2,0),(26,'images/products/prom4.png','APPLE',29000000,'iPad Pro M4','Mới','',14,2,0),(27,'images/products/0c334961-a3e2-4b40-93f1-b45bce5ce52a.png','APPLE',17000000,'iPad Air M2','Mới','',18,2,0),(28,'images/products/mini7.png','APPLE',15000000,'iPad mini 7','Mới','',19,2,0),(29,'images/products/mini_6.png','APPLE',25000000,'iPad mini 6','Mới','',28,2,0),(30,'images/products/12.png','APPLE',12500000,'iPhone 12','Mới','',26,1,0),(31,'images/products/16e.png','APPLE',15000000,'iPhone 16e','Mới','',12,1,0),(32,'images/products/4eef0b69-5658-4014-b9ff-d65881d378b3.png','APPLE',50000000,'iPad M4 Pro','Mới','',100,2,0),(33,'images/products/07fb6758-a24f-4993-8141-92dcbe635838.png','APPLE',20000000,'iPad M5 Pro','Mới','',45,2,0);
+INSERT INTO `products` VALUES (10,'APPLE','iPhone 17 pro','Mới','iPhone 17 – Chip A19 Pro mạnh mẽ, màn hình Super Retina XDR 6.3\", camera 48MP, pin 4500mAh, sạc nhanh USB-C. Thiết kế cao cấp với khung titanium và kính Ceramic Shield bền bỉ.',1,20),(11,'APPLE','iPhone 15 pro','Mới','',1,30),(12,'APPLE','iPhone XR','Mới','',1,50),(13,'APPLE','iPhone 11','Mới','',1,60),(14,'APPLE','iPhone 13','Mới','',1,30),(15,'APPLE','iPhone 14','Mới','',1,20),(16,'APPLE','iPhone 14 Pro','Mới','',1,0),(17,'APPLE','iPhone 15','Mới','',1,0),(18,'APPLE','iPhone 15 Pro Max','Mới','',1,0),(19,'APPLE','iPhone 16','Mới','',1,0),(20,'APPLE','iPhone 16 Plus','Mới','',1,0),(21,'APPLE','iPhone 17','Mới','',1,0),(23,'APPLE','iPad Gen 10','Mới','',2,0),(24,'APPLE','iPad Air 5 M1','Mới','',2,0),(25,'APPLE','iPad Gen 9','Mới','',2,0),(26,'APPLE','iPad Pro M4','Mới','',2,0),(27,'APPLE','iPad Air M2','Mới','',2,0),(28,'APPLE','iPad mini 7','Mới','',2,0),(29,'APPLE','iPad mini 6','Mới','',2,0),(30,'APPLE','iPhone 12','Mới','',1,0),(31,'APPLE','iPhone 16e','Mới','',1,0),(32,'APPLE','iPad M4 Pro','Mới','',2,0),(33,'APPLE','iPad M5 Pro','Mới','',2,0);
 /*!40000 ALTER TABLE `products` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -222,7 +248,7 @@ CREATE TABLE `slider_images` (
   `image_url` varchar(500) NOT NULL,
   `is_active` tinyint(1) DEFAULT '1',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -231,6 +257,7 @@ CREATE TABLE `slider_images` (
 
 LOCK TABLES `slider_images` WRITE;
 /*!40000 ALTER TABLE `slider_images` DISABLE KEYS */;
+INSERT INTO `slider_images` VALUES (1,'images/slider/slider-iphone16.jpg',1),(2,'images/slider/slider-ipad.jpg',1),(3,'images/slider/slider-sale.jpg',1),(4,'images/slider/slider-watch.jpg',1),(5,'images/slider/slider-new.jpg',1);
 /*!40000 ALTER TABLE `slider_images` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -250,7 +277,7 @@ CREATE TABLE `user_likes` (
   KEY `fk_user_likes_product` (`product_id`),
   CONSTRAINT `fk_user_likes_product` FOREIGN KEY (`product_id`) REFERENCES `products` (`product_id`) ON DELETE CASCADE,
   CONSTRAINT `fk_user_likes_user` FOREIGN KEY (`customer_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -259,6 +286,7 @@ CREATE TABLE `user_likes` (
 
 LOCK TABLES `user_likes` WRITE;
 /*!40000 ALTER TABLE `user_likes` DISABLE KEYS */;
+INSERT INTO `user_likes` VALUES (1,6,10),(2,6,11),(3,6,18),(4,6,19),(5,6,23),(6,7,12),(7,7,14),(8,7,16),(9,8,10),(10,8,19),(11,8,21),(12,9,11),(13,9,26);
 /*!40000 ALTER TABLE `user_likes` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -283,7 +311,7 @@ CREATE TABLE `users` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `UKr43af9ap4edm43mmtq01oddj6` (`username`),
   KEY `FK6e7f1kfvvn2k48olww485qvo3` (`role_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -292,7 +320,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (5,'$2a$10$342ro1UObsU/8YP0Dy1HNOQ92Fxy3hYI/KLTc0ygh7j5Q6NyeIyP6','levantai','ADMIN',NULL,NULL,NULL,NULL,NULL,NULL),(6,'$2a$10$w0KzLYHDgs5PI0Q4r3BjRu9RM3UbNa4IHSnfIb74KrHsTAlOnRfzW','mạnh','CUSTOMER',NULL,NULL,NULL,NULL,NULL,NULL),(7,'$2a$10$bj4SkPMUK3jTJ7FD.9blzeYmCo.bUF5vd1wJVh2ldpIxQ8F5DHetG','Hưng','CUSTOMER',NULL,NULL,NULL,NULL,NULL,NULL),(8,NULL,'Tài','CUSTOMER','google','116054212909485433236','levantai066@gmail.com',NULL,NULL,NULL),(9,NULL,'Tài Lê Văn','CUSTOMER','google','110613103348013667969','23130283@st.hcmuaf.edu.vn',NULL,'0978120646',NULL),(13,'$2a$10$eHRScb1D4/5SgSDVsxo5neWu.85Z9I.3bnpXSkv1JFrEkMVPtvbTu','manh1','CUSTOMER',NULL,NULL,'manht7000@gmail.com',NULL,NULL,NULL),(14,'$2a$10$iS8lPvSyUq7Czo6rC.2FwOFt.tbWA/cLAFhotl8QeyOKdnLVFF3Sa','tai2','CUSTOMER',NULL,NULL,'levantai06+6@gmail.com',NULL,NULL,NULL);
+INSERT INTO `users` VALUES (5,'$2a$10$342ro1UObsU/8YP0Dy1HNOQ92Fxy3hYI/KLTc0ygh7j5Q6NyeIyP6','levantai','ADMIN',NULL,NULL,NULL,NULL,NULL,NULL),(6,'$2a$10$w0KzLYHDgs5PI0Q4r3BjRu9RM3UbNa4IHSnfIb74KrHsTAlOnRfzW','mạnh','CUSTOMER',NULL,NULL,NULL,NULL,NULL,NULL),(7,'$2a$10$bj4SkPMUK3jTJ7FD.9blzeYmCo.bUF5vd1wJVh2ldpIxQ8F5DHetG','Hưng','CUSTOMER',NULL,NULL,NULL,NULL,NULL,NULL),(8,NULL,'Tài','CUSTOMER','google','116054212909485433236','levantai066@gmail.com',NULL,NULL,NULL),(9,NULL,'Tài Lê Văn','CUSTOMER','google','110613103348013667969','23130283@st.hcmuaf.edu.vn',NULL,NULL,NULL),(13,'$2a$10$KmcjsGN/04htrhRedfIIO.RqacQC3kU9NuhK0Dk84F6P0z7ifEP4K','manh1','CUSTOMER',NULL,NULL,'manht7000@gmail.com',NULL,NULL,NULL);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -305,4 +333,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-04-02 21:11:22
+-- Dump completed on 2026-04-03 22:28:19
