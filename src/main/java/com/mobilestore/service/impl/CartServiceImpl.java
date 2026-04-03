@@ -3,7 +3,6 @@ package com.mobilestore.service.impl;
 import com.mobilestore.dao.CartDAO;
 import com.mobilestore.dao.ProductDAO;
 import com.mobilestore.entity.CartItem;
-import com.mobilestore.entity.Product;
 import com.mobilestore.service.CartService;
 import java.util.List;
 

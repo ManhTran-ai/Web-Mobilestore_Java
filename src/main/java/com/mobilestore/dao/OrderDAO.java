@@ -3,6 +3,8 @@ package com.mobilestore.dao;
 import com.mobilestore.entity.Order;
 import com.mobilestore.entity.OrderDetail;
 import com.mobilestore.entity.Product;
+import com.mobilestore.entity.ProductVariant;
+import com.mobilestore.entity.CartItem;
 import com.mobilestore.entity.User;
 import com.mobilestore.util.DatabaseConnection;
 
@@ -80,8 +82,12 @@ public class OrderDAO {
 
     public List<OrderDetail> findDetailsByOrderId(int orderId) {
         List<OrderDetail> list = new ArrayList<>();
-        String sql = "SELECT od.id, od.price, od.quantity, od.product_id, p.product_name FROM order_details od " +
-                "LEFT JOIN products p ON od.product_id = p.product_id WHERE od.order_id = ?";
+        String sql = "SELECT od.id, od.price, od.quantity, od.product_id, od.variant_id, " +
+                "p.product_name, pv.color, pv.storage " +
+                "FROM order_details od " +
+                "LEFT JOIN products p ON od.product_id = p.product_id " +
+                "LEFT JOIN product_variants pv ON od.variant_id = pv.variant_id " +
+                "WHERE od.order_id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, orderId);
@@ -91,10 +97,21 @@ public class OrderDAO {
                     od.setId(rs.getInt("id"));
                     od.setPrice(rs.getDouble("price"));
                     od.setQuantity(rs.getInt("quantity"));
+
                     Product p = new Product();
                     p.setProductId(rs.getInt("product_id"));
                     p.setProductName(rs.getString("product_name"));
                     od.setProduct(p);
+
+                    Integer variantId = rs.getInt("variant_id");
+                    if (!rs.wasNull()) {
+                        ProductVariant pv = new ProductVariant();
+                        pv.setVariantId(variantId);
+                        pv.setColor(rs.getString("color"));
+                        pv.setStorage(rs.getString("storage"));
+                        od.setVariant(pv);
+                    }
+
                     list.add(od);
                 }
             }
@@ -115,8 +132,8 @@ public class OrderDAO {
         } catch (SQLException e) {
             System.err.println("Lỗi OrderDAO.updateStatus: " + e.getMessage());
             e.printStackTrace();
-            return false;
         }
+        return false;
     }
 
     public boolean deleteOrder(int orderId) {
@@ -141,13 +158,14 @@ public class OrderDAO {
         } catch (SQLException e) {
             System.err.println("Lỗi OrderDAO.deleteOrder: " + e.getMessage());
             e.printStackTrace();
-            return false;
         }
+        return false;
     }
-    public Integer createOrder(int userId, double totalAmount, List<com.mobilestore.entity.CartItem> items) {
+
+    public Integer createOrder(int userId, double totalAmount, List<CartItem> items) {
         String orderSql = "INSERT INTO orders (order_status, order_date, total_amount, user_id) VALUES (?, ?, ?, ?)";
-        String detailSql = "INSERT INTO order_details (price, quantity, order_id, product_id) VALUES (?, ?, ?, ?)";
-        String updateProductSql = "UPDATE products SET quantity_in_stock = quantity_in_stock - ? WHERE product_id = ?";
+        String detailSql = "INSERT INTO order_details (price, quantity, order_id, product_id, variant_id) VALUES (?, ?, ?, ?, ?)";
+        String updateVariantSql = "UPDATE product_variants SET quantity_in_stock = quantity_in_stock - ? WHERE variant_id = ?";
 
         try (Connection conn = DatabaseConnection.getConnection()) {
             conn.setAutoCommit(false);
@@ -163,20 +181,30 @@ public class OrderDAO {
                         int orderId = rs.getInt(1);
 
                         try (PreparedStatement psDetail = conn.prepareStatement(detailSql);
-                             PreparedStatement psUpdateProduct = conn.prepareStatement(updateProductSql)) {
-                            for (com.mobilestore.entity.CartItem item : items) {
-                                psDetail.setDouble(1, item.getProduct().getPrice());
+                             PreparedStatement psUpdateVariant = conn.prepareStatement(updateVariantSql)) {
+                            for (CartItem item : items) {
+                                ProductVariant variant = item.getVariant();
+                                Product product = item.getProduct();
+
+                                psDetail.setDouble(1, variant != null ? variant.getPrice() : product.getDisplayPrice());
                                 psDetail.setInt(2, item.getQuantity());
                                 psDetail.setInt(3, orderId);
-                                psDetail.setInt(4, item.getProduct().getProductId());
+                                psDetail.setInt(4, product.getProductId());
+                                if (variant != null) {
+                                    psDetail.setInt(5, variant.getVariantId());
+                                } else {
+                                    psDetail.setNull(5, Types.INTEGER);
+                                }
                                 psDetail.addBatch();
 
-                                psUpdateProduct.setInt(1, item.getQuantity());
-                                psUpdateProduct.setInt(2, item.getProduct().getProductId());
-                                psUpdateProduct.addBatch();
+                                if (variant != null) {
+                                    psUpdateVariant.setInt(1, item.getQuantity());
+                                    psUpdateVariant.setInt(2, variant.getVariantId());
+                                    psUpdateVariant.addBatch();
+                                }
                             }
                             psDetail.executeBatch();
-                            psUpdateProduct.executeBatch();
+                            psUpdateVariant.executeBatch();
                         }
 
                         conn.commit();
@@ -196,14 +224,14 @@ public class OrderDAO {
         return null;
     }
 
-    public Integer createOrderWithPayment(int userId, double totalAmount, 
-            List<com.mobilestore.entity.CartItem> items, String vnpTransactionId, String vnpOrderId) {
-        
+    public Integer createOrderWithPayment(int userId, double totalAmount,
+                                          List<CartItem> items, String vnpTransactionId, String vnpOrderId) {
+
         String orderSql = "INSERT INTO orders (order_status, order_date, total_amount, user_id, " +
                 "vnp_transaction_id, vnp_order_id) " +
                 "VALUES (?, ?, ?, ?, ?, ?)";
-        String detailSql = "INSERT INTO order_details (price, quantity, order_id, product_id) VALUES (?, ?, ?, ?)";
-        String updateProductSql = "UPDATE products SET quantity_in_stock = quantity_in_stock - ? WHERE product_id = ?";
+        String detailSql = "INSERT INTO order_details (price, quantity, order_id, product_id, variant_id) VALUES (?, ?, ?, ?, ?)";
+        String updateVariantSql = "UPDATE product_variants SET quantity_in_stock = quantity_in_stock - ? WHERE variant_id = ?";
 
         try (Connection conn = DatabaseConnection.getConnection()) {
             conn.setAutoCommit(false);
@@ -221,20 +249,30 @@ public class OrderDAO {
                         int orderId = rs.getInt(1);
 
                         try (PreparedStatement psDetail = conn.prepareStatement(detailSql);
-                             PreparedStatement psUpdateProduct = conn.prepareStatement(updateProductSql)) {
-                            for (com.mobilestore.entity.CartItem item : items) {
-                                psDetail.setDouble(1, item.getProduct().getPrice());
+                             PreparedStatement psUpdateVariant = conn.prepareStatement(updateVariantSql)) {
+                            for (CartItem item : items) {
+                                ProductVariant variant = item.getVariant();
+                                Product product = item.getProduct();
+
+                                psDetail.setDouble(1, variant != null ? variant.getPrice() : product.getDisplayPrice());
                                 psDetail.setInt(2, item.getQuantity());
                                 psDetail.setInt(3, orderId);
-                                psDetail.setInt(4, item.getProduct().getProductId());
+                                psDetail.setInt(4, product.getProductId());
+                                if (variant != null) {
+                                    psDetail.setInt(5, variant.getVariantId());
+                                } else {
+                                    psDetail.setNull(5, Types.INTEGER);
+                                }
                                 psDetail.addBatch();
 
-                                psUpdateProduct.setInt(1, item.getQuantity());
-                                psUpdateProduct.setInt(2, item.getProduct().getProductId());
-                                psUpdateProduct.addBatch();
+                                if (variant != null) {
+                                    psUpdateVariant.setInt(1, item.getQuantity());
+                                    psUpdateVariant.setInt(2, variant.getVariantId());
+                                    psUpdateVariant.addBatch();
+                                }
                             }
                             psDetail.executeBatch();
-                            psUpdateProduct.executeBatch();
+                            psUpdateVariant.executeBatch();
                         }
 
                         conn.commit();
@@ -254,5 +292,3 @@ public class OrderDAO {
         return null;
     }
 }
-
-

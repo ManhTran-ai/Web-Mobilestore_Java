@@ -483,7 +483,7 @@
                                 <c:forEach var="product" items="${favoriteProducts}">
                                     <div class="product-card">
                                         <div class="product-thumb">
-                                            <img src="${pageContext.request.contextPath}/${product.image}"
+                                            <img src="${pageContext.request.contextPath}/${product.displayImage}"
                                                  alt="${product.productName}"/>
                                         </div>
                                         <div class="product-body">
@@ -492,7 +492,7 @@
                                                 · ${product.productCondition}</div>
                                             <div class="price-row">
                                                 <div class="price">
-                                                    <fmt:formatNumber value="${product.price}" type="currency"
+                                                    <fmt:formatNumber value="${product.displayPrice}" type="currency"
                                                                       currencySymbol="" groupingUsed="true"/> đ
                                                 </div>
                                                 <c:if test="${product.discount > 0}">

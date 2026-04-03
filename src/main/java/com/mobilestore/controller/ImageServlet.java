@@ -17,7 +17,7 @@ public class ImageServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
 
-    private static final String UPLOAD_ROOT = "D:\\Web-Programming-MobileStore\\src\\main\\webapp";
+    private static final String UPLOAD_ROOT = "D:\\TTLTW\\Java-Web-MobileStore\\src\\main\\webapp";
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -27,18 +27,19 @@ public class ImageServlet extends HttpServlet {
             return;
         }
 
-        String relative = pathInfo.startsWith("/") ? pathInfo.substring(1) : pathInfo;
+        String pathWithinServlet = pathInfo.startsWith("/") ? pathInfo.substring(1) : pathInfo;
+        String relative = "images" + File.separator + pathWithinServlet;
 
         File file = null;
         if (UPLOAD_ROOT != null && !UPLOAD_ROOT.trim().isEmpty()) {
-            file = new File(UPLOAD_ROOT + File.separator + "images", relative);
+            file = new File(UPLOAD_ROOT + File.separator + relative);
             if (!file.exists() || !file.isFile()) {
                 file = null;
             }
         }
 
         if (file == null) {
-            String fallbackPath = getServletContext().getRealPath("") + File.separator + "images" + File.separator + relative;
+            String fallbackPath = getServletContext().getRealPath("") + File.separator + relative;
             file = new File(fallbackPath);
             if (!file.exists() || !file.isFile()) {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);

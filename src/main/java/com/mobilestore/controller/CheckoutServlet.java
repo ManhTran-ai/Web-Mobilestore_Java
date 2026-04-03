@@ -5,6 +5,7 @@ import com.mobilestore.service.CartService;
 import com.mobilestore.service.impl.OrderServiceImpl;
 import com.mobilestore.service.impl.CartServiceImpl;
 import com.mobilestore.entity.CartItem;
+import com.mobilestore.entity.ProductVariant;
 import com.mobilestore.entity.User;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -29,24 +30,24 @@ public class CheckoutServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/login?redirect=" + request.getRequestURI());
             return;
         }
-        
+
         List<CartItem> cart = null;
         Object cartObj = request.getSession().getAttribute("cart");
         if (cartObj instanceof List) {
             cart = (List<CartItem>) cartObj;
         }
-        
+
         if (cart == null || cart.isEmpty()) {
             cart = cartService.findByUserId(user.getId());
             if (cart != null && !cart.isEmpty()) {
                 request.getSession().setAttribute("cart", cart);
             }
         }
-        
+
         if (cart == null) {
             cart = new java.util.ArrayList<>();
         }
-        
+
         request.setAttribute("cartItems", cart);
         request.getRequestDispatcher("/views/products/checkout.jsp").forward(request, response);
     }
@@ -64,18 +65,23 @@ public class CheckoutServlet extends HttpServlet {
         if (cartObj instanceof List) {
             cart = (List<CartItem>) cartObj;
         }
-        
+
         if (cart == null || cart.isEmpty()) {
             cart = cartService.findByUserId(user.getId());
         }
-        
+
         if (cart == null || cart.isEmpty()) {
             response.sendRedirect(request.getContextPath() + "/cart?error=Giỏ hàng trống");
             return;
         }
-        
+
         double total = 0.0;
-        for (CartItem it : cart) total += (it.getProduct().getPrice()*(100-it.getProduct().getDiscount())/100) * it.getQuantity();
+        for (CartItem it : cart) {
+            ProductVariant variant = it.getVariant();
+            long price = (variant != null) ? variant.getPrice() : (it.getProduct() != null ? it.getProduct().getDisplayPrice() : 0);
+            long discount = it.getProduct() != null ? it.getProduct().getDiscount() : 0;
+            total += (price * (100 - discount) / 100.0) * it.getQuantity();
+        }
 
         Integer orderId = orderService.createOrder(user.getId(), total, cart);
         if (orderId != null) {
