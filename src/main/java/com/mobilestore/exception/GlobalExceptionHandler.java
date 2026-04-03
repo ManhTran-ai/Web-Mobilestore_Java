@@ -18,10 +18,10 @@ public class GlobalExceptionHandler implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-        
+
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
-        
+
         try {
             chain.doFilter(request, response);
         } catch (ResourceNotFoundException ex) {
@@ -37,38 +37,38 @@ public class GlobalExceptionHandler implements Filter {
         }
     }
 
-    private void handleException(HttpServletRequest request, HttpServletResponse response, 
-                                   String message, int statusCode) throws IOException {
+    private void handleException(HttpServletRequest request, HttpServletResponse response,
+                                 String message, int statusCode) throws IOException {
         response.setStatus(statusCode);
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        
+
         ErrorResponse errorResponse = new ErrorResponse(statusCode, message, request.getRequestURI());
         response.getWriter().write(errorResponse.toJson());
     }
 
     private void handleValidationException(HttpServletRequest request, HttpServletResponse response,
-                                            ValidationException ex) throws IOException {
+                                           ValidationException ex) throws IOException {
         response.setStatus(400);
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        
+
         Map<String, String> errors = ex.getErrors() != null ? ex.getErrors() : new HashMap<>();
         if (errors.isEmpty()) {
             errors.put("message", ex.getMessage());
         }
-        
+
         ErrorResponse errorResponse = new ErrorResponse(400, "Validation failed", request.getRequestURI());
         errorResponse.setValidationErrors(errors);
         response.getWriter().write(errorResponse.toJson());
     }
 
     private void handleConstraintViolationException(HttpServletRequest request, HttpServletResponse response,
-                                                     ConstraintViolationException ex) throws IOException {
+                                                    ConstraintViolationException ex) throws IOException {
         response.setStatus(400);
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        
+
         Map<String, String> errors = new HashMap<>();
         Set<ConstraintViolation<?>> violations = ex.getConstraintViolations();
         for (ConstraintViolation<?> violation : violations) {
@@ -78,7 +78,7 @@ public class GlobalExceptionHandler implements Filter {
             }
             errors.put(fieldName, violation.getMessage());
         }
-        
+
         ErrorResponse errorResponse = new ErrorResponse(400, "Validation failed", request.getRequestURI());
         errorResponse.setValidationErrors(errors);
         response.getWriter().write(errorResponse.toJson());

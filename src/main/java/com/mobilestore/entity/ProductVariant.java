@@ -11,11 +11,12 @@ import lombok.EqualsAndHashCode;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-public class OrderDetail {
-    private Integer id;
-    private Double price;
-    private Integer quantity;
-    private Order order;
+public class ProductVariant {
+    private Integer variantId;
+    private String color;
+    private String storage;
+    private Long price;
+    private Integer quantityInStock;
+    private String variantImage;
     private Product product;
-    private ProductVariant variant;
 }

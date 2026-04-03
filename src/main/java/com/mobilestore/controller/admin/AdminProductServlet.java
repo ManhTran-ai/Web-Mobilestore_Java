@@ -2,13 +2,16 @@ package com.mobilestore.controller.admin;
 
 import com.mobilestore.service.CategoryService;
 import com.mobilestore.service.ProductService;
+import com.mobilestore.service.ProductVariantService;
 import com.mobilestore.service.impl.CategoryServiceImpl;
 import com.mobilestore.service.impl.ProductServiceImpl;
-import com.mobilestore.dto.FileUploadResult;
+import com.mobilestore.service.impl.ProductVariantServiceImpl;
 import com.mobilestore.dto.ProductFormData;
+import com.mobilestore.dto.VariantFormData;
 import com.mobilestore.dto.ValidationResult;
 import com.mobilestore.entity.Category;
 import com.mobilestore.entity.Product;
+import com.mobilestore.entity.ProductVariant;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
@@ -25,25 +28,26 @@ import java.util.*;
 
 @WebServlet(name = "AdminProductServlet", urlPatterns = {"/admin/products", "/admin/products/*"})
 @MultipartConfig(
-    fileSizeThreshold = 1024 * 1024,
-    maxFileSize = 1024 * 1024 * 10,
-    maxRequestSize = 1024 * 1024 * 50
+        fileSizeThreshold = 1024 * 1024,
+        maxFileSize = 1024 * 1024 * 10,
+        maxRequestSize = 1024 * 1024 * 20
 )
 public class AdminProductServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private final ProductService productService = new ProductServiceImpl();
+    private final ProductVariantService variantService = new ProductVariantServiceImpl();
     private final CategoryService categoryService = new CategoryServiceImpl();
 
     private static final String UPLOAD_DIR = "images/products";
-    private static final String UPLOAD_ROOT = "D:\\Web-Programming-MobileStore\\src\\main\\webapp";
+    private static final String UPLOAD_ROOT = "D:\\TTLTW\\Java-Web-MobileStore\\src\\main\\webapp";
 
     private static final Set<String> ALLOWED_EXTENSIONS = new HashSet<>(
-        Arrays.asList(".jpg", ".jpeg", ".png", ".gif", ".webp")
+            Arrays.asList(".jpg", ".jpeg", ".png", ".gif", ".webp")
     );
 
     private static final Set<String> ALLOWED_MIME_TYPES = new HashSet<>(
-        Arrays.asList("image/jpeg", "image/png", "image/gif", "image/webp")
+            Arrays.asList("image/jpeg", "image/png", "image/gif", "image/webp")
     );
 
     private static final long MAX_FILE_SIZE = 10 * 1024 * 1024;
@@ -142,53 +146,49 @@ public class AdminProductServlet extends HttpServlet {
         }
 
         try {
-            FileUploadResult uploadResult = processImageUpload(request);
-            if (!uploadResult.isSuccess() && uploadResult.getErrorMessage() != null) {
-                formData.addError(uploadResult.getErrorMessage());
-                setErrorAndForward(request, response, formData.getErrors(), formData);
-                return;
-            }
-
             Product product = new Product();
             product.setProductName(formData.getProductName());
             product.setManufacturer(formData.getManufacturer());
             product.setProductCondition(formData.getProductCondition());
-            product.setPrice(formData.getPrice());
-            product.setDiscount(formData.getDiscount());
-            product.setQuantityInStock(formData.getQuantityInStock());
+            product.setDiscount(formData.getDiscount() != null ? formData.getDiscount() : 0L);
             product.setProductInfo(formData.getProductInfo());
-            product.setImage(uploadResult.getFilePath());
 
             Category category = new Category();
             category.setCategoryId(formData.getCategoryId());
             product.setCategory(category);
 
-            Product existing = productService.findByUniqueKey(product.getProductName(),
-                    product.getManufacturer(),
-                    product.getProductCondition(),
-                    product.getCategory() != null ? product.getCategory().getCategoryId() : null);
+            Product createdProduct = productService.save(product);
 
-            if (existing != null) {
-                int newQty = existing.getQuantityInStock() + product.getQuantityInStock();
-                existing.setQuantityInStock(newQty);
-                boolean updated = productService.update(existing) != null;
-                if (updated) {
-                    response.sendRedirect(request.getContextPath() + "/admin/products?success=quantity_updated");
-                } else {
-                    formData.addError("Không thể cập nhật số lượng sản phẩm. Vui lòng thử lại.");
-                    setErrorAndForward(request, response, formData.getErrors(), formData);
-                }
+            if (createdProduct == null) {
+                formData.addError("Không thể tạo sản phẩm. Vui lòng thử lại.");
+                setErrorAndForward(request, response, formData.getErrors(), formData);
                 return;
             }
 
-            Product createdProduct = productService.save(product);
+            for (VariantFormData vd : formData.getVariants()) {
+                String imagePath = null;
+                String partName = vd.getUploadedImageFile();
+                if (partName != null) {
+                    try {
+                        Part filePart = request.getPart(partName);
+                        if (filePart != null && filePart.getSize() > 0) {
+                            imagePath = uploadVariantImage(filePart);
+                        }
+                    } catch (Exception ignored) {}
+                }
 
-            if (createdProduct != null) {
-                response.sendRedirect(request.getContextPath() + "/admin/products?success=created");
-            } else {
-                formData.addError("Không thể tạo sản phẩm. Vui lòng thử lại.");
-                setErrorAndForward(request, response, formData.getErrors(), formData);
+                ProductVariant variant = new ProductVariant();
+                variant.setProduct(createdProduct);
+                variant.setColor(vd.getColor());
+                variant.setStorage(vd.getStorage());
+                variant.setPrice(vd.getPrice());
+                variant.setQuantityInStock(vd.getQuantityInStock());
+                variant.setVariantImage(imagePath);
+
+                variantService.create(variant);
             }
+
+            response.sendRedirect(request.getContextPath() + "/admin/products?success=created");
 
         } catch (Exception e) {
             System.err.println("Lỗi khi thêm sản phẩm: " + e.getMessage());
@@ -225,41 +225,79 @@ public class AdminProductServlet extends HttpServlet {
         }
 
         try {
-            FileUploadResult uploadResult = processImageUpload(request);
-            if (!uploadResult.isSuccess() && uploadResult.getErrorMessage() != null) {
-                formData.addError(uploadResult.getErrorMessage());
-                setErrorAndForwardEdit(request, response, formData.getErrors(), formData, id);
-                return;
-            }
-
-            String imagePath = uploadResult.getFilePath();
-            if (imagePath == null || imagePath.isEmpty()) {
-                imagePath = existingProduct.getImage();
-            } else {
-                deleteOldImage(existingProduct.getImage());
-            }
-
             existingProduct.setProductName(formData.getProductName());
             existingProduct.setManufacturer(formData.getManufacturer());
             existingProduct.setProductCondition(formData.getProductCondition());
-            existingProduct.setPrice(formData.getPrice());
-            existingProduct.setDiscount(formData.getDiscount());
-            existingProduct.setQuantityInStock(formData.getQuantityInStock());
+            existingProduct.setDiscount(formData.getDiscount() != null ? formData.getDiscount() : 0L);
             existingProduct.setProductInfo(formData.getProductInfo());
-            existingProduct.setImage(imagePath);
 
             Category category = new Category();
             category.setCategoryId(formData.getCategoryId());
             existingProduct.setCategory(category);
 
-            boolean updated = productService.update(existingProduct) != null;
+            productService.update(existingProduct);
 
-            if (updated) {
-                response.sendRedirect(request.getContextPath() + "/admin/products?success=updated");
-            } else {
-                formData.addError("Không thể cập nhật sản phẩm. Vui lòng thử lại.");
-                setErrorAndForwardEdit(request, response, formData.getErrors(), formData, id);
+            List<ProductVariant> dbVariants = variantService.findByProductId(id);
+            Set<Integer> submittedIds = new HashSet<>();
+
+            for (VariantFormData vd : formData.getVariants()) {
+                if (vd.getVariantId() != null) {
+                    submittedIds.add(vd.getVariantId());
+                    ProductVariant existingVariant = variantService.findByIdWithProduct(vd.getVariantId());
+                    if (existingVariant != null) {
+                        existingVariant.setColor(vd.getColor());
+                        existingVariant.setStorage(vd.getStorage());
+                        existingVariant.setPrice(vd.getPrice());
+                        existingVariant.setQuantityInStock(vd.getQuantityInStock());
+
+                        String partName = "variantImage_" + vd.getVariantIndex();
+                        try {
+                            Part filePart = request.getPart(partName);
+                            if (filePart != null && filePart.getSize() > 0) {
+                                String newImagePath = uploadVariantImage(filePart);
+                                if (newImagePath != null) {
+                                    deleteOldImage(existingVariant.getVariantImage());
+                                    existingVariant.setVariantImage(newImagePath);
+                                }
+                            }
+                        } catch (Exception e) {
+
+                        }
+
+                        variantService.update(existingVariant);
+                    }
+                } else {
+                    String imagePath = null;
+                    String partName = vd.getUploadedImageFile();
+                    if (partName != null) {
+                        try {
+                            Part filePart = request.getPart(partName);
+                            if (filePart != null && filePart.getSize() > 0) {
+                                imagePath = uploadVariantImage(filePart);
+                            }
+                        } catch (Exception ignored) {}
+                    }
+
+                    ProductVariant variant = new ProductVariant();
+                    variant.setProduct(existingProduct);
+                    variant.setColor(vd.getColor());
+                    variant.setStorage(vd.getStorage());
+                    variant.setPrice(vd.getPrice());
+                    variant.setQuantityInStock(vd.getQuantityInStock());
+                    variant.setVariantImage(imagePath);
+
+                    variantService.create(variant);
+                }
             }
+
+            for (ProductVariant dbv : dbVariants) {
+                if (!submittedIds.contains(dbv.getVariantId())) {
+                    deleteOldImage(dbv.getVariantImage());
+                    variantService.delete(dbv.getVariantId());
+                }
+            }
+
+            response.sendRedirect(request.getContextPath() + "/admin/products?success=updated");
 
         } catch (Exception e) {
             System.err.println("Lỗi khi cập nhật sản phẩm: " + e.getMessage());
@@ -313,39 +351,34 @@ public class AdminProductServlet extends HttpServlet {
         boolean deleted = productService.delete(id);
 
         if (deleted) {
-            deleteOldImage(product.getImage());
             response.sendRedirect(request.getContextPath() + "/admin/products?success=deleted");
         } else {
             response.sendRedirect(request.getContextPath() + "/admin/products?error=delete_failed");
         }
     }
 
-    private FileUploadResult processImageUpload(HttpServletRequest request) throws IOException, ServletException {
-        Part filePart = request.getPart("image");
-
+    private String uploadVariantImage(Part filePart) throws IOException, ServletException {
         if (filePart == null || filePart.getSize() == 0) {
-            return new FileUploadResult(true, null, null);
+            return null;
         }
 
         String fileName = filePart.getSubmittedFileName();
         if (fileName == null || fileName.trim().isEmpty()) {
-            return new FileUploadResult(true, null, null);
+            return null;
         }
 
         if (filePart.getSize() > MAX_FILE_SIZE) {
-            return new FileUploadResult(false, null, "Kích thước file không được vượt quá 10MB");
+            return null;
         }
 
         String extension = getFileExtension(fileName).toLowerCase();
         if (!ALLOWED_EXTENSIONS.contains(extension)) {
-            return new FileUploadResult(false, null,
-                "Định dạng file không được hỗ trợ. Chỉ chấp nhận: JPG, JPEG, PNG, GIF, WEBP");
+            return null;
         }
 
         String contentType = filePart.getContentType();
         if (contentType == null || !ALLOWED_MIME_TYPES.contains(contentType.toLowerCase())) {
-            return new FileUploadResult(false, null,
-                "Loại file không hợp lệ. Chỉ chấp nhận file ảnh.");
+            return null;
         }
 
         String uniqueFileName = UUID.randomUUID().toString() + extension;
@@ -359,10 +392,7 @@ public class AdminProductServlet extends HttpServlet {
 
         File uploadDir = new File(uploadPath);
         if (!uploadDir.exists()) {
-            boolean created = uploadDir.mkdirs();
-            if (!created) {
-                return new FileUploadResult(false, null, "Không thể tạo thư mục upload");
-            }
+            uploadDir.mkdirs();
         }
 
         Path filePath = Paths.get(uploadPath, uniqueFileName);
@@ -375,7 +405,7 @@ public class AdminProductServlet extends HttpServlet {
             dbPath = dbPath.substring(1);
         }
 
-        return new FileUploadResult(true, dbPath, null);
+        return dbPath;
     }
 
     private void deleteOldImage(String imagePath) {
@@ -396,12 +426,8 @@ public class AdminProductServlet extends HttpServlet {
                 String fallback = getServletContext().getRealPath("") + File.separator + imagePath;
                 file = new File(fallback);
             }
-            String actualPath = file.getAbsolutePath();
             if (file.exists()) {
-                boolean deleted = file.delete();
-                if (!deleted) {
-                    System.err.println("Không thể xóa file: " + actualPath);
-                }
+                file.delete();
             }
         } catch (Exception e) {
             System.err.println("Lỗi khi xóa file ảnh: " + e.getMessage());
@@ -422,9 +448,7 @@ public class AdminProductServlet extends HttpServlet {
         String productName = request.getParameter("productName");
         String manufacturer = request.getParameter("manufacturer");
         String productCondition = request.getParameter("productCondition");
-        String priceStr = request.getParameter("price");
         String discountStr = request.getParameter("discount");
-        String quantityStr = request.getParameter("quantityInStock");
         String productInfo = request.getParameter("productInfo");
         String categoryIdStr = request.getParameter("categoryId");
         String newCategoryName = request.getParameter("newCategoryName");
@@ -449,23 +473,6 @@ public class AdminProductServlet extends HttpServlet {
             formData.addError("Tên nhà sản xuất không được vượt quá 255 ký tự");
         }
 
-        if (priceStr == null || priceStr.trim().isEmpty()) {
-            formData.addError("Giá không được để trống");
-        } else {
-            try {
-                Long price = Long.parseLong(priceStr.trim());
-                if (price < 0) {
-                    formData.addError("Giá phải lớn hơn hoặc bằng 0");
-                } else if (price > 999999999) {
-                    formData.addError("Giá không được vượt quá 999,999,999 VNĐ");
-                } else {
-                    formData.setPrice(price);
-                }
-            } catch (NumberFormatException e) {
-                formData.addError("Giá không hợp lệ. Vui lòng nhập số");
-            }
-        }
-
         if (discountStr != null && !discountStr.trim().isEmpty()) {
             try {
                 Long discount = Long.parseLong(discountStr.trim());
@@ -479,23 +486,6 @@ public class AdminProductServlet extends HttpServlet {
             }
         } else {
             formData.setDiscount(0L);
-        }
-
-        if (quantityStr == null || quantityStr.trim().isEmpty()) {
-            formData.addError("Số lượng không được để trống");
-        } else {
-            try {
-                int quantity = Integer.parseInt(quantityStr.trim());
-                if (quantity < 0) {
-                    formData.addError("Số lượng phải lớn hơn hoặc bằng 0");
-                } else if (quantity > 99999) {
-                    formData.addError("Số lượng không được vượt quá 99,999");
-                } else {
-                    formData.setQuantityInStock(quantity);
-                }
-            } catch (NumberFormatException e) {
-                formData.addError("Số lượng không hợp lệ. Vui lòng nhập số nguyên");
-            }
         }
 
         if ((categoryIdStr == null || categoryIdStr.trim().isEmpty())
@@ -551,6 +541,83 @@ public class AdminProductServlet extends HttpServlet {
             formData.addError("Mô tả sản phẩm không được vượt quá 1000 ký tự");
         }
 
+        Enumeration<String> paramNames = request.getParameterNames();
+        List<VariantFormData> variants = new ArrayList<>();
+        while (paramNames.hasMoreElements()) {
+            String name = paramNames.nextElement();
+            if (name.startsWith("variantColor_")) {
+                String index = name.substring("variantColor_".length());
+                String color = request.getParameter("variantColor_" + index);
+                String storage = request.getParameter("variantStorage_" + index);
+                String priceStr = request.getParameter("variantPrice_" + index);
+                String quantityStr = request.getParameter("variantQuantity_" + index);
+                String variantIdStr = request.getParameter("variantId_" + index);
+
+                VariantFormData vd = new VariantFormData();
+                if (variantIdStr != null && !variantIdStr.trim().isEmpty()) {
+                    try {
+                        vd.setVariantId(Integer.parseInt(variantIdStr.trim()));
+                    } catch (NumberFormatException ignored) {}
+                }
+
+                vd.setVariantIndex(Integer.parseInt(index));
+                if (color != null) color = color.trim();
+                if (storage != null) storage = storage.trim();
+
+                boolean hasColor = color != null && !color.isEmpty();
+                boolean hasStorage = storage != null && !storage.isEmpty();
+                boolean hasPrice = priceStr != null && !priceStr.trim().isEmpty();
+                boolean hasQuantity = quantityStr != null && !quantityStr.trim().isEmpty();
+
+                if (hasColor || hasStorage || hasPrice || hasQuantity) {
+                    if (!hasColor) {
+                        formData.addError("Màu sắc của phiên bản không được để trống");
+                    }
+                    if (!hasStorage) {
+                        formData.addError("Dung lượng của phiên bản không được để trống");
+                    }
+                    if (!hasPrice) {
+                        formData.addError("Giá của phiên bản không được để trống");
+                    } else {
+                        try {
+                            Long price = Long.parseLong(priceStr.trim());
+                            if (price < 0) {
+                                formData.addError("Giá phải lớn hơn hoặc bằng 0");
+                            } else {
+                                vd.setPrice(price);
+                            }
+                        } catch (NumberFormatException e) {
+                            formData.addError("Giá không hợp lệ");
+                        }
+                    }
+                    if (!hasQuantity) {
+                        formData.addError("Số lượng không được để trống");
+                    } else {
+                        try {
+                            int qty = Integer.parseInt(quantityStr.trim());
+                            if (qty < 0) {
+                                formData.addError("Số lượng phải >= 0");
+                            } else {
+                                vd.setQuantityInStock(qty);
+                            }
+                        } catch (NumberFormatException e) {
+                            formData.addError("Số lượng không hợp lệ");
+                        }
+                    }
+
+                    vd.setColor(color);
+                    vd.setStorage(storage);
+                    vd.setUploadedImageFile("variantImage_" + index);
+                    variants.add(vd);
+                }
+            }
+        }
+
+        if (variants.isEmpty()) {
+            formData.addError("Phải có ít nhất một phiên bản sản phẩm");
+        }
+
+        formData.setVariants(variants);
         return formData;
     }
 
@@ -587,25 +654,18 @@ public class AdminProductServlet extends HttpServlet {
         request.setAttribute("errors", errors);
         request.setAttribute("error", String.join("<br>", errors));
 
-        Product product = new Product();
-        product.setProductId(id);
-        product.setProductName(formData.getProductName());
-        product.setManufacturer(formData.getManufacturer());
-        product.setProductCondition(formData.getProductCondition());
-        product.setPrice(formData.getPrice());
-        product.setDiscount(formData.getDiscount());
-        product.setQuantityInStock(formData.getQuantityInStock());
-        product.setProductInfo(formData.getProductInfo());
-
-        if (formData.getCategoryId() != null) {
-            Category category = new Category();
-            category.setCategoryId(formData.getCategoryId());
-            product.setCategory(category);
-        }
-
-        Product existingProduct = productService.findById(id);
-        if (existingProduct != null) {
-            product.setImage(existingProduct.getImage());
+        Product product = productService.findById(id);
+        if (product != null) {
+            product.setProductName(formData.getProductName());
+            product.setManufacturer(formData.getManufacturer());
+            product.setProductCondition(formData.getProductCondition());
+            product.setDiscount(formData.getDiscount());
+            product.setProductInfo(formData.getProductInfo());
+            if (formData.getCategoryId() != null) {
+                Category category = new Category();
+                category.setCategoryId(formData.getCategoryId());
+                product.setCategory(category);
+            }
         }
 
         request.setAttribute("product", product);

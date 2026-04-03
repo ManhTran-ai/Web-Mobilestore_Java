@@ -1,6 +1,5 @@
 package com.mobilestore.dto.response;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class ErrorResponse {
