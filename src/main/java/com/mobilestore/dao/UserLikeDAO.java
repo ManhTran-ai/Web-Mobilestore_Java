@@ -2,6 +2,7 @@ package com.mobilestore.dao;
 
 import com.mobilestore.entity.Category;
 import com.mobilestore.entity.Product;
+import com.mobilestore.entity.ProductVariant;
 import com.mobilestore.util.DatabaseConnection;
 
 import java.sql.Connection;
@@ -16,7 +17,7 @@ public class UserLikeDAO {
     public List<Product> findLikedProductsByUser(int userId) {
         List<Product> products = new ArrayList<>();
         String sql = "SELECT p.product_id, p.product_name, p.manufacturer, p.product_condition, " +
-                "p.price, p.discount, p.image, p.product_info, p.quantity_in_stock, p.category_id, c.category_name " +
+                "p.discount, p.product_info, p.category_id, c.category_name " +
                 "FROM user_likes ul " +
                 "JOIN products p ON ul.product_id = p.product_id " +
                 "LEFT JOIN categories c ON p.category_id = c.category_id " +
@@ -30,7 +31,9 @@ public class UserLikeDAO {
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    products.add(mapResultSetToProduct(rs));
+                    Product product = mapResultSetToProduct(rs);
+                    product.setVariants(findVariantsByProductId(product.getProductId()));
+                    products.add(product);
                 }
             }
         } catch (SQLException e) {
@@ -58,22 +61,44 @@ public class UserLikeDAO {
         }
     }
 
+    private List<ProductVariant> findVariantsByProductId(Integer productId) {
+        List<ProductVariant> variants = new ArrayList<>();
+        String sql = "SELECT variant_id, product_id, color, storage, price, quantity_in_stock, variant_image " +
+                "FROM product_variants WHERE product_id = ? ORDER BY price ASC";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, productId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    ProductVariant variant = new ProductVariant();
+                    variant.setVariantId(rs.getInt("variant_id"));
+                    variant.setColor(rs.getString("color"));
+                    variant.setStorage(rs.getString("storage"));
+                    variant.setPrice(rs.getLong("price"));
+                    variant.setQuantityInStock(rs.getInt("quantity_in_stock"));
+                    String img = rs.getString("variant_image");
+                    if (img != null && img.startsWith("/")) {
+                        img = img.substring(1);
+                    }
+                    variant.setVariantImage(img);
+                    variants.add(variant);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Lỗi khi lấy variants trong UserLikeDAO: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return variants;
+    }
+
     private Product mapResultSetToProduct(ResultSet rs) throws SQLException {
         Product product = new Product();
         product.setProductId(rs.getInt("product_id"));
         product.setProductName(rs.getString("product_name"));
         product.setManufacturer(rs.getString("manufacturer"));
         product.setProductCondition(rs.getString("product_condition"));
-        product.setPrice(rs.getLong("price"));
         product.setDiscount(rs.getLong("discount"));
-
-        String img = rs.getString("image");
-        if (img != null && img.startsWith("/")) {
-            img = img.substring(1);
-        }
-        product.setImage(img);
         product.setProductInfo(rs.getString("product_info"));
-        product.setQuantityInStock(rs.getInt("quantity_in_stock"));
 
         Integer categoryId = rs.getInt("category_id");
         if (categoryId != null && !rs.wasNull()) {

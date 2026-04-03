@@ -14,6 +14,6 @@ import lombok.EqualsAndHashCode;
 public class Cart {
     private Integer id;
     private Integer quantity;
-    private Product product;
+    private ProductVariant variant;
     private User user;
 }

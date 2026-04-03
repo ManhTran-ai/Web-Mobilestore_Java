@@ -12,7 +12,7 @@ public class PasswordResetTokenDAO {
 
     public PasswordResetToken findByToken(String token) {
         String sql = "SELECT id, token, user_id, email, expires_at, used, created_at " +
-                     "FROM password_reset_tokens WHERE token = ?";
+                "FROM password_reset_tokens WHERE token = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -33,8 +33,8 @@ public class PasswordResetTokenDAO {
 
     public PasswordResetToken findByUserId(Integer userId) {
         String sql = "SELECT id, token, user_id, email, expires_at, used, created_at " +
-                     "FROM password_reset_tokens WHERE user_id = ? AND used = 0 " +
-                     "ORDER BY created_at DESC LIMIT 1";
+                "FROM password_reset_tokens WHERE user_id = ? AND used = 0 " +
+                "ORDER BY created_at DESC LIMIT 1";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -55,7 +55,7 @@ public class PasswordResetTokenDAO {
 
     public PasswordResetToken create(PasswordResetToken token) {
         String sql = "INSERT INTO password_reset_tokens (token, user_id, email, expires_at, used) " +
-                     "VALUES (?, ?, ?, ?, ?)";
+                "VALUES (?, ?, ?, ?, ?)";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {

@@ -13,7 +13,6 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode
 public class CartItem {
     private Product product;
+    private ProductVariant variant;
     private int quantity;
 }
-
-
