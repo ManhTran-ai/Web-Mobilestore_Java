@@ -88,6 +88,14 @@ public class ProductsServlet extends HttpServlet {
 
         List<com.mobilestore.entity.Category> categories = categoryService.findAll();
 
+        jakarta.servlet.http.HttpSession session = request.getSession(false);
+        if (session != null && session.getAttribute("user") != null) {
+            com.mobilestore.entity.User user = (com.mobilestore.entity.User) session.getAttribute("user");
+            com.mobilestore.dao.UserLikeDAO userLikeDAO = new com.mobilestore.dao.UserLikeDAO();
+            List<Integer> likedProductIds = userLikeDAO.findLikedProductIdsByUser(user.getId());
+            request.setAttribute("likedProductIds", likedProductIds);
+        }
+
         request.setAttribute("products", products);
         request.setAttribute("categories", categories);
         request.setAttribute("currentPage", page);
@@ -125,6 +133,14 @@ public class ProductsServlet extends HttpServlet {
                     .filter(p -> !p.getProductId().equals(product.getProductId()))
                     .limit(7)
                     .toList();
+            }
+
+            jakarta.servlet.http.HttpSession session = request.getSession(false);
+            if (session != null && session.getAttribute("user") != null) {
+                com.mobilestore.entity.User user = (com.mobilestore.entity.User) session.getAttribute("user");
+                com.mobilestore.dao.UserLikeDAO userLikeDAO = new com.mobilestore.dao.UserLikeDAO();
+                List<Integer> likedProductIds = userLikeDAO.findLikedProductIdsByUser(user.getId());
+                request.setAttribute("likedProductIds", likedProductIds);
             }
 
             request.setAttribute("product", product);

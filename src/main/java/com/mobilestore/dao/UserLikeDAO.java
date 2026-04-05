@@ -61,6 +61,64 @@ public class UserLikeDAO {
         }
     }
 
+    public boolean addLike(int userId, int productId) {
+        String sql = "INSERT INTO user_likes (customer_id, product_id) VALUES (?, ?)";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, userId);
+            ps.setInt(2, productId);
+
+            int affectedRows = ps.executeUpdate();
+            return affectedRows > 0;
+        } catch (SQLException e) {
+            System.err.println("Lỗi khi thêm sản phẩm yêu thích: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean isLiked(int userId, int productId) {
+        String sql = "SELECT 1 FROM user_likes WHERE customer_id = ? AND product_id = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, userId);
+            ps.setInt(2, productId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException e) {
+            System.err.println("Lỗi khi kiểm tra trạng thái yêu thích: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public List<Integer> findLikedProductIdsByUser(int userId) {
+        List<Integer> productIds = new ArrayList<>();
+        String sql = "SELECT product_id FROM user_likes WHERE customer_id = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, userId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    productIds.add(rs.getInt("product_id"));
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Lỗi khi lấy danh sách ID sản phẩm yêu thích: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return productIds;
+    }
+
     private List<ProductVariant> findVariantsByProductId(Integer productId) {
         List<ProductVariant> variants = new ArrayList<>();
         String sql = "SELECT variant_id, product_id, color, storage, price, quantity_in_stock, variant_image " +
