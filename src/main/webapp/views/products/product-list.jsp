@@ -144,6 +144,10 @@
                     </c:forEach>
                 </select>
             </div>
+            <div style="display:flex; align-items:center; gap:10px; min-width: 180px; padding: 0.5rem 0.75rem; border: 1px solid #e5e5ea; border-radius: 8px; background: #fff;">
+                <input id="favoritesOnly" type="checkbox" name="favorites" value="1" ${favoritesOnly ? 'checked' : ''} style="width: 18px; height: 18px;">
+                <label for="favoritesOnly" style="font-size: 0.95rem; color:#1a1a1a; cursor:pointer; user-select:none;">Chỉ xem yêu thích</label>
+            </div>
             <div style="display: flex; gap: 0.5rem;">
                 <button type="submit" class="btn" style="padding: 0.75rem 1.5rem;">Tìm kiếm</button>
                 <a href="${pageContext.request.contextPath}/products" class="btn secondary" style="padding: 0.75rem 1.5rem; text-decoration: none;">Xóa bộ lọc</a>
@@ -151,8 +155,15 @@
         </form>
     </div>
 
-    <c:if test="${not empty searchKeyword or not empty selectedCategory}">
+    <c:if test="${favoritesOnly and favoritesRequiresLogin}">
         <div style="margin-bottom: 1rem; color: #666; font-size: 0.9rem;">
+            Vui lòng <a href="${pageContext.request.contextPath}/login" style="color:#000; font-weight:600;">đăng nhập</a> để xem sản phẩm yêu thích.
+        </div>
+    </c:if>
+
+    <c:if test="${favoritesOnly or not empty searchKeyword or not empty selectedCategory}">
+        <div style="margin-bottom: 1rem; color: #666; font-size: 0.9rem;">
+            <c:if test="${favoritesOnly}">Bộ lọc: <strong>Yêu thích</strong> | </c:if>
             <c:if test="${not empty searchKeyword}">Kết quả tìm kiếm cho: "<strong>${searchKeyword}</strong>"</c:if>
             <c:if test="${not empty selectedCategory and not empty searchKeyword}"> | </c:if>
             <c:if test="${not empty selectedCategory}">
@@ -240,10 +251,19 @@
         </c:forEach>
     </div>
 
+    <c:if test="${empty products}">
+        <div style="padding: 2rem 0; text-align: center; color: #666;">
+            <c:choose>
+                <c:when test="${favoritesOnly}">Bạn chưa có sản phẩm yêu thích nào.</c:when>
+                <c:otherwise>Không có sản phẩm phù hợp.</c:otherwise>
+            </c:choose>
+        </div>
+    </c:if>
+
     <c:if test="${totalPages > 1}">
         <div class="pagination">
             <c:if test="${currentPage > 1}">
-                <a class="btn" href="${pageContext.request.contextPath}/products?page=${currentPage - 1}${not empty searchKeyword ? '&search=' : ''}${searchKeyword}${not empty selectedCategory ? '&category=' : ''}${selectedCategory}">« Trước</a>
+                <a class="btn" href="${pageContext.request.contextPath}/products?page=${currentPage - 1}${not empty searchKeyword ? '&search=' : ''}${searchKeyword}${not empty selectedCategory ? '&category=' : ''}${selectedCategory}${favoritesOnly ? '&favorites=1' : ''}">« Trước</a>
             </c:if>
             <c:forEach var="p" begin="1" end="${totalPages}">
                 <c:choose>
@@ -251,12 +271,12 @@
                         <span class="btn secondary">${p}</span>
                     </c:when>
                     <c:otherwise>
-                        <a class="btn" href="${pageContext.request.contextPath}/products?page=${p}${not empty searchKeyword ? '&search=' : ''}${searchKeyword}${not empty selectedCategory ? '&category=' : ''}${selectedCategory}">${p}</a>
+                        <a class="btn" href="${pageContext.request.contextPath}/products?page=${p}${not empty searchKeyword ? '&search=' : ''}${searchKeyword}${not empty selectedCategory ? '&category=' : ''}${selectedCategory}${favoritesOnly ? '&favorites=1' : ''}">${p}</a>
                     </c:otherwise>
                 </c:choose>
             </c:forEach>
             <c:if test="${currentPage < totalPages}">
-                <a class="btn" href="${pageContext.request.contextPath}/products?page=${currentPage + 1}${not empty searchKeyword ? '&search=' : ''}${searchKeyword}${not empty selectedCategory ? '&category=' : ''}${selectedCategory}">Tiếp »</a>
+                <a class="btn" href="${pageContext.request.contextPath}/products?page=${currentPage + 1}${not empty searchKeyword ? '&search=' : ''}${searchKeyword}${not empty selectedCategory ? '&category=' : ''}${selectedCategory}${favoritesOnly ? '&favorites=1' : ''}">Tiếp »</a>
             </c:if>
         </div>
     </c:if>
@@ -295,6 +315,8 @@
 
 <div id="toast-container"></div>
 <script>
+    const isFavoritesFilter = ${favoritesOnly};
+
     function showToast(message) {
         const container = document.getElementById('toast-container');
         const toast = document.createElement('div');
@@ -334,6 +356,10 @@
                             currentBtn.classList.add('active');
                         } else {
                             currentBtn.classList.remove('active');
+                            if (isFavoritesFilter) {
+                                const card = currentBtn.closest('.card');
+                                if (card) card.remove();
+                            }
                         }
                         showToast(data.message);
                     } else {
