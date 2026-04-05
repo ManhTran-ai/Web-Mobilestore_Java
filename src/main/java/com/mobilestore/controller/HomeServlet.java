@@ -48,6 +48,7 @@ public class HomeServlet extends HttpServlet {
 
         try {
             com.mobilestore.service.ProductService productService = new com.mobilestore.service.impl.ProductServiceImpl();
+            com.mobilestore.dao.UserLikeDAO userLikeDAO = new com.mobilestore.dao.UserLikeDAO();
 
             java.util.List<com.mobilestore.entity.Product> products = productService.findByPage(1, 5).getContent();
 
@@ -55,6 +56,13 @@ public class HomeServlet extends HttpServlet {
             request.setAttribute("saleProducts", saleProducts);
 
             request.setAttribute("products", products);
+
+            jakarta.servlet.http.HttpSession session = request.getSession(false);
+            if (session != null && session.getAttribute("user") != null) {
+                com.mobilestore.entity.User user = (com.mobilestore.entity.User) session.getAttribute("user");
+                java.util.List<Integer> likedProductIds = userLikeDAO.findLikedProductIdsByUser(user.getId());
+                request.setAttribute("likedProductIds", likedProductIds);
+            }
 
         } catch (Exception e) {
             System.err.println("Lỗi khi load products trên homepage: " + e.getMessage());
