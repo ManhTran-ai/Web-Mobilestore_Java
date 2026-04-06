@@ -76,7 +76,7 @@ public class ProfileServlet extends HttpServlet {
         if (productId != null) {
             boolean removed = userService.removeFavorite(sessionUser.getId(), productId);
             if (removed) {
-                req.setAttribute("successMessage", "Đã xóa khỏi danh sách yêu thích");
+                req.setAttribute("successMessage", "Đã xóa khỏi yêu thích");
             } else {
                 req.setAttribute("errorMessage", "Không thể xóa sản phẩm khỏi danh sách yêu thích");
             }

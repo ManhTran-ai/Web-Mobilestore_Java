@@ -5,11 +5,14 @@ import com.mobilestore.service.CategoryService;
 import com.mobilestore.service.impl.ProductServiceImpl;
 import com.mobilestore.service.impl.CategoryServiceImpl;
 import com.mobilestore.entity.Product;
+import com.mobilestore.dao.UserLikeDAO;
+import com.mobilestore.entity.User;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -42,6 +45,13 @@ public class ProductsServlet extends HttpServlet {
         String sizeParam = request.getParameter("size");
         String searchKeyword = request.getParameter("search");
         String categoryParam = request.getParameter("category");
+        String favoritesParam = request.getParameter("favorites");
+
+        boolean favoritesOnly = favoritesParam != null && (
+            "1".equals(favoritesParam) ||
+            "true".equalsIgnoreCase(favoritesParam) ||
+            "on".equalsIgnoreCase(favoritesParam)
+        );
 
         if (pageParam != null) {
             try { page = Math.max(1, Integer.parseInt(pageParam)); } catch (NumberFormatException ignored) {}
@@ -64,14 +74,56 @@ public class ProductsServlet extends HttpServlet {
         int totalItems;
         int totalPages;
 
-        if (searchKeyword != null && !searchKeyword.trim().isEmpty()) {
-            totalItems = productService.countSearch(searchKeyword.trim(), categoryId);
+        HttpSession session = request.getSession(false);
+        User user = (session != null) ? (User) session.getAttribute("user") : null;
+
+        request.setAttribute("favoritesOnly", favoritesOnly);
+        request.setAttribute("favoritesRequiresLogin", favoritesOnly && user == null);
+
+        String normalizedSearch = (searchKeyword != null) ? searchKeyword.trim() : null;
+        if (normalizedSearch != null && normalizedSearch.isEmpty()) normalizedSearch = null;
+
+        if (favoritesOnly) {
+            if (user == null) {
+                products = new ArrayList<>();
+                totalItems = 0;
+                totalPages = 0;
+            } else {
+                UserLikeDAO userLikeDAO = new UserLikeDAO();
+                List<Product> likedProducts = userLikeDAO.findLikedProductsByUser(user.getId());
+
+                List<Product> filtered = likedProducts;
+                if (normalizedSearch != null) {
+                    String searchLower = normalizedSearch.toLowerCase();
+                    filtered = filtered.stream()
+                            .filter(p -> p.getProductName() != null && p.getProductName().toLowerCase().contains(searchLower))
+                            .toList();
+                }
+                if (categoryId != null) {
+                    Integer finalCategoryId = categoryId;
+                    filtered = filtered.stream()
+                            .filter(p -> p.getCategory() != null && finalCategoryId.equals(p.getCategory().getCategoryId()))
+                            .toList();
+                }
+
+                totalItems = filtered.size();
+                totalPages = (int) Math.ceil((double) totalItems / pageSize);
+                if (page > totalPages && totalPages > 0) page = totalPages;
+
+                int fromIndex = Math.max(0, (page - 1) * pageSize);
+                int toIndex = Math.min(filtered.size(), fromIndex + pageSize);
+                if (fromIndex >= filtered.size()) {
+                    products = new ArrayList<>();
+                } else {
+                    products = new ArrayList<>(filtered.subList(fromIndex, toIndex));
+                }
+            }
+        } else if (normalizedSearch != null) {
+            totalItems = productService.countSearch(normalizedSearch, categoryId);
             totalPages = (int) Math.ceil((double) totalItems / pageSize);
             if (page > totalPages && totalPages > 0) page = totalPages;
 
-            products = productService.searchWithFilter(searchKeyword.trim(), categoryId, page, pageSize).getContent();
-
-            request.setAttribute("searchKeyword", searchKeyword.trim());
+            products = productService.searchWithFilter(normalizedSearch, categoryId, page, pageSize).getContent();
         } else if (categoryId != null) {
             totalItems = productService.countSearch(null, categoryId);
             totalPages = (int) Math.ceil((double) totalItems / pageSize);
@@ -88,6 +140,12 @@ public class ProductsServlet extends HttpServlet {
 
         List<com.mobilestore.entity.Category> categories = categoryService.findAll();
 
+        if (user != null) {
+            UserLikeDAO userLikeDAO = new UserLikeDAO();
+            List<Integer> likedProductIds = userLikeDAO.findLikedProductIdsByUser(user.getId());
+            request.setAttribute("likedProductIds", likedProductIds);
+        }
+
         request.setAttribute("products", products);
         request.setAttribute("categories", categories);
         request.setAttribute("currentPage", page);
@@ -95,6 +153,7 @@ public class ProductsServlet extends HttpServlet {
         request.setAttribute("pageSize", pageSize);
         request.setAttribute("totalItems", totalItems);
         request.setAttribute("selectedCategory", categoryId);
+        request.setAttribute("searchKeyword", normalizedSearch);
 
         request.getRequestDispatcher("/views/products/product-list.jsp").forward(request, response);
     }
@@ -125,6 +184,14 @@ public class ProductsServlet extends HttpServlet {
                     .filter(p -> !p.getProductId().equals(product.getProductId()))
                     .limit(7)
                     .toList();
+            }
+
+            jakarta.servlet.http.HttpSession session = request.getSession(false);
+            if (session != null && session.getAttribute("user") != null) {
+                com.mobilestore.entity.User user = (com.mobilestore.entity.User) session.getAttribute("user");
+                com.mobilestore.dao.UserLikeDAO userLikeDAO = new com.mobilestore.dao.UserLikeDAO();
+                List<Integer> likedProductIds = userLikeDAO.findLikedProductIdsByUser(user.getId());
+                request.setAttribute("likedProductIds", likedProductIds);
             }
 
             request.setAttribute("product", product);

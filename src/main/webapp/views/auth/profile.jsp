@@ -364,6 +364,34 @@
             background: #fecdd3;
         }
 
+        #toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            background: #000;
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+            font-size: 14px;
+            opacity: 0;
+            transform: translateY(16px);
+            transition: all 0.25s ease;
+            max-width: min(420px, calc(100vw - 40px));
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
     </style>
 </head>
 <body>
@@ -518,6 +546,15 @@
     </div>
 </section>
 
+<div id="toast-container"></div>
+
+<c:if test="${not empty successMessage}">
+    <div id="serverSuccessMessage" style="display:none;"><c:out value="${successMessage}"/></div>
+</c:if>
+<c:if test="${not empty errorMessage}">
+    <div id="serverErrorMessage" style="display:none;"><c:out value="${errorMessage}"/></div>
+</c:if>
+
 <script>
     const activeTab = '${activeTab}' || 'info';
     const tabButtons = document.querySelectorAll('.tab-btn');
@@ -525,6 +562,23 @@
         info: document.getElementById('tab-info'),
         favorites: document.getElementById('tab-favorites')
     };
+
+    function showToast(message) {
+        const container = document.getElementById('toast-container');
+        if (!container) return;
+
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.textContent = message;
+        container.appendChild(toast);
+
+        setTimeout(() => toast.classList.add('show'), 10);
+
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.remove(), 250);
+        }, 3000);
+    }
 
     function setTab(tab) {
         tabButtons.forEach(btn => {
@@ -541,6 +595,15 @@
     });
 
     setTab(activeTab === 'favorites' ? 'favorites' : 'info');
+
+    const serverSuccessEl = document.getElementById('serverSuccessMessage');
+    if (serverSuccessEl && serverSuccessEl.textContent.trim()) {
+        showToast(serverSuccessEl.textContent.trim());
+    }
+    const serverErrorEl = document.getElementById('serverErrorMessage');
+    if (serverErrorEl && serverErrorEl.textContent.trim()) {
+        showToast(serverErrorEl.textContent.trim());
+    }
 
     function refreshCartCount() {
         fetch('${pageContext.request.contextPath}/cart/count')
