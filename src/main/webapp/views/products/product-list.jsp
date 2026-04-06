@@ -37,6 +37,60 @@
         .btn.add-to-cart-btn { background: #000; color: #e5e5ea; }
         .variant-selector { margin: 4px 0; }
         .variant-selector select { width: 100%; padding: 4px; border: 1px solid #e5e5ea; border-radius: 6px; font-size: 0.85rem; }
+        .wishlist-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #eee;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 20px;
+            color: #ccc;
+            transition: all 0.3s ease;
+            z-index: 10;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .wishlist-btn:hover {
+            transform: scale(1.1);
+            color: #ff3b30;
+        }
+        .wishlist-btn.active {
+            color: #ff3b30;
+        }
+        #toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .toast {
+            background: #000 !important;
+            background-color: #000 !important;
+            color: #fff !important;
+            --bs-toast-bg: #000;
+            --bs-toast-color: #fff;
+            --bs-toast-border-color: transparent;
+            padding: 12px 24px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            font-size: 14px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
         @media (max-width: 768px) { .container { padding: 0 12px; } }
     </style>
 </head>
@@ -90,6 +144,10 @@
                     </c:forEach>
                 </select>
             </div>
+            <div style="display:flex; align-items:center; gap:10px; min-width: 180px; padding: 0.5rem 0.75rem; border: 1px solid #e5e5ea; border-radius: 8px; background: #fff;">
+                <input id="favoritesOnly" type="checkbox" name="favorites" value="1" ${favoritesOnly ? 'checked' : ''} style="width: 18px; height: 18px;">
+                <label for="favoritesOnly" style="font-size: 0.95rem; color:#1a1a1a; cursor:pointer; user-select:none;">Chỉ xem yêu thích</label>
+            </div>
             <div style="display: flex; gap: 0.5rem;">
                 <button type="submit" class="btn" style="padding: 0.75rem 1.5rem;">Tìm kiếm</button>
                 <a href="${pageContext.request.contextPath}/products" class="btn secondary" style="padding: 0.75rem 1.5rem; text-decoration: none;">Xóa bộ lọc</a>
@@ -97,8 +155,15 @@
         </form>
     </div>
 
-    <c:if test="${not empty searchKeyword or not empty selectedCategory}">
+    <c:if test="${favoritesOnly and favoritesRequiresLogin}">
         <div style="margin-bottom: 1rem; color: #666; font-size: 0.9rem;">
+            Vui lòng <a href="${pageContext.request.contextPath}/login" style="color:#000; font-weight:600;">đăng nhập</a> để xem sản phẩm yêu thích.
+        </div>
+    </c:if>
+
+    <c:if test="${favoritesOnly or not empty searchKeyword or not empty selectedCategory}">
+        <div style="margin-bottom: 1rem; color: #666; font-size: 0.9rem;">
+            <c:if test="${favoritesOnly}">Bộ lọc: <strong>Yêu thích</strong> | </c:if>
             <c:if test="${not empty searchKeyword}">Kết quả tìm kiếm cho: "<strong>${searchKeyword}</strong>"</c:if>
             <c:if test="${not empty selectedCategory and not empty searchKeyword}"> | </c:if>
             <c:if test="${not empty selectedCategory}">
@@ -114,7 +179,14 @@
 
     <div class="grid">
         <c:forEach var="product" items="${products}">
-            <div class="card" data-product-id="${product.productId}">
+            <div class="card" data-product-id="${product.productId}" style="position: relative;">
+                <c:set var="isLiked" value="false" />
+                <c:if test="${not empty likedProductIds and likedProductIds.contains(product.productId)}">
+                    <c:set var="isLiked" value="true" />
+                </c:if>
+                <div class="wishlist-btn ${isLiked ? 'active' : ''}" data-id="${product.productId}" title="Thêm vào yêu thích">
+                    &hearts;
+                </div>
                 <a href="${pageContext.request.contextPath}/products/view?id=${product.productId}"
                    style="text-decoration:none; color:inherit; display:block;">
                     <c:choose>
@@ -179,10 +251,19 @@
         </c:forEach>
     </div>
 
+    <c:if test="${empty products}">
+        <div style="padding: 2rem 0; text-align: center; color: #666;">
+            <c:choose>
+                <c:when test="${favoritesOnly}">Bạn chưa có sản phẩm yêu thích nào.</c:when>
+                <c:otherwise>Không có sản phẩm phù hợp.</c:otherwise>
+            </c:choose>
+        </div>
+    </c:if>
+
     <c:if test="${totalPages > 1}">
         <div class="pagination">
             <c:if test="${currentPage > 1}">
-                <a class="btn" href="${pageContext.request.contextPath}/products?page=${currentPage - 1}${not empty searchKeyword ? '&search=' : ''}${searchKeyword}${not empty selectedCategory ? '&category=' : ''}${selectedCategory}">« Trước</a>
+                <a class="btn" href="${pageContext.request.contextPath}/products?page=${currentPage - 1}${not empty searchKeyword ? '&search=' : ''}${searchKeyword}${not empty selectedCategory ? '&category=' : ''}${selectedCategory}${favoritesOnly ? '&favorites=1' : ''}">« Trước</a>
             </c:if>
             <c:forEach var="p" begin="1" end="${totalPages}">
                 <c:choose>
@@ -190,12 +271,12 @@
                         <span class="btn secondary">${p}</span>
                     </c:when>
                     <c:otherwise>
-                        <a class="btn" href="${pageContext.request.contextPath}/products?page=${p}${not empty searchKeyword ? '&search=' : ''}${searchKeyword}${not empty selectedCategory ? '&category=' : ''}${selectedCategory}">${p}</a>
+                        <a class="btn" href="${pageContext.request.contextPath}/products?page=${p}${not empty searchKeyword ? '&search=' : ''}${searchKeyword}${not empty selectedCategory ? '&category=' : ''}${selectedCategory}${favoritesOnly ? '&favorites=1' : ''}">${p}</a>
                     </c:otherwise>
                 </c:choose>
             </c:forEach>
             <c:if test="${currentPage < totalPages}">
-                <a class="btn" href="${pageContext.request.contextPath}/products?page=${currentPage + 1}${not empty searchKeyword ? '&search=' : ''}${searchKeyword}${not empty selectedCategory ? '&category=' : ''}${selectedCategory}">Tiếp »</a>
+                <a class="btn" href="${pageContext.request.contextPath}/products?page=${currentPage + 1}${not empty searchKeyword ? '&search=' : ''}${searchKeyword}${not empty selectedCategory ? '&category=' : ''}${selectedCategory}${favoritesOnly ? '&favorites=1' : ''}">Tiếp »</a>
             </c:if>
         </div>
     </c:if>
@@ -232,7 +313,72 @@
     </div>
 </footer>
 
+<div id="toast-container"></div>
 <script>
+    const isFavoritesFilter = ${favoritesOnly};
+
+    function showToast(message) {
+        const container = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.textContent = message;
+        container.appendChild(toast);
+        
+        setTimeout(() => toast.classList.add('show'), 10);
+        
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const wishlistBtns = document.querySelectorAll('.wishlist-btn');
+        wishlistBtns.forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const productId = this.getAttribute('data-id');
+                const currentBtn = this;
+                
+                fetch('${pageContext.request.contextPath}/api/toggle-like', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: 'productId=' + productId
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        if (data.action === 'liked') {
+                            currentBtn.classList.add('active');
+                        } else {
+                            currentBtn.classList.remove('active');
+                            if (isFavoritesFilter) {
+                                const card = currentBtn.closest('.card');
+                                if (card) card.remove();
+                            }
+                        }
+                        showToast(data.message);
+                    } else {
+                        showToast(data.message || 'Có lỗi xảy ra!');
+                        if (data.message && data.message.includes('đăng nhập')) {
+                            setTimeout(() => {
+                                window.location.href = '${pageContext.request.contextPath}/login';
+                            }, 1500);
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showToast('Không thể kết nối đến máy chủ.');
+                });
+            });
+        });
+    });
+
     function refreshCartCount() {
         fetch('${pageContext.request.contextPath}/cart/count')
             .then(r => r.json())
@@ -298,27 +444,6 @@
             });
         });
     });
-
-    function showToast(message) {
-        let t = document.getElementById('toastMessage');
-        if (!t) {
-            t = document.createElement('div');
-            t.id = 'toastMessage';
-            t.style.position = 'fixed';
-            t.style.right = '16px';
-            t.style.bottom = '16px';
-            t.style.background = '#111';
-            t.style.color = '#fff';
-            t.style.padding = '10px 14px';
-            t.style.borderRadius = '8px';
-            t.style.zIndex = 9999;
-            document.body.appendChild(t);
-        }
-        t.textContent = message;
-        t.style.opacity = '1';
-        setTimeout(() => { t.style.opacity = '0'; }, 2000);
-    }
-
     refreshCartCount();
 </script>
 </body>
