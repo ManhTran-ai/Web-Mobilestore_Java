@@ -204,6 +204,33 @@ public class CartServlet extends HttpServlet {
             }
             response.sendRedirect(request.getContextPath() + "/cart");
             return;
+        } else if ("clear".equals(action)) {
+            String xreq = request.getHeader("X-Requested-With");
+            boolean isAjax = xreq != null && "XMLHttpRequest".equalsIgnoreCase(xreq);
+
+            try {
+                cartService.clearCartByUser(user.getId());
+                request.getSession().removeAttribute("cart");
+
+                if (isAjax) {
+                    response.setContentType("application/json;charset=UTF-8");
+                    response.getWriter().print("{\"success\":true,\"count\":0}");
+                    return;
+                }
+
+                response.sendRedirect(request.getContextPath() + "/cart");
+                return;
+            } catch (Exception e) {
+                e.printStackTrace();
+                if (isAjax) {
+                    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                    response.setContentType("application/json;charset=UTF-8");
+                    response.getWriter().print("{\"success\":false,\"message\":\"Lỗi khi xóa giỏ hàng\"}");
+                    return;
+                }
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Lỗi khi xóa giỏ hàng");
+                return;
+            }
         } else if ("update".equals(action)) {
             String idxStr = request.getParameter("index");
             String qtyStr = request.getParameter("quantity");
