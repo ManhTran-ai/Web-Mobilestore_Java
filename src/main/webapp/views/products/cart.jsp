@@ -153,6 +153,7 @@
                         </span>
             </div>
             <div style="display:flex;gap:12px;justify-content:flex-end;">
+                <button type="button" class="btn danger" onclick="clearCart()">Xóa tất cả</button>
                 <a class="btn secondary" href="${pageContext.request.contextPath}/products">Tiếp Tục Mua Sắm</a>
                 <a class="btn" href="${pageContext.request.contextPath}/checkout">Thanh Toán</a>
             </div>
@@ -289,6 +290,46 @@
             .catch(function(err) {
                 console.error(err);
                 showToast('Lỗi khi xóa', false);
+            });
+    }
+
+    function clearCart() {
+        if (!confirm('Bạn muốn xóa tất cả sản phẩm trong giỏ hàng?')) {
+            return;
+        }
+
+        fetch('${pageContext.request.contextPath}/cart?action=clear', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            credentials: 'same-origin',
+            body: ''
+        })
+            .then(async function(res) {
+                if (res.status === 401) {
+                    var json = await res.json().catch(function() { return null; });
+                    if (json && json.redirect) {
+                        window.location.href = json.redirect;
+                        return null;
+                    }
+                    throw new Error('Vui lòng đăng nhập để tiếp tục');
+                }
+                if (!res.ok) throw new Error('Xóa giỏ hàng thất bại');
+                return res.json().catch(function() { return null; });
+            })
+            .then(function(json) {
+                if (!json) return;
+                if (json.success) {
+                    location.reload();
+                } else {
+                    showToast(json.message || 'Xóa giỏ hàng thất bại', false);
+                }
+            })
+            .catch(function(err) {
+                console.error(err);
+                showToast(err.message || 'Lỗi khi xóa giỏ hàng', false);
             });
     }
 
