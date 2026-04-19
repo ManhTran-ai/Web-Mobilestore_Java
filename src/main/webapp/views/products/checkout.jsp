@@ -43,9 +43,9 @@
             justify-content: space-between;
             align-items: center;
             height: 100%;
-            max-width: 976px;
+            max-width: 1320px;
             margin: 0 auto;
-            padding: 0 24px;
+            padding: 0 12px;
         }
 
         .logo {
@@ -85,8 +85,6 @@
             align-items: center;
             gap: 8px;
             padding: 8px 10px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 999px;
             background: rgba(255, 255, 255, 0.08);
             color: #fff;
             text-decoration: none;
