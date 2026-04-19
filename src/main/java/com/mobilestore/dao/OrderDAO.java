@@ -16,7 +16,9 @@ public class OrderDAO {
 
     public List<Order> findAll() {
         List<Order> orders = new ArrayList<>();
-        String sql = "SELECT o.order_id, o.order_status, o.order_date, o.total_amount, o.user_id, u.username " +
+        String sql = "SELECT o.order_id, o.order_status, o.order_date, o.total_amount, o.user_id, " +
+                "u.username, o.shipping_address, o.customer_phone, o.note, o.shipping_cost, " +
+                "o.district_id, o.ward_code " +
                 "FROM orders o LEFT JOIN users u ON o.user_id = u.id ORDER BY o.order_id DESC";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
@@ -30,6 +32,13 @@ public class OrderDAO {
                     o.setOrderDate(new java.util.Date(ts.getTime()));
                 }
                 o.setTotalAmount(rs.getDouble("total_amount"));
+                o.setShippingCost(rs.getObject("shipping_cost") != null ? rs.getDouble("shipping_cost") : 0.0);
+                o.setShippingAddress(rs.getString("shipping_address"));
+                o.setCustomerPhone(rs.getString("customer_phone"));
+                o.setNote(rs.getString("note"));
+                Integer districtId = (Integer) rs.getObject("district_id");
+                o.setDistrictId(districtId);
+                o.setWardCode(rs.getString("ward_code"));
                 Integer uid = rs.getInt("user_id");
                 if (!rs.wasNull()) {
                     User u = new User();
@@ -47,7 +56,9 @@ public class OrderDAO {
     }
 
     public Order findById(int orderId) {
-        String sql = "SELECT o.order_id, o.order_status, o.order_date, o.total_amount, o.user_id, u.username " +
+        String sql = "SELECT o.order_id, o.order_status, o.order_date, o.total_amount, o.user_id, " +
+                "u.username, o.shipping_address, o.customer_phone, o.note, o.shipping_cost, " +
+                "o.district_id, o.ward_code " +
                 "FROM orders o LEFT JOIN users u ON o.user_id = u.id WHERE o.order_id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -62,6 +73,13 @@ public class OrderDAO {
                         o.setOrderDate(new java.util.Date(ts.getTime()));
                     }
                     o.setTotalAmount(rs.getDouble("total_amount"));
+                    o.setShippingCost(rs.getObject("shipping_cost") != null ? rs.getDouble("shipping_cost") : 0.0);
+                    o.setShippingAddress(rs.getString("shipping_address"));
+                    o.setCustomerPhone(rs.getString("customer_phone"));
+                    o.setNote(rs.getString("note"));
+                    Integer districtId = (Integer) rs.getObject("district_id");
+                    o.setDistrictId(districtId);
+                    o.setWardCode(rs.getString("ward_code"));
                     Integer uid = rs.getInt("user_id");
                     if (!rs.wasNull()) {
                         User u = new User();
@@ -82,11 +100,11 @@ public class OrderDAO {
 
     public List<OrderDetail> findDetailsByOrderId(int orderId) {
         List<OrderDetail> list = new ArrayList<>();
-        String sql = "SELECT od.id, od.price, od.quantity, od.product_id, od.variant_id, " +
-                "p.product_name, pv.color, pv.storage " +
+        String sql = "SELECT od.id, od.price, od.quantity, od.variant_id, " +
+                "p.product_name, p.product_id, pv.color, pv.storage " +
                 "FROM order_details od " +
-                "LEFT JOIN products p ON od.product_id = p.product_id " +
                 "LEFT JOIN product_variants pv ON od.variant_id = pv.variant_id " +
+                "LEFT JOIN products p ON pv.product_id = p.product_id " +
                 "WHERE od.order_id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -162,9 +180,13 @@ public class OrderDAO {
         return false;
     }
 
-    public Integer createOrder(int userId, double totalAmount, List<CartItem> items) {
-        String orderSql = "INSERT INTO orders (order_status, order_date, total_amount, user_id) VALUES (?, ?, ?, ?)";
-        String detailSql = "INSERT INTO order_details (price, quantity, order_id, product_id, variant_id) VALUES (?, ?, ?, ?, ?)";
+    public Integer createOrder(int userId, double totalAmount, List<CartItem> items,
+                               String shippingAddress, String customerPhone, String note,
+                               double shippingCost, Integer districtId, String wardCode) {
+        String orderSql = "INSERT INTO orders (order_status, order_date, total_amount, user_id, " +
+                "shipping_address, customer_phone, note, shipping_cost, district_id, ward_code) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String detailSql = "INSERT INTO order_details (price, quantity, order_id, variant_id) VALUES (?, ?, ?, ?)";
         String updateVariantSql = "UPDATE product_variants SET quantity_in_stock = quantity_in_stock - ? WHERE variant_id = ?";
 
         try (Connection conn = DatabaseConnection.getConnection()) {
@@ -174,6 +196,16 @@ public class OrderDAO {
                 psOrder.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
                 psOrder.setDouble(3, totalAmount);
                 psOrder.setInt(4, userId);
+                psOrder.setString(5, shippingAddress);
+                psOrder.setString(6, customerPhone);
+                psOrder.setString(7, note);
+                psOrder.setDouble(8, shippingCost);
+                if (districtId != null) {
+                    psOrder.setInt(9, districtId);
+                } else {
+                    psOrder.setNull(9, Types.INTEGER);
+                }
+                psOrder.setString(10, wardCode);
                 psOrder.executeUpdate();
 
                 try (ResultSet rs = psOrder.getGeneratedKeys()) {
@@ -189,11 +221,10 @@ public class OrderDAO {
                                 psDetail.setDouble(1, variant != null ? variant.getPrice() : product.getDisplayPrice());
                                 psDetail.setInt(2, item.getQuantity());
                                 psDetail.setInt(3, orderId);
-                                psDetail.setInt(4, product.getProductId());
                                 if (variant != null) {
-                                    psDetail.setInt(5, variant.getVariantId());
+                                    psDetail.setInt(4, variant.getVariantId());
                                 } else {
-                                    psDetail.setNull(5, Types.INTEGER);
+                                    psDetail.setNull(4, Types.INTEGER);
                                 }
                                 psDetail.addBatch();
 
@@ -225,12 +256,16 @@ public class OrderDAO {
     }
 
     public Integer createOrderWithPayment(int userId, double totalAmount,
-                                          List<CartItem> items, String vnpTransactionId, String vnpOrderId) {
+                                          List<CartItem> items,
+                                          String shippingAddress, String customerPhone, String note,
+                                          double shippingCost, Integer districtId, String wardCode,
+                                          String vnpTransactionId, String vnpOrderId) {
 
         String orderSql = "INSERT INTO orders (order_status, order_date, total_amount, user_id, " +
+                "shipping_address, customer_phone, note, shipping_cost, district_id, ward_code, " +
                 "vnp_transaction_id, vnp_order_id) " +
-                "VALUES (?, ?, ?, ?, ?, ?)";
-        String detailSql = "INSERT INTO order_details (price, quantity, order_id, product_id, variant_id) VALUES (?, ?, ?, ?, ?)";
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String detailSql = "INSERT INTO order_details (price, quantity, order_id, variant_id) VALUES (?, ?, ?, ?)";
         String updateVariantSql = "UPDATE product_variants SET quantity_in_stock = quantity_in_stock - ? WHERE variant_id = ?";
 
         try (Connection conn = DatabaseConnection.getConnection()) {
@@ -240,8 +275,18 @@ public class OrderDAO {
                 psOrder.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
                 psOrder.setDouble(3, totalAmount);
                 psOrder.setInt(4, userId);
-                psOrder.setString(5, vnpTransactionId);
-                psOrder.setString(6, vnpOrderId);
+                psOrder.setString(5, shippingAddress);
+                psOrder.setString(6, customerPhone);
+                psOrder.setString(7, note);
+                psOrder.setDouble(8, shippingCost);
+                if (districtId != null) {
+                    psOrder.setInt(9, districtId);
+                } else {
+                    psOrder.setNull(9, Types.INTEGER);
+                }
+                psOrder.setString(10, wardCode);
+                psOrder.setString(11, vnpTransactionId);
+                psOrder.setString(12, vnpOrderId);
                 psOrder.executeUpdate();
 
                 try (ResultSet rs = psOrder.getGeneratedKeys()) {
@@ -257,11 +302,10 @@ public class OrderDAO {
                                 psDetail.setDouble(1, variant != null ? variant.getPrice() : product.getDisplayPrice());
                                 psDetail.setInt(2, item.getQuantity());
                                 psDetail.setInt(3, orderId);
-                                psDetail.setInt(4, product.getProductId());
                                 if (variant != null) {
-                                    psDetail.setInt(5, variant.getVariantId());
+                                    psDetail.setInt(4, variant.getVariantId());
                                 } else {
-                                    psDetail.setNull(5, Types.INTEGER);
+                                    psDetail.setNull(4, Types.INTEGER);
                                 }
                                 psDetail.addBatch();
 
