@@ -20,4 +20,6 @@ public class User {
     private String shippingAddress;
     private String customerPhone;
     private String note;
+    private Integer districtId;
+    private String wardCode;
 }
