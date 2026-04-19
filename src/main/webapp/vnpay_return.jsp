@@ -29,18 +29,41 @@
         Double totalAmount = (Double) sessionObj.getAttribute("vnp_total_amount");
         List<CartItem> cart = (List<CartItem>) sessionObj.getAttribute("vnp_cart");
         Integer userId = (Integer) sessionObj.getAttribute("vnp_user_id");
-        
+        Double shippingFee = (Double) sessionObj.getAttribute("vnp_shipping_fee");
+        String shippingAddress = (String) sessionObj.getAttribute("vnp_shipping_address");
+        String customerPhone = (String) sessionObj.getAttribute("vnp_customer_phone");
+        String note = (String) sessionObj.getAttribute("vnp_note");
+        Integer districtId = (Integer) sessionObj.getAttribute("vnp_district_id");
+        String wardCode = (String) sessionObj.getAttribute("vnp_ward_code");
+
         if (totalAmount != null && cart != null && userId != null) {
             OrderDAO orderDAO = new OrderDAO();
             orderId = orderDAO.createOrderWithPayment(
-                userId, 
-                totalAmount, 
-                cart, 
+                userId,
+                totalAmount,
+                cart,
+                shippingAddress != null ? shippingAddress : "",
+                customerPhone != null ? customerPhone : "",
+                note != null ? note : "",
+                shippingFee != null ? shippingFee : 0.0,
+                districtId,
+                wardCode,
                 vnp_TransactionNo,
                 vnp_TxnRef
             );
-            
+
             if (orderId != null) {
+                System.out.println("[ORDER-SHIPPING-COST] OrderId=" + orderId
+                        + " | UserId=" + userId
+                        + " | DistrictId=" + districtId
+                        + " | WardCode=" + wardCode
+                        + " | PhiShipThucTe=" + (shippingFee != null ? (long) shippingFee : 0L) + " VND"
+                        + " | PhiShipUserTra=0 VND (Freeship)"
+                        + " | TongTruocShip=" + (long) totalAmount + " VND"
+                        + " | TongSauShip=" + (long) (totalAmount + (shippingFee != null ? shippingFee : 0.0)) + " VND"
+                        + " | PaymentMethod=VNPAY"
+                        + " | VNPayTxnRef=" + vnp_TxnRef
+                        + " | VNPayTransNo=" + vnp_TransactionNo);
                 CartDAO cartDAO = new CartDAO();
                 cartDAO.clearCartByUser(userId);
                 sessionObj.removeAttribute("cart");
@@ -56,8 +79,14 @@
     
     sessionObj.removeAttribute("vnp_order_id");
     sessionObj.removeAttribute("vnp_total_amount");
+    sessionObj.removeAttribute("vnp_shipping_fee");
     sessionObj.removeAttribute("vnp_cart");
     sessionObj.removeAttribute("vnp_user_id");
+    sessionObj.removeAttribute("vnp_shipping_address");
+    sessionObj.removeAttribute("vnp_customer_phone");
+    sessionObj.removeAttribute("vnp_note");
+    sessionObj.removeAttribute("vnp_district_id");
+    sessionObj.removeAttribute("vnp_ward_code");
 %>
 <!DOCTYPE html>
 <html lang="vi">
