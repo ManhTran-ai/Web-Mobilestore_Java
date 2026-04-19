@@ -392,6 +392,43 @@
             transform: translateY(0);
         }
 
+        select {
+            width: 100%;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 12px 14px;
+            font-size: 0.96rem;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            background: #f8fafc;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 36px;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #0f766e;
+            box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.14);
+            background-color: #fff;
+        }
+
+        select:disabled {
+            background-color: #e2e8f0;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .address-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 16px;
+            margin-top: 12px;
+        }
+
     </style>
 </head>
 <body>
@@ -468,11 +505,33 @@
                                 <input type="text" id="customerPhone" name="customerPhone"
                                        value="${profileUser.customerPhone}" placeholder="Nhập số điện thoại"/>
                             </div>
-                            <div>
-                                <label for="shippingAddress">Địa chỉ giao hàng</label>
-                                <textarea id="shippingAddress" name="shippingAddress"
-                                          placeholder="Số nhà, đường, quận/huyện, tỉnh/thành">${profileUser.shippingAddress}</textarea>
+                            <div class="address-grid">
+                                <div>
+                                    <label for="provinceId">Tỉnh / Thành phố</label>
+                                    <select id="provinceId" name="provinceId">
+                                        <option value="">-- Chọn Tỉnh / Thành phố --</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="districtId">Quận / Huyện</label>
+                                    <select id="districtId" name="districtIdSelect" disabled>
+                                        <option value="">-- Chọn Quận / Huyện --</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="wardCode">Phường / Xã</label>
+                                    <select id="wardCode" name="wardCodeSelect" disabled>
+                                        <option value="">-- Chọn Phường / Xã --</option>
+                                    </select>
+                                </div>
                             </div>
+                            <div style="margin-top:16px;">
+                                <label for="shippingAddress">Địa chỉ chi tiết</label>
+                                <textarea id="shippingAddress" name="shippingAddress"
+                                          placeholder="Số nhà, tên đường (không bắt buộc)">${profileUser.shippingAddress}</textarea>
+                            </div>
+                            <input type="hidden" id="districtIdHidden" name="districtId" value="${profileUser.districtId}"/>
+                            <input type="hidden" id="wardCodeHiddenField" name="wardCode" value="${profileUser.wardCode}"/>
                             <div>
                                 <label for="note">Ghi chú</label>
                                 <textarea id="note" name="note"
@@ -618,6 +677,133 @@
     }
 
     refreshCartCount();
+
+    const ctx = '${pageContext.request.contextPath}';
+
+    const provinceSel       = document.getElementById('provinceId');
+    const districtSel      = document.getElementById('districtId');
+    const wardSel          = document.getElementById('wardCode');
+    const hiddenDistrict   = document.getElementById('districtIdHidden');
+    const hiddenWard       = document.getElementById('wardCodeHiddenField');
+
+    const savedDistrictId = '${profileUser.districtId}';
+    const savedWardCode = '${profileUser.wardCode}';
+
+    async function loadProvinces() {
+        const res = await fetch(ctx + '/api/ghn/provinces');
+        const json = await res.json();
+        if (json.success) {
+            json.data.forEach(p => {
+                const opt = document.createElement('option');
+                opt.value = p.ProvinceID;
+                opt.textContent = p.NameExtension
+                    ? p.NameExtension.find(n => n && n.trim()) || p.NameExtension[0] || p.ProvinceName
+                    : p.ProvinceName;
+                provinceSel.appendChild(opt);
+            });
+            if (savedDistrictId) {
+                await resolveAndPrefill(savedDistrictId, savedWardCode);
+            }
+        }
+    }
+
+    async function resolveAndPrefill(districtId, wardCode) {
+        for (const opt of provinceSel.options) {
+            if (!opt.value) continue;
+            const dRes = await fetch(ctx + '/api/ghn/districts?province_id=' + opt.value);
+            const dJson = await dRes.json();
+            if (dJson.success) {
+                const found = dJson.data.find(d => String(d.DistrictID) === String(districtId));
+                if (found) {
+                    provinceSel.value = opt.value;
+                    await loadDistrictsByProvince(opt.value, districtId, wardCode);
+                    return;
+                }
+            }
+        }
+    }
+
+    async function loadDistrictsByProvince(provinceId, preselectId, preselectWard) {
+        districtSel.innerHTML = '<option value="">-- Đang tải... --</option>';
+        districtSel.disabled = true;
+        wardSel.innerHTML = '<option value="">-- Chọn Phường / Xã --</option>';
+        wardSel.disabled = true;
+
+        if (!provinceId) {
+            districtSel.innerHTML = '<option value="">-- Chọn Tỉnh trước --</option>';
+            return;
+        }
+
+        const res = await fetch(ctx + '/api/ghn/districts?province_id=' + provinceId);
+        const json = await res.json();
+        districtSel.innerHTML = '<option value="">-- Chọn Quận / Huyện --</option>';
+
+        if (json.success) {
+            json.data.forEach(d => {
+                const opt = document.createElement('option');
+                opt.value = d.DistrictID;
+                opt.textContent = d.NameExtension
+                    ? d.NameExtension.find(n => n && n.trim()) || d.DistrictName
+                    : d.DistrictName;
+                districtSel.appendChild(opt);
+            });
+            districtSel.disabled = false;
+
+            if (preselectId) {
+                districtSel.value = preselectId;
+                await loadWardsByDistrict(preselectId, preselectWard);
+            }
+        }
+    }
+
+    async function loadWardsByDistrict(districtId, preselectCode) {
+        wardSel.innerHTML = '<option value="">-- Đang tải... --</option>';
+        wardSel.disabled = true;
+
+        if (!districtId) {
+            wardSel.innerHTML = '<option value="">-- Chọn Quận trước --</option>';
+            return;
+        }
+
+        const res = await fetch(ctx + '/api/ghn/wards?district_id=' + districtId);
+        const json = await res.json();
+        wardSel.innerHTML = '<option value="">-- Chọn Phường / Xã --</option>';
+
+        if (json.success) {
+            json.data.forEach(w => {
+                const opt = document.createElement('option');
+                opt.value = w.WardCode;
+                opt.textContent = w.NameExtension
+                    ? w.NameExtension.find(n => n && n.trim()) || w.WardName
+                    : w.WardName;
+                wardSel.appendChild(opt);
+            });
+            wardSel.disabled = false;
+
+            if (preselectCode) {
+                wardSel.value = preselectCode;
+                hiddenDistrict.value = districtId;
+                hiddenWard.value = preselectCode;
+            }
+        }
+    }
+
+    provinceSel.addEventListener('change', () => {
+        loadDistrictsByProvince(provinceSel.value, null, null);
+    });
+
+    districtSel.addEventListener('change', () => {
+        loadWardsByDistrict(districtSel.value, null);
+        hiddenDistrict.value = districtSel.value || '';
+        hiddenWard.value = '';
+    });
+
+    wardSel.addEventListener('change', () => {
+        hiddenDistrict.value = districtSel.value || '';
+        hiddenWard.value = wardSel.value || '';
+    });
+
+    loadProvinces();
 </script>
 </body>
 </html>
