@@ -30,12 +30,20 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Integer createOrder(Integer userId, Double totalAmount, List<CartItem> items) {
-        return orderDAO.createOrder(userId, totalAmount, items);
+    public Integer createOrder(Integer userId, Double totalAmount, List<CartItem> items,
+                              String shippingAddress, String customerPhone, String note,
+                              Double shippingCost, Integer districtId, String wardCode) {
+        return orderDAO.createOrder(userId, totalAmount, items,
+                shippingAddress, customerPhone, note, shippingCost, districtId, wardCode);
     }
 
     @Override
-    public Integer createOrderWithPayment(Integer userId, Double totalAmount, List<CartItem> items, String vnpTransactionId, String vnpOrderId) {
-        return orderDAO.createOrderWithPayment(userId, totalAmount, items, vnpTransactionId, vnpOrderId);
+    public Integer createOrderWithPayment(Integer userId, Double totalAmount, List<CartItem> items,
+                                         String shippingAddress, String customerPhone, String note,
+                                         Double shippingCost, Integer districtId, String wardCode,
+                                         String vnpTransactionId, String vnpOrderId) {
+        return orderDAO.createOrderWithPayment(userId, totalAmount, items,
+                shippingAddress, customerPhone, note, shippingCost, districtId, wardCode,
+                vnpTransactionId, vnpOrderId);
     }
 }

@@ -28,4 +28,7 @@ public class Order {
     private String paymentStatus;
     private String vnpTransactionId;
     private String vnpOrderId;
+    private Double shippingCost;
+    private Integer districtId;
+    private String wardCode;
 }

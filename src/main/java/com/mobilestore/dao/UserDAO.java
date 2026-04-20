@@ -10,7 +10,7 @@ import java.util.List;
 public class UserDAO {
     
     public User findByUsername(String username) {
-        String sql = "SELECT id, username, password, role_name, oauth_provider, oauth_id, email, shipping_address, customer_phone, note " +
+        String sql = "SELECT id, username, password, role_name, oauth_provider, oauth_id, email, shipping_address, customer_phone, note, district_id, ward_code " +
                      "FROM users " +
                      "WHERE username = ?";
         
@@ -32,7 +32,7 @@ public class UserDAO {
     }
     
     public User findById(Integer id) {
-        String sql = "SELECT id, username, password, role_name, oauth_provider, oauth_id, email, shipping_address, customer_phone, note " +
+        String sql = "SELECT id, username, password, role_name, oauth_provider, oauth_id, email, shipping_address, customer_phone, note, district_id, ward_code " +
                      "FROM users " +
                      "WHERE id = ?";
         
@@ -55,7 +55,7 @@ public class UserDAO {
     
     public List<User> findAll() {
         List<User> users = new ArrayList<>();
-        String sql = "SELECT id, username, password, role_name, oauth_provider, oauth_id, email, shipping_address, customer_phone, note " +
+        String sql = "SELECT id, username, password, role_name, oauth_provider, oauth_id, email, shipping_address, customer_phone, note, district_id, ward_code " +
                      "FROM users";
         
         try (Connection conn = DatabaseConnection.getConnection();
@@ -101,7 +101,7 @@ public class UserDAO {
     }
     
     public boolean update(User user) {
-        String sql = "UPDATE users SET username = ?, password = ?, role_name = ?, email = ?, shipping_address = ?, customer_phone = ?, note = ? WHERE id = ?";
+        String sql = "UPDATE users SET username = ?, password = ?, role_name = ?, email = ?, shipping_address = ?, customer_phone = ?, note = ?, district_id = ?, ward_code = ? WHERE id = ?";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -113,7 +113,9 @@ public class UserDAO {
             ps.setString(5, user.getShippingAddress());
             ps.setString(6, user.getCustomerPhone());
             ps.setString(7, user.getNote());
-            ps.setInt(8, user.getId());
+            ps.setObject(8, user.getDistrictId());
+            ps.setString(9, user.getWardCode());
+            ps.setInt(10, user.getId());
             
             int affectedRows = ps.executeUpdate();
             return affectedRows > 0;
@@ -125,7 +127,7 @@ public class UserDAO {
     }
 
     public boolean updateProfile(User user) {
-        String sql = "UPDATE users SET username = ?, email = ?, shipping_address = ?, customer_phone = ?, note = ? WHERE id = ?";
+        String sql = "UPDATE users SET username = ?, email = ?, shipping_address = ?, customer_phone = ?, note = ?, district_id = ?, ward_code = ? WHERE id = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -135,7 +137,9 @@ public class UserDAO {
             ps.setString(3, user.getShippingAddress());
             ps.setString(4, user.getCustomerPhone());
             ps.setString(5, user.getNote());
-            ps.setInt(6, user.getId());
+            ps.setObject(6, user.getDistrictId());
+            ps.setString(7, user.getWardCode());
+            ps.setInt(8, user.getId());
 
             int affectedRows = ps.executeUpdate();
             return affectedRows > 0;
@@ -192,12 +196,14 @@ public class UserDAO {
         user.setShippingAddress(rs.getString("shipping_address"));
         user.setCustomerPhone(rs.getString("customer_phone"));
         user.setNote(rs.getString("note"));
+        user.setDistrictId(rs.getObject("district_id", Integer.class));
+        user.setWardCode(rs.getString("ward_code"));
         
         return user;
     }
     
     public User findByOauthId(String oauthId, String oauthProvider) {
-        String sql = "SELECT id, username, password, role_name, oauth_provider, oauth_id, email, shipping_address, customer_phone, note " +
+        String sql = "SELECT id, username, password, role_name, oauth_provider, oauth_id, email, shipping_address, customer_phone, note, district_id, ward_code " +
                      "FROM users " +
                      "WHERE oauth_id = ? AND oauth_provider = ?";
         
@@ -220,7 +226,7 @@ public class UserDAO {
     }
 
     public User findByEmail(String email) {
-        String sql = "SELECT id, username, password, role_name, oauth_provider, oauth_id, email, shipping_address, customer_phone, note " +
+        String sql = "SELECT id, username, password, role_name, oauth_provider, oauth_id, email, shipping_address, customer_phone, note, district_id, ward_code " +
                      "FROM users " +
                      "WHERE email = ?";
 
