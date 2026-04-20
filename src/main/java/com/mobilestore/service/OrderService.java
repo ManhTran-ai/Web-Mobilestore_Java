@@ -9,6 +9,11 @@ public interface OrderService {
     Order findById(Integer id);
     boolean updateStatus(Integer orderId, String status);
     boolean delete(Integer id);
-    Integer createOrder(Integer userId, Double totalAmount, List<CartItem> items);
-    Integer createOrderWithPayment(Integer userId, Double totalAmount, List<CartItem> items, String vnpTransactionId, String vnpOrderId);
+    Integer createOrder(Integer userId, Double totalAmount, List<CartItem> items,
+                       String shippingAddress, String customerPhone, String note,
+                       Double shippingCost, Integer districtId, String wardCode);
+    Integer createOrderWithPayment(Integer userId, Double totalAmount, List<CartItem> items,
+                                  String shippingAddress, String customerPhone, String note,
+                                  Double shippingCost, Integer districtId, String wardCode,
+                                  String vnpTransactionId, String vnpOrderId);
 }
