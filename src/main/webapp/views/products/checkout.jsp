@@ -523,12 +523,31 @@
                                 </div>
 
                                 <div class="form-group" id="addressGroup">
-                                    <label class="form-label" for="address">
+                                    <label class="form-label" for="shippingAddress">
                                         Địa chỉ nhận hàng <span class="required">*</span>
                                     </label>
-                                    <textarea id="address" name="address" class="form-control"
+                                    <div class="address-dropdowns" style="display:grid; gap:12px; margin-bottom:12px;">
+                                        <div>
+                                            <select id="provinceSelect" class="form-control" style="background-image:none;">
+                                                <option value="">-- Chọn Tỉnh / Thành phố --</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <select id="districtSelect" class="form-control" disabled style="background-image:none;">
+                                                <option value="">-- Chọn Quận / Huyện --</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <select id="wardSelect" class="form-control" disabled style="background-image:none;">
+                                                <option value="">-- Chọn Phường / Xã --</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" id="districtIdField" name="districtId" value="${sessionScope.user.districtId}"/>
+                                    <input type="hidden" id="wardCodeField" name="wardCode" value="${sessionScope.user.wardCode}"/>
+                                    <textarea id="shippingAddress" name="shippingAddress" class="form-control"
                                               required minlength="10" maxlength="500"
-                                              placeholder="Nhập địa chỉ chi tiết (số nhà, đường, phường/xã, quận/huyện, tỉnh/thành phố)">${sessionScope.user != null && sessionScope.user.shippingAddress != null ? sessionScope.user.shippingAddress : ''}</textarea>
+                                              placeholder="Số nhà, tên đường (không bắt buộc)">${sessionScope.user.shippingAddress != null ? sessionScope.user.shippingAddress : ''}</textarea>
                                     <div class="error-message" id="addressError">Vui lòng nhập địa chỉ giao hàng</div>
                                 </div>
 
@@ -579,11 +598,18 @@
                                 </div>
                                 <div class="order-total-row">
                                     <span>Phí vận chuyển:</span>
-                                    <span>Miễn phí</span>
+                                    <span id="shippingFeeDisplay">
+                                        <c:choose>
+                                            <c:when test="${shippingCost > 0}">
+                                                <fmt:formatNumber value="${shippingCost}" type="number" groupingUsed="true"/>₫
+                                            </c:when>
+                                            <c:otherwise>Miễn phí</c:otherwise>
+                                        </c:choose>
+                                    </span>
                                 </div>
                                 <div class="order-total-row final">
                                     <span>Tổng cộng:</span>
-                                    <span class="amount"><fmt:formatNumber value="${total}" type="number"
+                                    <span class="amount" id="totalAmountDisplay"><fmt:formatNumber value="${total + (shippingCost != null ? shippingCost : 0)}" type="number"
                                                                            groupingUsed="true"/>₫</span>
                                 </div>
                             </div>
@@ -657,6 +683,179 @@
         });
     }
 
+    const ctx = '${pageContext.request.contextPath}';
+    const provinceSel = document.getElementById('provinceSelect');
+    const districtSel = document.getElementById('districtSelect');
+    const wardSel     = document.getElementById('wardSelect');
+    const hiddenDistrict = document.getElementById('districtIdField');
+    const hiddenWard    = document.getElementById('wardCodeField');
+
+    const savedDistrictId = '${sessionScope.user.districtId}';
+    const savedWardCode   = '${sessionScope.user.wardCode}';
+
+    let cartTotal = ${total};
+
+    async function loadProvinces() {
+        const res = await fetch(ctx + '/api/ghn/provinces');
+        const json = await res.json();
+        if (json.success) {
+            json.data.forEach(p => {
+                const opt = document.createElement('option');
+                opt.value = p.ProvinceID;
+                opt.textContent = p.NameExtension
+                    ? p.NameExtension.find(n => n && n.trim()) || p.NameExtension[0] || p.ProvinceName
+                    : p.ProvinceName;
+                provinceSel.appendChild(opt);
+            });
+            if (savedDistrictId) {
+                await resolveAndPrefill(savedDistrictId, savedWardCode);
+            }
+        }
+    }
+
+    async function resolveAndPrefill(districtId, wardCode) {
+        for (const opt of provinceSel.options) {
+            if (!opt.value) continue;
+            const dRes = await fetch(ctx + '/api/ghn/districts?province_id=' + opt.value);
+            const dJson = await dRes.json();
+            if (dJson.success) {
+                const found = dJson.data.find(d => String(d.DistrictID) === String(districtId));
+                if (found) {
+                    provinceSel.value = opt.value;
+                    await loadDistricts(opt.value, districtId, wardCode);
+                    return;
+                }
+            }
+        }
+    }
+
+    async function loadDistricts(provinceId, preselectId, preselectWard) {
+        districtSel.innerHTML = '<option value="">-- Đang tải... --</option>';
+        districtSel.disabled = true;
+        wardSel.innerHTML = '<option value="">-- Chọn Phường / Xã --</option>';
+        wardSel.disabled = true;
+
+        if (!provinceId) {
+            districtSel.innerHTML = '<option value="">-- Chọn Tỉnh trước --</option>';
+            return;
+        }
+
+        const res = await fetch(ctx + '/api/ghn/districts?province_id=' + provinceId);
+        const json = await res.json();
+        districtSel.innerHTML = '<option value="">-- Chọn Quận / Huyện --</option>';
+
+        if (json.success) {
+            json.data.forEach(d => {
+                const opt = document.createElement('option');
+                opt.value = d.DistrictID;
+                opt.textContent = d.NameExtension
+                    ? d.NameExtension.find(n => n && n.trim()) || d.DistrictName
+                    : d.DistrictName;
+                districtSel.appendChild(opt);
+            });
+            districtSel.disabled = false;
+
+            if (preselectId) {
+                districtSel.value = preselectId;
+                await loadWards(preselectId, preselectWard);
+            }
+        }
+    }
+
+    async function loadWards(districtId, preselectCode) {
+        wardSel.innerHTML = '<option value="">-- Đang tải... --</option>';
+        wardSel.disabled = true;
+
+        if (!districtId) {
+            wardSel.innerHTML = '<option value="">-- Chọn Quận trước --</option>';
+            return;
+        }
+
+        const res = await fetch(ctx + '/api/ghn/wards?district_id=' + districtId);
+        const json = await res.json();
+        wardSel.innerHTML = '<option value="">-- Chọn Phường / Xã --</option>';
+
+        if (json.success) {
+            json.data.forEach(w => {
+                const opt = document.createElement('option');
+                opt.value = w.WardCode;
+                opt.textContent = w.NameExtension
+                    ? w.NameExtension.find(n => n && n.trim()) || w.WardName
+                    : w.WardName;
+                wardSel.appendChild(opt);
+            });
+            wardSel.disabled = false;
+
+            if (preselectCode) {
+                wardSel.value = preselectCode;
+                hiddenDistrict.value = districtId;
+                hiddenWard.value = preselectCode;
+                await calculateShippingFee();
+            } else {
+                updateShippingDisplay(0);
+            }
+        }
+    }
+
+    async function calculateShippingFee() {
+        const districtId = districtSel.value;
+        const wardCode = wardSel.value;
+
+        if (!districtId || !wardCode) {
+            updateShippingDisplay(0);
+            return;
+        }
+
+        const body = {
+            to_district_id: parseInt(districtId),
+            to_ward_code: wardCode
+        };
+
+        const res = await fetch(ctx + '/api/ghn/calculate-fee', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+        });
+        const json = await res.json();
+
+        const fee = json.success && json.fee ? json.fee : 0;
+        updateShippingDisplay(fee);
+    }
+
+    function updateShippingDisplay(fee) {
+        hiddenDistrict.value = districtSel.value || '';
+        hiddenWard.value = wardSel.value || '';
+
+        const shippingEl = document.getElementById('shippingFeeDisplay');
+        const totalEl = document.getElementById('totalAmountDisplay');
+        const grandTotal = cartTotal + fee;
+
+        if (shippingEl) {
+            if (fee > 0) {
+                shippingEl.textContent = new Intl.NumberFormat('vi-VN').format(fee) + '₫';
+            } else {
+                shippingEl.textContent = 'Miễn phí';
+            }
+        }
+        if (totalEl) {
+            totalEl.textContent = new Intl.NumberFormat('vi-VN').format(grandTotal) + '₫';
+        }
+    }
+
+    provinceSel.addEventListener('change', () => {
+        loadDistricts(provinceSel.value, null, null);
+    });
+
+    districtSel.addEventListener('change', () => {
+        loadWards(districtSel.value, null);
+    });
+
+    wardSel.addEventListener('change', () => {
+        calculateShippingFee();
+    });
+
+    loadProvinces();
+
     function validateForm() {
         let isValid = true;
 
@@ -695,21 +894,32 @@
             emailGroup.classList.remove('error');
         }
 
-        const address = document.getElementById('address');
-        const addressGroup = document.getElementById('addressGroup');
-        if (!address.value.trim() || address.value.trim().length < 10) {
-            address.classList.add('error');
-            addressGroup.classList.add('error');
+        if (!districtSel.value) {
+            districtSel.style.borderColor = '#dc3545';
             isValid = false;
         } else {
-            address.classList.remove('error');
-            addressGroup.classList.remove('error');
+            districtSel.style.borderColor = '';
+        }
+
+        if (!wardSel.value) {
+            wardSel.style.borderColor = '#dc3545';
+            isValid = false;
+        } else {
+            wardSel.style.borderColor = '';
         }
 
         return isValid;
     }
 
     function payWithVNPay() {
+        if (!validateForm()) {
+            const firstError = document.querySelector('.form-group.error') ||
+                document.querySelector('select[style*="borderColor: rgb(220, 53, 69)"]');
+            if (firstError) {
+                firstError.scrollIntoView({behavior: 'smooth', block: 'center'});
+            }
+            return;
+        }
         const form = document.createElement('form');
         form.method = 'POST';
         form.action = '${pageContext.request.contextPath}/vnpay-payment';
@@ -725,15 +935,11 @@
     });
 
     document.getElementById('checkoutForm').addEventListener('submit', function (e) {
-        const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
-
-        if (paymentMethod === 'COD') {
-            if (!validateForm()) {
-                e.preventDefault();
-                const firstError = document.querySelector('.form-group.error');
-                if (firstError) {
-                    firstError.scrollIntoView({behavior: 'smooth', block: 'center'});
-                }
+        if (!validateForm()) {
+            e.preventDefault();
+            const firstError = document.querySelector('.form-group.error, select[style*="borderColor"]');
+            if (firstError) {
+                firstError.scrollIntoView({behavior: 'smooth', block: 'center'});
             }
         }
     });
@@ -741,7 +947,11 @@
     document.querySelectorAll('.form-control').forEach(input => {
         input.addEventListener('input', function () {
             this.classList.remove('error');
-            this.closest('.form-group').classList.remove('error');
+            const group = this.closest('.form-group');
+            if (group) group.classList.remove('error');
+            if (this.tagName === 'SELECT') {
+                this.style.borderColor = '';
+            }
         });
     });
 

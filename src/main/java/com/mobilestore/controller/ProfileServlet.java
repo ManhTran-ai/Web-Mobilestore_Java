@@ -97,6 +97,8 @@ public class ProfileServlet extends HttpServlet {
         String note = trimToNull(req.getParameter("note"));
         String newPassword = req.getParameter("newPassword");
         String confirmPassword = req.getParameter("confirmPassword");
+        String districtIdParam = trimToNull(req.getParameter("districtId"));
+        String wardCode = trimToNull(req.getParameter("wardCode"));
 
         if (username == null || username.length() < 3) {
             errors.add("Họ tên cần ít nhất 3 ký tự");
@@ -120,6 +122,14 @@ public class ProfileServlet extends HttpServlet {
             }
         }
 
+        Integer districtId = null;
+        if (districtIdParam != null && !districtIdParam.isBlank()) {
+            try {
+                districtId = Integer.parseInt(districtIdParam);
+            } catch (NumberFormatException ignored) {
+            }
+        }
+
         User userFromDb = userService.getById(sessionUser.getId());
         if (userFromDb == null) {
             session.invalidate();
@@ -133,6 +143,8 @@ public class ProfileServlet extends HttpServlet {
             userFromDb.setShippingAddress(shippingAddress);
             userFromDb.setCustomerPhone(customerPhone);
             userFromDb.setNote(note);
+            userFromDb.setDistrictId(districtId);
+            userFromDb.setWardCode(wardCode);
             req.setAttribute("errorMessage", String.join(". ", errors));
             populateAndForward(req, resp, userFromDb, "info");
             return;
@@ -143,6 +155,8 @@ public class ProfileServlet extends HttpServlet {
         userFromDb.setShippingAddress(shippingAddress);
         userFromDb.setCustomerPhone(customerPhone);
         userFromDb.setNote(note);
+        userFromDb.setDistrictId(districtId);
+        userFromDb.setWardCode(wardCode);
 
         boolean profileUpdated = userService.updateProfile(userFromDb);
         boolean passwordUpdated = true;
