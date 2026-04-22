@@ -52,14 +52,14 @@
         .form-actions { display: flex; gap: 1rem; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #e5e5ea; }
         .btn { display: inline-flex; align-items: center; justify-content: center; padding: 0.75rem 1.5rem; border-radius: 8px; font-size: 0.95rem; font-weight: 500; text-decoration: none; cursor: pointer; transition: all 0.2s; border: none; font-family: inherit; }
         .btn:disabled { opacity: 0.6; cursor: not-allowed; }
-        .btn-primary { background: #0071e3; color: #ffffff; }
-        .btn-primary:hover:not(:disabled) { background: #0077ed; }
-        .btn-secondary { background: #e5e5ea; color: #1a1a1a; }
-        .btn-secondary:hover { background: #d1d1d6; }
-        .btn-add { background: #34c759; color: #fff; padding: 0.5rem 1rem; font-size: 0.875rem; }
-        .btn-add:hover { background: #2db84d; }
-        .btn-danger { background: #ff3b30; color: #fff; padding: 0.5rem 1rem; font-size: 0.875rem; }
-        .btn-danger:hover { background: #e0352b; }
+        .btn-primary { background: #0071e3 !important; color: #ffffff !important; }
+        .btn-primary:hover:not(:disabled) { background: #0077ed !important; }
+        .btn-secondary { background: #e5e5ea !important; color: #1a1a1a !important; }
+        .btn-secondary:hover { background: #d1d1d6 !important; }
+        .btn-add { background: #34c759 !important; color: #fff !important; padding: 0.5rem 1rem; font-size: 0.875rem; }
+        .btn-add:hover { background: #2db84d !important; }
+        .btn-danger { background: #ff3b30 !important; color: #fff !important; padding: 0.5rem 1rem; font-size: 0.875rem; }
+        .btn-danger:hover { background: #e0352b !important; }
         .spinner { display: none; width: 18px; height: 18px; border: 2px solid #ffffff; border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite; margin-right: 6px; }
         @keyframes spin { to { transform: rotate(360deg); } }
         .btn-primary.loading .spinner { display: inline-block; }

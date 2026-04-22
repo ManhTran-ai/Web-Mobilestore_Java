@@ -189,8 +189,8 @@
             display: block;
             width: 100%;
             padding: 14px 16px;
-            background: #1a1a1a;
-            color: #ffffff;
+            background: #1a1a1a !important;
+            color: #ffffff !important;
             text-align: center;
             border: none;
             border-radius: 8px;
@@ -201,7 +201,7 @@
         }
 
         .btn:hover {
-            background: #333;
+            background: #333 !important;
             transform: translateY(-1px);
         }
 
@@ -212,9 +212,9 @@
             gap: 10px;
             width: 100%;
             padding: 14px 16px;
-            background: #ffffff;
-            color: #3c4043;
-            border: 1px solid #dadce0;
+            background: #1a1a1a !important;
+            color: #ffffff !important;
+            border: 1px solid #1a1a1a;
             border-radius: 8px;
             font-weight: 500;
             font-size: 0.95rem;
@@ -223,7 +223,7 @@
         }
 
         .btn-google:hover {
-            background: #f8f9fa;
+            background: #333 !important;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
 

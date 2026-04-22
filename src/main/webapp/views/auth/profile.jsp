@@ -235,19 +235,19 @@
         }
 
         .btn-primary {
-            background: #0f172a;
-            color: #fff;
+            background: #0f172a !important;
+            color: #fff !important;
             box-shadow: 0 14px 32px rgba(15, 23, 42, 0.22);
         }
 
         .btn-primary:hover {
             transform: translateY(-1px);
-            background: #111827;
+            background: #111827 !important;
         }
 
         .btn-ghost {
-            background: #e2e8f0;
-            color: #0f172a;
+            background: #e2e8f0 !important;
+            color: #0f172a !important;
         }
 
         .note {

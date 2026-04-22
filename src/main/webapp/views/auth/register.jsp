@@ -217,8 +217,8 @@
             display: block;
             width: 100%;
             padding: 14px 16px;
-            background: #1a1a1a;
-            color: #ffffff;
+            background: #1a1a1a !important;
+            color: #ffffff !important;
             text-align: center;
             border: none;
             border-radius: 8px;
@@ -229,7 +229,7 @@
         }
 
         .btn:hover {
-            background: #333;
+            background: #333 !important;
             transform: translateY(-1px);
         }
 
