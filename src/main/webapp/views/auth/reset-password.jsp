@@ -94,22 +94,22 @@
         .password-strength.weak { color: #dc3545; }
         .password-strength.medium { color: #ffc107; }
         .password-strength.strong { color: #28a745; }
-        .btn { 
-            display: block; 
-            width: 100%; 
-            padding: 14px 16px; 
-            background: #1a1a1a; 
-            color: #ffffff; 
-            text-align: center; 
-            border: none; 
-            border-radius: 8px; 
-            font-weight: 500; 
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 14px 16px;
+            background: #1a1a1a !important;
+            color: #ffffff !important;
+            text-align: center;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
             font-size: 0.95rem;
-            cursor: pointer; 
-            transition: background-color 0.2s, transform 0.2s; 
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.2s;
         }
-        .btn:hover { 
-            background: #333;
+        .btn:hover {
+            background: #333 !important;
             transform: translateY(-1px);
         }
         .error { 

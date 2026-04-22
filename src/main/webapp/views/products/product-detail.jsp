@@ -60,10 +60,10 @@
         .product-description h3 { font-size: 1.2rem; font-weight: 600; margin-bottom: 1rem; color: #1a1a1a; }
         .product-description p { line-height: 1.6; color: #333; }
         .actions { display: flex; gap: 1rem; align-items: center; }
-        .btn { display: inline-block; padding: 0.75rem 1.5rem; border-radius: 8px; background: #000; color: #fff; text-decoration: none; font-weight: 500; transition: opacity 0.2s; border: none; cursor: pointer; font-size: 1rem; }
+        .btn { display: inline-block; padding: 0.75rem 1.5rem; border-radius: 8px; background: #000 !important; color: #fff !important; text-decoration: none; font-weight: 500; transition: opacity 0.2s; border: none; cursor: pointer; font-size: 1rem; }
         .btn:hover { opacity: 0.8; }
-        .btn.secondary { background: #e5e5ea; color: #1a1a1a; }
-        .btn:disabled { background: #ccc; cursor: not-allowed; }
+        .btn.secondary { background: #e5e5ea !important; color: #1a1a1a !important; }
+        .btn:disabled { background: #ccc !important; cursor: not-allowed; }
         .related-products { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid #e5e5ea; }
         .related-products h2 { font-size: 1.5rem; font-weight: 600; margin-bottom: 1.5rem; color: #1a1a1a; }
         .related-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; }

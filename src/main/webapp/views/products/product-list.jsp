@@ -32,9 +32,9 @@
         .current-price.sale { color: #ff3b30; }
         .discount-tag { background: #000; color: #fff; padding: 2px 8px; border-radius: 4px; font-size: 0.9rem; font-weight: 600; }
         .old-price { font-size: 1.2rem; color: #86868b; text-decoration: line-through; }
-        .btn { display: inline-block; padding: 0.5rem 0.75rem; border-radius: 8px; background: #000; color: #fff; text-decoration: none; }
-        .btn.secondary { background: #e5e5ea; color: #1a1a1a; }
-        .btn.add-to-cart-btn { background: #000; color: #e5e5ea; }
+        .btn { display: inline-block; padding: 0.5rem 0.75rem; border-radius: 8px; background: #000 !important; color: #fff !important; text-decoration: none; }
+        .btn.secondary { background: #e5e5ea !important; color: #1a1a1a !important; }
+        .btn.add-to-cart-btn { background: #000 !important; color: #e5e5ea !important; }
         .variant-selector { margin: 4px 0; }
         .variant-selector select { width: 100%; padding: 4px; border: 1px solid #e5e5ea; border-radius: 6px; font-size: 0.85rem; }
         .wishlist-btn {
