@@ -288,8 +288,8 @@
         .btn {
             padding: 12px 20px;
             border-radius: 8px;
-            background: #111;
-            color: #fff;
+            background: #111 !important;
+            color: #fff !important;
             border: none;
             cursor: pointer;
             text-decoration: none;
@@ -306,12 +306,12 @@
         }
 
         .btn-secondary {
-            background: #e5e5ea;
-            color: #1a1a1a;
+            background: #e5e5ea !important;
+            color: #1a1a1a !important;
         }
 
         .btn-vnpay {
-            background: #0066cc;
+            background: #0066cc !important;
         }
 
         .btn-group {

@@ -281,8 +281,8 @@
         .btn {
             display: inline-block;
             padding: 14px 32px;
-            background: #1a1a1a;
-            color: #ffffff;
+            background: #1a1a1a !important;
+            color: #ffffff !important;
             text-decoration: none;
             border-radius: 8px;
             font-weight: 500;
@@ -293,7 +293,7 @@
         }
 
         .btn:hover {
-            background: #333;
+            background: #333 !important;
             transform: translateY(-1px);
         }
 

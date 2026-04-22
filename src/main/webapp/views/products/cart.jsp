@@ -29,9 +29,9 @@
         .qty-controls { display: flex; gap: 8px; align-items: center }
         .qty-input { width: 60px; padding: 8px; border: 1px solid #e5e5ea; border-radius: 6px; text-align: center; font-size: 14px; }
         .qty-input:focus { outline: none; border-color: #0071e3; }
-        .btn { padding: 8px 12px; border-radius: 6px; background: #111; color: #fff; text-decoration: none; border: none; cursor: pointer; transition: opacity 0.2s }
+        .btn { padding: 8px 12px; border-radius: 6px; background: #111 !important; color: #fff !important; text-decoration: none; border: none; cursor: pointer; transition: opacity 0.2s }
         .btn:hover { opacity: 0.8 }
-        .btn.secondary { background: #e5e5ea; color: #111 }
+        .btn.secondary { background: #e5e5ea !important; color: #111 !important; }
         .btn.danger { background: #dc3545; color: #fff }
         .btn.danger:hover { background: #c82333 }
         .right { text-align: right }
