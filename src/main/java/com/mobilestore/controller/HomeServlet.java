@@ -1,11 +1,21 @@
 package com.mobilestore.controller;
 
+import com.mobilestore.dao.UserLikeDAO;
+import com.mobilestore.entity.Product;
+import com.mobilestore.entity.SliderImage;
+import com.mobilestore.entity.User;
+import com.mobilestore.service.ProductService;
+import com.mobilestore.service.SliderImageService;
+import com.mobilestore.service.impl.ProductServiceImpl;
+import com.mobilestore.service.impl.SliderImageServiceImpl;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.List;
 
 @WebServlet(name = "HomeServlet", urlPatterns = {"/", "/home", "/index"})
 public class HomeServlet extends HttpServlet {
@@ -47,20 +57,24 @@ public class HomeServlet extends HttpServlet {
         }
 
         try {
-            com.mobilestore.service.ProductService productService = new com.mobilestore.service.impl.ProductServiceImpl();
-            com.mobilestore.dao.UserLikeDAO userLikeDAO = new com.mobilestore.dao.UserLikeDAO();
+            ProductService productService = new ProductServiceImpl();
+            UserLikeDAO userLikeDAO = new UserLikeDAO();
 
-            java.util.List<com.mobilestore.entity.Product> products = productService.findByPage(1, 5).getContent();
+            List<Product> products = productService.findByPage(1, 5).getContent();
 
-            java.util.List<com.mobilestore.entity.Product> saleProducts = productService.findSales(5);
+            List<Product> saleProducts = productService.findSales(5);
             request.setAttribute("saleProducts", saleProducts);
 
             request.setAttribute("products", products);
 
-            jakarta.servlet.http.HttpSession session = request.getSession(false);
+            SliderImageService sliderService = new SliderImageServiceImpl();
+            List<SliderImage> activeSliders = sliderService.findAllActive();
+            request.setAttribute("activeSliders", activeSliders);
+
+            HttpSession session = request.getSession(false);
             if (session != null && session.getAttribute("user") != null) {
-                com.mobilestore.entity.User user = (com.mobilestore.entity.User) session.getAttribute("user");
-                java.util.List<Integer> likedProductIds = userLikeDAO.findLikedProductIdsByUser(user.getId());
+                User user = (User) session.getAttribute("user");
+                List<Integer> likedProductIds = userLikeDAO.findLikedProductIdsByUser(user.getId());
                 request.setAttribute("likedProductIds", likedProductIds);
             }
 

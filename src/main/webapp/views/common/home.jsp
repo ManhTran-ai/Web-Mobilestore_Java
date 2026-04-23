@@ -468,18 +468,29 @@
     </div>
     <div class="carousel-container">
         <div class="carousel-slides" id="carouselSlides">
+<c:choose>
+    <c:when test="${not empty activeSliders}">
+        <c:forEach var="slider" items="${activeSliders}">
             <div class="carousel-slide">
-                <img src="${pageContext.request.contextPath}/images/iPhone.png"/>
+                <img src="${pageContext.request.contextPath}/${slider.imageUrl}"/>
             </div>
-            <div class="carousel-slide">
-                <img src="${pageContext.request.contextPath}/images/macbook.png"/>
-            </div>
-            <div class="carousel-slide">
-                <img src="${pageContext.request.contextPath}/images/iPad.png"/>
-            </div>
-            <div class="carousel-slide">
-                <img src="${pageContext.request.contextPath}/images/Apple_Watch.png"/>
-            </div>
+        </c:forEach>
+    </c:when>
+    <c:otherwise>
+        <div class="carousel-slide">
+            <img src="${pageContext.request.contextPath}/images/iPhone.png"/>
+        </div>
+        <div class="carousel-slide">
+            <img src="${pageContext.request.contextPath}/images/macbook.png"/>
+        </div>
+        <div class="carousel-slide">
+            <img src="${pageContext.request.contextPath}/images/iPad.png"/>
+        </div>
+        <div class="carousel-slide">
+            <img src="${pageContext.request.contextPath}/images/Apple_Watch.png"/>
+        </div>
+    </c:otherwise>
+</c:choose>
         </div>
 
         <div class="carousel-dots" id="carouselDots"></div>
