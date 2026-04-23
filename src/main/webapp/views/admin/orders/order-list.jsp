@@ -595,7 +595,7 @@
                                         <td class="order-id">#${o.orderId}</td>
                                         <td class="order-customer">${o.user != null ? o.user.username : 'Khách'}</td>
                                         <td class="order-date"><fmt:formatDate value="${o.orderDate}" pattern="yyyy-MM-dd HH:mm"/></td>
-                                        <td class="order-total"><fmt:formatNumber value="${o.totalAmount}" type="number" groupingUsed="true"/>₫</td>
+                                            <td class="order-total"><fmt:formatNumber value="${o.totalAmount != null ? o.totalAmount : 0}" type="number" groupingUsed="true"/>₫</td>
                                         <td>
                                             <span class="status-badge ${o.orderStatus == 'PENDING' ? 'pending' : o.orderStatus == 'PROCESSING' ? 'processing' : o.orderStatus == 'SHIPPED' ? 'shipped' : o.orderStatus == 'COMPLETED' ? 'completed' : 'cancelled'}">
                                                 ${o.orderStatus}

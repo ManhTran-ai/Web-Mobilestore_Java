@@ -31,4 +31,5 @@ public class Order {
     private Double shippingCost;
     private Integer districtId;
     private String wardCode;
+    private String trackingNumber;
 }

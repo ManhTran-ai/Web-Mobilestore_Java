@@ -551,7 +551,7 @@
                 </c:forEach>
                 <tr class="total-row">
                     <td colspan="3" class="right">Tổng cộng:</td>
-                    <td class="right total-amount"><fmt:formatNumber value="${order.totalAmount}" type="number" groupingUsed="true"/>₫</td>
+                    <td class="right total-amount"><fmt:formatNumber value="${order.totalAmount != null ? order.totalAmount : 0}" type="number" groupingUsed="true"/>₫</td>
                 </tr>
                 </tbody>
             </table>
