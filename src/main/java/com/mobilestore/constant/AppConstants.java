@@ -6,7 +6,6 @@ public class AppConstants {
     private AppConstants() {}
     
     public static final String UPLOAD_DIR = "images/products";
-    public static final String UPLOAD_ROOT = "D:\\Web-Programming-MobileStore\\src\\main\\webapp";
     
     public static final long MAX_FILE_SIZE = 10 * 1024 * 1024;
     public static final int DEFAULT_PAGE_SIZE = 12;
