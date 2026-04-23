@@ -429,13 +429,13 @@
                 <div class="card-header">
                     <span class="card-title">Sản phẩm đã đặt</span>
                     <c:if test="${not empty userOrder.details}">
-                        <span style="font-size:0.8rem;color:var(--text-muted);">${userOrder.details.size()} sản phẩm</span>
+                        <span style="font-size:0.8rem;color:#86868b;">${userOrder.details.size()} sản phẩm</span>
                     </c:if>
                 </div>
                 <ul class="product-list">
                     <c:choose>
                         <c:when test="${empty userOrder.details}">
-                            <li class="product-item" style="justify-content:center;color:var(--text-muted);font-size:0.9rem;grid-template-columns:1fr;">
+                            <li class="product-item" style="justify-content:center;color:#86868b;font-size:0.9rem;grid-template-columns:1fr;">
                                 Không có thông tin sản phẩm
                             </li>
                         </c:when>
@@ -536,16 +536,16 @@
                                 <p class="address-block">${userOrder.shippingAddress}</p>
                             </c:when>
                             <c:otherwise>
-                                <p style="color:var(--text-muted);font-size:0.9rem;">Chưa có thông tin địa chỉ</p>
+                                <p style="color:#86868b;font-size:0.9rem;">Chưa có thông tin địa chỉ</p>
                             </c:otherwise>
                         </c:choose>
                         <c:if test="${not empty userOrder.customerPhone}">
-                            <p style="margin-top:10px;font-size:0.85rem;color:var(--text-secondary);">
+                            <p style="margin-top:10px;font-size:0.85rem;color:#6e6e73;">
                                 <strong>Điện thoại:</strong> ${userOrder.customerPhone}
                             </p>
                         </c:if>
                         <c:if test="${not empty userOrder.note}">
-                            <p style="margin-top:6px;font-size:0.85rem;color:var(--text-secondary);">
+                            <p style="margin-top:6px;font-size:0.85rem;color:#6e6e73;">
                                 <strong>Ghi chú:</strong> ${userOrder.note}
                             </p>
                         </c:if>

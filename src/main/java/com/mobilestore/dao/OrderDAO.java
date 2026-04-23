@@ -191,7 +191,7 @@ public class OrderDAO {
         String detailSql = "INSERT INTO order_details (price, quantity, order_id, variant_id) VALUES (?, ?, ?, ?)";
         String updateVariantSql = "UPDATE product_variants SET quantity_in_stock = quantity_in_stock - ? WHERE variant_id = ?";
 
-        // Ensure non-negative values
+        
         if (totalAmount < 0) totalAmount = 0;
         if (shippingCost < 0) shippingCost = 0;
 
@@ -224,7 +224,7 @@ public class OrderDAO {
                                 ProductVariant variant = item.getVariant();
                                 Product product = item.getProduct();
 
-                                psDetail.setDouble(1, variant != null ? variant.getPrice() : product.getDisplayPrice());
+                                psDetail.setDouble(1, variant != null && variant.getPrice() != null ? variant.getPrice().doubleValue() : product.getDisplayPrice().doubleValue());
                                 psDetail.setInt(2, item.getQuantity());
                                 psDetail.setInt(3, orderId);
                                 if (variant != null) {
@@ -274,7 +274,7 @@ public class OrderDAO {
         String detailSql = "INSERT INTO order_details (price, quantity, order_id, variant_id) VALUES (?, ?, ?, ?)";
         String updateVariantSql = "UPDATE product_variants SET quantity_in_stock = quantity_in_stock - ? WHERE variant_id = ?";
 
-        // Ensure non-negative values
+        
         if (totalAmount < 0) totalAmount = 0;
         if (shippingCost < 0) shippingCost = 0;
 
@@ -309,7 +309,7 @@ public class OrderDAO {
                                 ProductVariant variant = item.getVariant();
                                 Product product = item.getProduct();
 
-                                psDetail.setDouble(1, variant != null ? variant.getPrice() : product.getDisplayPrice());
+                                psDetail.setDouble(1, variant != null && variant.getPrice() != null ? variant.getPrice().doubleValue() : product.getDisplayPrice().doubleValue());
                                 psDetail.setInt(2, item.getQuantity());
                                 psDetail.setInt(3, orderId);
                                 if (variant != null) {
