@@ -2,7 +2,10 @@ package com.mobilestore.controller;
 
 import com.mobilestore.entity.Product;
 import com.mobilestore.entity.User;
+import com.mobilestore.entity.Order;
 import com.mobilestore.service.UserService;
+import com.mobilestore.service.OrderService;
+import com.mobilestore.service.impl.OrderServiceImpl;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -19,6 +22,7 @@ public class ProfileServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private final UserService userService = new UserService();
+    private final OrderService orderService = new OrderServiceImpl();
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");
     private static final Pattern PHONE_PATTERN = Pattern.compile("^[0-9+\\-\\s]{8,15}$");
 
@@ -39,9 +43,11 @@ public class ProfileServlet extends HttpServlet {
         }
 
         List<Product> favorites = userService.getLikedProducts(freshUser.getId());
+        List<Order> userOrders = orderService.findByUserId(freshUser.getId());
 
         req.setAttribute("profileUser", freshUser);
         req.setAttribute("favoriteProducts", favorites);
+        req.setAttribute("userOrders", userOrders);
         String activeTab = req.getParameter("tab");
         req.setAttribute("activeTab", activeTab != null ? activeTab : "info");
         req.getRequestDispatcher("/views/auth/profile.jsp").forward(req, resp);
@@ -177,8 +183,10 @@ public class ProfileServlet extends HttpServlet {
 
     private void populateAndForward(HttpServletRequest req, HttpServletResponse resp, User user, String activeTab) throws ServletException, IOException {
         List<Product> favorites = userService.getLikedProducts(user.getId());
+        List<Order> userOrders = orderService.findByUserId(user.getId());
         req.setAttribute("profileUser", user);
         req.setAttribute("favoriteProducts", favorites);
+        req.setAttribute("userOrders", userOrders);
         req.setAttribute("activeTab", activeTab);
         req.getRequestDispatcher("/views/auth/profile.jsp").forward(req, resp);
     }

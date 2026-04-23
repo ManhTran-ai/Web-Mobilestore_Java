@@ -11,17 +11,6 @@
         Ứng dụng quản lý cửa hàng điện thoại di động
     </description>
 
-    <servlet>
-        <servlet-name>HomeServlet</servlet-name>
-        <servlet-class>com.mobilestore.controller.HomeServlet</servlet-class>
-    </servlet>
-
-    <servlet-mapping>
-        <servlet-name>HomeServlet</servlet-name>
-        <url-pattern>/home</url-pattern>
-        <url-pattern>/index</url-pattern>
-    </servlet-mapping>
-
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
         <welcome-file>index.html</welcome-file>
@@ -45,6 +34,19 @@
         <filter-name>CharacterEncodingFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
+
+    <error-page>
+        <error-code>500</error-code>
+        <location>/WEB-INF/views/error/500.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>404</error-code>
+        <location>/WEB-INF/views/error/404.jsp</location>
+    </error-page>
+    <error-page>
+        <exception-type>java.lang.Exception</exception-type>
+        <location>/WEB-INF/views/error/500.jsp</location>
+    </error-page>
 
     <context-param>
         <param-name>uploadPath</param-name>
