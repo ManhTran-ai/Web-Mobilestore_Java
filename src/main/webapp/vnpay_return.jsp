@@ -132,11 +132,12 @@
 <body>
     <div class="container">
         <% if (orderId != null) { %>
-            <div class="success">✓</div>
+            <div class="success">&#10003;</div>
             <h1>Thanh toán thành công!</h1>
             <p class="order-id">Mã đơn hàng: #<%= orderId %></p>
             <p>Cảm ơn bạn đã mua sắm tại Mobile Store!</p>
-            <a href="${pageContext.request.contextPath}/" class="btn">Về trang chủ</a>
+            <a href="${pageContext.request.contextPath}/" class="btn" style="margin-top:0.75rem;">Quay trở lại trang chủ</a>
+            <a href="${pageContext.request.contextPath}/order-confirmation?id=<%= orderId %>" class="btn" style="background:#28a745;margin-top:0.5rem;">Xem chi tiết đơn hàng</a>
         <% } else { %>
             <div class="error">✗</div>
             <h1>Thanh toán thất bại</h1>
