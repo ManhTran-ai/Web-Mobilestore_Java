@@ -18,7 +18,7 @@ public class OrderDAO {
         List<Order> orders = new ArrayList<>();
         String sql = "SELECT o.order_id, o.order_status, o.order_date, o.total_amount, o.user_id, " +
                 "u.username, o.shipping_address, o.customer_phone, o.note, o.shipping_cost, " +
-                "o.district_id, o.ward_code " +
+                "o.district_id, o.ward_code, o.tracking_number " +
                 "FROM orders o LEFT JOIN users u ON o.user_id = u.id ORDER BY o.order_id DESC";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
@@ -39,6 +39,7 @@ public class OrderDAO {
                 Integer districtId = (Integer) rs.getObject("district_id");
                 o.setDistrictId(districtId);
                 o.setWardCode(rs.getString("ward_code"));
+                o.setTrackingNumber(rs.getString("tracking_number"));
                 Integer uid = rs.getInt("user_id");
                 if (!rs.wasNull()) {
                     User u = new User();
@@ -58,7 +59,7 @@ public class OrderDAO {
     public Order findById(int orderId) {
         String sql = "SELECT o.order_id, o.order_status, o.order_date, o.total_amount, o.user_id, " +
                 "u.username, o.shipping_address, o.customer_phone, o.note, o.shipping_cost, " +
-                "o.district_id, o.ward_code " +
+                "o.district_id, o.ward_code, o.tracking_number " +
                 "FROM orders o LEFT JOIN users u ON o.user_id = u.id WHERE o.order_id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -80,6 +81,7 @@ public class OrderDAO {
                     Integer districtId = (Integer) rs.getObject("district_id");
                     o.setDistrictId(districtId);
                     o.setWardCode(rs.getString("ward_code"));
+                    o.setTrackingNumber(rs.getString("tracking_number"));
                     Integer uid = rs.getInt("user_id");
                     if (!rs.wasNull()) {
                         User u = new User();
@@ -189,6 +191,9 @@ public class OrderDAO {
         String detailSql = "INSERT INTO order_details (price, quantity, order_id, variant_id) VALUES (?, ?, ?, ?)";
         String updateVariantSql = "UPDATE product_variants SET quantity_in_stock = quantity_in_stock - ? WHERE variant_id = ?";
 
+        if (totalAmount < 0) totalAmount = 0;
+        if (shippingCost < 0) shippingCost = 0;
+
         try (Connection conn = DatabaseConnection.getConnection()) {
             conn.setAutoCommit(false);
             try (PreparedStatement psOrder = conn.prepareStatement(orderSql, Statement.RETURN_GENERATED_KEYS)) {
@@ -268,6 +273,9 @@ public class OrderDAO {
         String detailSql = "INSERT INTO order_details (price, quantity, order_id, variant_id) VALUES (?, ?, ?, ?)";
         String updateVariantSql = "UPDATE product_variants SET quantity_in_stock = quantity_in_stock - ? WHERE variant_id = ?";
 
+        if (totalAmount < 0) totalAmount = 0;
+        if (shippingCost < 0) shippingCost = 0;
+
         try (Connection conn = DatabaseConnection.getConnection()) {
             conn.setAutoCommit(false);
             try (PreparedStatement psOrder = conn.prepareStatement(orderSql, Statement.RETURN_GENERATED_KEYS)) {
@@ -334,5 +342,117 @@ public class OrderDAO {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public List<Order> findByUserId(int userId) {
+        List<Order> orders = new ArrayList<>();
+        String sql = "SELECT o.order_id, o.order_status, o.order_date, o.total_amount, o.user_id, " +
+                "o.shipping_address, o.customer_phone, o.note, o.shipping_cost, o.payment_method, " +
+                "o.district_id, o.ward_code, o.tracking_number " +
+                "FROM orders o WHERE o.user_id = ? ORDER BY o.order_date DESC";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Order o = new Order();
+                    o.setOrderId(rs.getInt("order_id"));
+                    o.setOrderStatus(rs.getString("order_status"));
+                    Timestamp ts = rs.getTimestamp("order_date");
+                    if (ts != null) {
+                        o.setOrderDate(new java.util.Date(ts.getTime()));
+                    }
+                    o.setTotalAmount(rs.getDouble("total_amount"));
+                    o.setShippingCost(rs.getObject("shipping_cost") != null ? rs.getDouble("shipping_cost") : 0.0);
+                    o.setShippingAddress(rs.getString("shipping_address"));
+                    o.setCustomerPhone(rs.getString("customer_phone"));
+                    o.setNote(rs.getString("note"));
+                    o.setPaymentMethod(rs.getString("payment_method"));
+                    Integer districtId = (Integer) rs.getObject("district_id");
+                    o.setDistrictId(districtId);
+                    o.setWardCode(rs.getString("ward_code"));
+                    o.setTrackingNumber(rs.getString("tracking_number"));
+                    o.setDetails(findDetailsByOrderId(o.getOrderId()));
+                    orders.add(o);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Lỗi OrderDAO.findByUserId: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return orders;
+    }
+
+    public Order findByIdAndUserId(int orderId, int userId) {
+        String sql = "SELECT o.order_id, o.order_status, o.order_date, o.total_amount, o.user_id, " +
+                "o.shipping_address, o.customer_phone, o.note, o.shipping_cost, o.payment_method, " +
+                "o.district_id, o.ward_code, o.tracking_number " +
+                "FROM orders o WHERE o.order_id = ? AND o.user_id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, orderId);
+            ps.setInt(2, userId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Order o = new Order();
+                    o.setOrderId(rs.getInt("order_id"));
+                    o.setOrderStatus(rs.getString("order_status"));
+                    Timestamp ts = rs.getTimestamp("order_date");
+                    if (ts != null) {
+                        o.setOrderDate(new java.util.Date(ts.getTime()));
+                    }
+                    o.setTotalAmount(rs.getDouble("total_amount"));
+                    o.setShippingCost(rs.getObject("shipping_cost") != null ? rs.getDouble("shipping_cost") : 0.0);
+                    o.setShippingAddress(rs.getString("shipping_address"));
+                    o.setCustomerPhone(rs.getString("customer_phone"));
+                    o.setNote(rs.getString("note"));
+                    o.setPaymentMethod(rs.getString("payment_method"));
+                    Integer districtId = (Integer) rs.getObject("district_id");
+                    o.setDistrictId(districtId);
+                    o.setWardCode(rs.getString("ward_code"));
+                    o.setTrackingNumber(rs.getString("tracking_number"));
+                    User u = new User();
+                    u.setId(rs.getInt("user_id"));
+                    o.setUser(u);
+                    o.setDetails(findDetailsByOrderId(orderId));
+                    return o;
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Lỗi OrderDAO.findByIdAndUserId: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public String findTrackingNumberById(int orderId) {
+        String sql = "SELECT tracking_number FROM orders WHERE order_id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, orderId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("tracking_number");
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Lỗi OrderDAO.findTrackingNumberById: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public boolean updateTrackingNumber(int orderId, String trackingNumber) {
+        String sql = "UPDATE orders SET tracking_number = ? WHERE order_id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, trackingNumber);
+            ps.setInt(2, orderId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.err.println("Lỗi OrderDAO.updateTrackingNumber: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return false;
     }
 }

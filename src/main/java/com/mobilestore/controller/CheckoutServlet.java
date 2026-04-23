@@ -106,9 +106,12 @@ public class CheckoutServlet extends HttpServlet {
 
         double cartTotal = 0.0;
         for (CartItem it : cart) {
+            if (it == null || it.getProduct() == null) {
+                continue;
+            }
             ProductVariant variant = it.getVariant();
-            long price = (variant != null) ? variant.getPrice() : (it.getProduct() != null ? it.getProduct().getDisplayPrice() : 0);
-            long discount = it.getProduct() != null && it.getProduct().getDiscount() != null ? it.getProduct().getDiscount() : 0L;
+            long price = (variant != null && variant.getPrice() > 0) ? variant.getPrice() : it.getProduct().getDisplayPrice();
+            long discount = it.getProduct().getDiscount() != null ? it.getProduct().getDiscount() : 0L;
             cartTotal += (price * (100 - discount) / 100.0) * it.getQuantity();
         }
 
@@ -117,7 +120,7 @@ public class CheckoutServlet extends HttpServlet {
         Integer orderId = orderService.createOrder(
                 user.getId(), cartTotal, cart,
                 shippingAddress, customerPhone, note,
-                0.0, districtId, wardCode
+                (double) actualShippingFee, districtId, wardCode
         );
 
         if (orderId != null) {
@@ -125,13 +128,13 @@ public class CheckoutServlet extends HttpServlet {
                     + " | UserId=" + user.getId()
                     + " | DistrictId=" + districtId
                     + " | WardCode=" + wardCode
-                    + " | PhiShipThucTe=" + actualShippingFee + " VND"
-                    + " | PhiShipUserTra=0 VND (Freeship)"
+                    + " | PhiShipThucTe=" + (long) actualShippingFee + " VND"
+                    + " | PhiShipUserTra=" + (long) actualShippingFee + " VND"
                     + " | TongTruocShip=" + (long) cartTotal + " VND"
                     + " | TongSauShip=" + (long) total + " VND");
             request.getSession().removeAttribute("cart");
             cartService.clearCartByUser(user.getId());
-            response.sendRedirect(request.getContextPath() + "/products?success=order_placed&id=" + orderId);
+            response.sendRedirect(request.getContextPath() + "/order-confirmation?id=" + orderId);
         } else {
             request.setAttribute("error", "Không thể tạo đơn hàng. Vui lòng thử lại.");
             doGet(request, response);
