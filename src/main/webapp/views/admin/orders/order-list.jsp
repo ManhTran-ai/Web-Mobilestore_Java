@@ -120,30 +120,30 @@
         }
 
         .btn-primary {
-            background: #0071e3 !important;
-            color: #ffffff !important;
+            background: #0071e3;
+            color: #ffffff;
         }
 
         .btn-primary:hover {
-            background: #0077ed !important;
+            background: #0077ed;
         }
 
         .btn-danger {
-            background: #ff3b30 !important;
-            color: #ffffff !important;
+            background: #ff3b30;
+            color: #ffffff;
         }
 
         .btn-danger:hover {
-            background: #ff453a !important;
+            background: #ff453a;
         }
 
         .btn-secondary {
-            background: #e5e5ea !important;
-            color: #1a1a1a !important;
+            background: #e5e5ea;
+            color: #1a1a1a;
         }
 
         .btn-secondary:hover {
-            background: #d1d1d6 !important;
+            background: #d1d1d6;
         }
 
         .btn-sm {
@@ -595,7 +595,7 @@
                                         <td class="order-id">#${o.orderId}</td>
                                         <td class="order-customer">${o.user != null ? o.user.username : 'Khách'}</td>
                                         <td class="order-date"><fmt:formatDate value="${o.orderDate}" pattern="yyyy-MM-dd HH:mm"/></td>
-                                            <td class="order-total"><fmt:formatNumber value="${o.totalAmount != null ? o.totalAmount : 0}" type="number" groupingUsed="true"/>₫</td>
+                                        <td class="order-total"><fmt:formatNumber value="${o.totalAmount}" type="number" groupingUsed="true"/>₫</td>
                                         <td>
                                             <span class="status-badge ${o.orderStatus == 'PENDING' ? 'pending' : o.orderStatus == 'PROCESSING' ? 'processing' : o.orderStatus == 'SHIPPED' ? 'shipped' : o.orderStatus == 'COMPLETED' ? 'completed' : 'cancelled'}">
                                                 ${o.orderStatus}

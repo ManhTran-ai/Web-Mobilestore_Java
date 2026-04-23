@@ -59,11 +59,9 @@ public class OrderConfirmationServlet extends HttpServlet {
             return;
         }
 
-        // Ensure orderDate is never null for JSP rendering
         if (order.getOrderDate() == null) {
             order.setOrderDate(new java.util.Date());
         }
-        // Ensure totalAmount is never null for JSP rendering
         if (order.getTotalAmount() == null) {
             double cartTotal = 0.0;
             if (order.getDetails() != null) {
@@ -73,7 +71,6 @@ public class OrderConfirmationServlet extends HttpServlet {
             }
             order.setTotalAmount(cartTotal + (order.getShippingCost() != null ? order.getShippingCost() : 0.0));
         }
-        // Ensure shippingCost is never null
         if (order.getShippingCost() == null) {
             order.setShippingCost(0.0);
         }

@@ -8,61 +8,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trang Chủ - Mobile Store</title>
     <style>
-        .wishlist-btn {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            background: rgba(255, 255, 255, 0.9);
-            border: 1px solid #eee;
-            border-radius: 50%;
-            width: 36px;
-            height: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 20px;
-            color: #ccc;
-            transition: all 0.3s ease;
-            z-index: 10;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .wishlist-btn:hover {
-            transform: scale(1.1);
-            color: #ff3b30;
-        }
-        .wishlist-btn.active {
-            color: #ff3b30;
-        }
-        #toast-container {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .toast {
-            background: #000 !important;
-            background-color: #000 !important;
-            color: #fff !important;
-            --bs-toast-bg: #000;
-            --bs-toast-color: #fff;
-            --bs-toast-border-color: transparent;
-            padding: 12px 24px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            font-size: 14px;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.3s ease;
-        }
-        .toast.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
         * {
             margin: 0;
             padding: 0;
@@ -281,8 +226,8 @@
         .btn {
             display: inline-block;
             padding: 14px 32px;
-            background: #1a1a1a !important;
-            color: #ffffff !important;
+            background: #1a1a1a;
+            color: #ffffff;
             text-decoration: none;
             border-radius: 8px;
             font-weight: 500;
@@ -293,7 +238,7 @@
         }
 
         .btn:hover {
-            background: #333 !important;
+            background: #333;
             transform: translateY(-1px);
         }
 
@@ -544,26 +489,18 @@
                          style="border:1px solid #e5e5ea; border-radius:12px; padding:1rem; text-align:left; background:#fff; position: relative;">
                         <span class="sale-badge"
                               style="position: absolute; top: 10px; right: 10px; z-index: 1;">-${p.discount}%</span>
-                        
-                        <c:set var="isLiked" value="false" />
-                        <c:if test="${not empty likedProductIds and likedProductIds.contains(p.productId)}">
-                            <c:set var="isLiked" value="true" />
-                        </c:if>
-                        <div class="wishlist-btn ${isLiked ? 'active' : ''}" data-id="${p.productId}" title="Thêm vào yêu thích" style="top: 40px;">
-                            &hearts;
-                        </div>
 
                         <a href="${pageContext.request.contextPath}/products/view?id=${p.productId}"
                            style="text-decoration:none; color:inherit;">
                             <div style="height:160px; display:flex; align-items:center; justify-content:center; overflow:hidden; margin-bottom:0.75rem;">
                                 <c:choose>
-                                    <c:when test="${not empty p.displayImage}">
-                                        <img src="${pageContext.request.contextPath}/${p.displayImage}" alt="${p.productName}"
+                                    <c:when test="${not empty p.image}">
+                                        <img src="${pageContext.request.contextPath}/${p.image}" alt="${p.productName}"
                                              style="max-width:100%; max-height:100%; object-fit:contain;">
                                     </c:when>
                                     <c:otherwise>
                                         <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:#888;">
-                                            &#128241;
+                                            📱
                                         </div>
                                     </c:otherwise>
                                 </c:choose>
@@ -573,18 +510,18 @@
 
                             <div class="price-container">
                                 <span class="sale-price" style="color:#0071e3; font-weight:700;">
-                                    <fmt:formatNumber value="${p.displayPrice}" type="number"
+                                    <fmt:formatNumber value="${p.price * (100 - p.discount) / 100}" type="number"
                                                       groupingUsed="true"/>₫
                                 </span>
                                 <span class="original-price"
                                       style="color:#86868b; text-decoration:line-through; font-size:0.85rem; margin-left:5px;">
-                                    <fmt:formatNumber value="${p.displayOriginalPrice}" type="number" groupingUsed="true"/>₫
+                                    <fmt:formatNumber value="${p.price}" type="number" groupingUsed="true"/>₫
                                 </span>
                             </div>
 
                             <div style="font-size:0.9rem; color:#888; margin-top:0.5rem;">
                                 <c:choose>
-                                    <c:when test="${p.totalStock == 0}">Hết hàng</c:when>
+                                    <c:when test="${p.quantityInStock == 0}">Hết hàng</c:when>
                                 </c:choose>
                             </div>
                         </a>
@@ -599,26 +536,19 @@
         <h2 style="text-align:center; margin-bottom:1.25rem;">Sản phẩm mới</h2>
         <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap:1.5rem;">
             <c:forEach var="product" items="${products}">
-                <div style="border:1px solid #e5e5ea; border-radius:12px; padding:1rem; text-align:left; background:#ffffff; position: relative;">
-                    <c:set var="isLiked" value="false" />
-                    <c:if test="${not empty likedProductIds and likedProductIds.contains(product.productId)}">
-                        <c:set var="isLiked" value="true" />
-                    </c:if>
-                    <div class="wishlist-btn ${isLiked ? 'active' : ''}" data-id="${product.productId}" title="Thêm vào yêu thích">
-                        &hearts;
-                    </div>
+                <div style="border:1px solid #e5e5ea; border-radius:12px; padding:1rem; text-align:left; background:#fff;">
                     <a href="${pageContext.request.contextPath}/products/view?id=${product.productId}"
                        style="text-decoration:none; color:inherit;">
                         <div style="height:160px; display:flex; align-items:center; justify-content:center; overflow:hidden; margin-bottom:0.75rem;">
                             <c:choose>
-                                <c:when test="${not empty product.displayImage}">
-                                    <img src="${pageContext.request.contextPath}/${product.displayImage}"
+                                <c:when test="${not empty product.image}">
+                                    <img src="${pageContext.request.contextPath}/${product.image}"
                                          alt="${product.productName}"
                                          style="max-width:100%; max-height:100%; object-fit:contain;">
                                 </c:when>
                                 <c:otherwise>
                                     <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:#888;">
-                                        &#128241;
+                                        📱
                                     </div>
                                 </c:otherwise>
                             </c:choose>
@@ -626,12 +556,12 @@
                         <div style="font-weight:600; margin-bottom:0.25rem; font-size:1rem; line-height:1.3;">${product.productName}</div>
                         <div style="color:#666; font-size:0.9rem; margin-bottom:0.25rem;">${product.manufacturer}</div>
                         <div style="font-weight:700; font-size:1.1rem; color:#0071e3; margin-bottom:0.5rem; display:flex; align-items:center;">
-                            <fmt:formatNumber value="${product.displayPrice}" type="number"
+                            <fmt:formatNumber value="${product.price*(100-product.discount)/100}" type="number"
                                               groupingUsed="true"/>₫
                         </div>
                         <div style="font-size:0.9rem; color:#888; margin-bottom:0.75rem;">
                             <c:choose>
-                                <c:when test="${product.totalStock == 0}">Hết hàng</c:when>
+                                <c:when test="${product.quantityInStock == 0}">Hết hàng</c:when>
                             </c:choose>
                         </div>
                     </a>
@@ -684,66 +614,7 @@
     </div>
 </footer>
 
-<div id="toast-container"></div>
 <script>
-    function showToast(message) {
-        const container = document.getElementById('toast-container');
-        const toast = document.createElement('div');
-        toast.className = 'toast';
-        toast.textContent = message;
-        container.appendChild(toast);
-        
-        setTimeout(() => toast.classList.add('show'), 10);
-        
-        setTimeout(() => {
-            toast.classList.remove('show');
-            setTimeout(() => toast.remove(), 300);
-        }, 3000);
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-        const wishlistBtns = document.querySelectorAll('.wishlist-btn');
-        wishlistBtns.forEach(btn => {
-            btn.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                
-                const productId = this.getAttribute('data-id');
-                const currentBtn = this;
-                
-                fetch('${pageContext.request.contextPath}/api/toggle-like', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: 'productId=' + productId
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        if (data.action === 'liked') {
-                            currentBtn.classList.add('active');
-                        } else {
-                            currentBtn.classList.remove('active');
-                        }
-                        showToast(data.message);
-                    } else {
-                        showToast(data.message || 'Có lỗi xảy ra!');
-                        if (data.message && data.message.includes('đăng nhập')) {
-                            setTimeout(() => {
-                                window.location.href = '${pageContext.request.contextPath}/login';
-                            }, 1500);
-                        }
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    showToast('Không thể kết nối đến máy chủ.');
-                });
-            });
-        });
-    });
-
     function refreshCartCount() {
         fetch('${pageContext.request.contextPath}/cart/count')
             .then(r => r.json())
@@ -806,6 +677,29 @@
             });
         });
     });
+
+    function showToast(message) {
+        let t = document.getElementById('toastMessage');
+        if (!t) {
+            t = document.createElement('div');
+            t.id = 'toastMessage';
+            t.style.position = 'fixed';
+            t.style.right = '16px';
+            t.style.bottom = '16px';
+            t.style.background = '#111';
+            t.style.color = '#fff';
+            t.style.padding = '10px 14px';
+            t.style.borderRadius = '8px';
+            t.style.zIndex = 9999;
+            document.body.appendChild(t);
+        }
+        t.textContent = message;
+        t.style.opacity = '1';
+        setTimeout(() => {
+            t.style.opacity = '0';
+        }, 2000);
+    }
+
     refreshCartCount();
 </script>
 </body>
