@@ -110,6 +110,7 @@
                 <li><a href="${pageContext.request.contextPath}/"><span class="icon">&#127968;</span> Trang chủ</a></li>
                 <li><a href="${pageContext.request.contextPath}/admin/products" class="active"><span class="icon">&#128230;</span> Sản phẩm</a></li>
                 <li><a href="${pageContext.request.contextPath}/admin/orders"><span class="icon">&#129534;</span> Đơn hàng</a></li>
+                <li><a href="${pageContext.request.contextPath}/admin/sliders"><span class="icon">&#127909;</span> Slider Images</a></li>
             </ul>
         </nav>
     </aside>
