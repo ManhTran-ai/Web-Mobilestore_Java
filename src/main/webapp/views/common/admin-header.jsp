@@ -22,6 +22,11 @@
                     Đơn hàng
                 </a>
             </li>
+            <li>
+                <a href="${pageContext.request.contextPath}/admin/sliders" ${activeMenu == 'sliders' ? 'class="active"' : ''}>
+                    Slider Images
+                </a>
+            </li>
         </ul>
     </nav>
 </aside>
