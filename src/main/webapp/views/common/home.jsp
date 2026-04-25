@@ -467,22 +467,39 @@
         </div>
     </div>
     <div class="carousel-container">
-        <div class="carousel-slides" id="carouselSlides">
-            <div class="carousel-slide">
-                <img src="${pageContext.request.contextPath}/images/iPhone.png"/>
-            </div>
-            <div class="carousel-slide">
-                <img src="${pageContext.request.contextPath}/images/macbook.png"/>
-            </div>
-            <div class="carousel-slide">
-                <img src="${pageContext.request.contextPath}/images/iPad.png"/>
-            </div>
-            <div class="carousel-slide">
-                <img src="${pageContext.request.contextPath}/images/Apple_Watch.png"/>
-            </div>
-        </div>
-
-        <div class="carousel-dots" id="carouselDots"></div>
+        <c:choose>
+            <c:when test="${not empty sliderImages}">
+                <div class="carousel-slides" id="carouselSlides">
+                    <c:forEach var="slider" items="${sliderImages}">
+                        <div class="carousel-slide">
+                            <img src="${pageContext.request.contextPath}/${slider.imageUrl}" alt="Slider"/>
+                        </div>
+                    </c:forEach>
+                </div>
+                <button class="carousel-nav prev" id="carouselPrev">&#10094;</button>
+                <button class="carousel-nav next" id="carouselNext">&#10095;</button>
+                <div class="carousel-dots" id="carouselDots"></div>
+            </c:when>
+            <c:otherwise>
+                <div class="carousel-slides" id="carouselSlides">
+                    <div class="carousel-slide">
+                        <img src="${pageContext.request.contextPath}/images/iPhone.png" alt="iPhone"/>
+                    </div>
+                    <div class="carousel-slide">
+                        <img src="${pageContext.request.contextPath}/images/Macbook.png" alt="Macbook"/>
+                    </div>
+                    <div class="carousel-slide">
+                        <img src="${pageContext.request.contextPath}/images/iPad.png" alt="iPad"/>
+                    </div>
+                    <div class="carousel-slide">
+                        <img src="${pageContext.request.contextPath}/images/Apple_Watch.png" alt="Apple Watch"/>
+                    </div>
+                </div>
+                <button class="carousel-nav prev" id="carouselPrev">&#10094;</button>
+                <button class="carousel-nav next" id="carouselNext">&#10095;</button>
+                <div class="carousel-dots" id="carouselDots"></div>
+            </c:otherwise>
+        </c:choose>
     </div>
 </section>
 

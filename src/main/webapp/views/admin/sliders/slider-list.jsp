@@ -1,12 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
-<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản lý Sản phẩm - Trang quản lý</title>
+    <title>Quản lý Slider Images - Trang quản lý</title>
     <style>
         * {
             margin: 0;
@@ -151,45 +150,9 @@
             background: #d1d1d6 !important;
         }
 
-        .btn-warning {
-            background: #ff9500 !important;
-            color: #ffffff !important;
-        }
-
-        .btn-warning:hover {
-            background: #ff9f0a !important;
-        }
-
         .btn-sm {
             padding: 0.5rem 1rem;
             font-size: 0.875rem;
-        }
-
-        .search-box {
-            position: relative;
-        }
-
-        .search-box input {
-            padding: 0.75rem 1rem 0.75rem 2.5rem;
-            border: 1px solid #d1d1d6;
-            border-radius: 8px;
-            font-size: 0.95rem;
-            width: 300px;
-            transition: border-color 0.2s;
-        }
-
-        .search-box input:focus {
-            outline: none;
-            border-color: #0071e3;
-        }
-
-        .search-box::before {
-            content: '🔍';
-            position: absolute;
-            left: 0.75rem;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 1rem;
         }
 
         .alert {
@@ -214,12 +177,6 @@
             border: 1px solid #f5c6cb;
         }
 
-        .alert-warning {
-            background: #fff3cd;
-            color: #856404;
-            border: 1px solid #ffeeba;
-        }
-
         .alert .close-btn {
             margin-left: auto;
             background: none;
@@ -236,7 +193,7 @@
 
         .stats-row {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 1.5rem;
             margin-bottom: 2rem;
         }
@@ -270,10 +227,6 @@
 
         .stat-card.warning .value {
             color: #ff9500;
-        }
-
-        .stat-card.danger .value {
-            color: #ff3b30;
         }
 
         .table-container {
@@ -330,16 +283,16 @@
             border-bottom: none;
         }
 
-        .product-image {
-            width: 60px;
+        .slider-image {
+            width: 120px;
             height: 60px;
             object-fit: cover;
             border-radius: 8px;
             background: #f5f5f7;
         }
 
-        .product-image-placeholder {
-            width: 60px;
+        .slider-image-placeholder {
+            width: 120px;
             height: 60px;
             border-radius: 8px;
             background: #f5f5f7;
@@ -350,62 +303,58 @@
             font-size: 1.5rem;
         }
 
-        .product-name {
-            font-weight: 500;
-            color: #1a1a1a;
+        .slider-url {
             max-width: 200px;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
-        }
-
-        .product-manufacturer {
-            font-size: 0.875rem;
-            color: #888;
-        }
-
-        .price {
-            font-weight: 600;
-            color: #0071e3;
-            white-space: nowrap;
-        }
-
-        .stock {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 500;
-        }
-
-        .stock.in-stock {
-            background: #d1f2eb;
-            color: #0d6848;
-        }
-
-        .stock.low-stock {
-            background: #fff3cd;
-            color: #856404;
-        }
-
-        .stock.out-of-stock {
-            background: #fdecea;
-            color: #c62828;
-        }
-
-        .condition-badge {
-            display: inline-block;
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            font-weight: 500;
-            background: #e5e5ea;
+            font-size: 0.85rem;
             color: #666;
         }
 
-        .condition-badge.new {
-            background: #d1f2eb;
-            color: #0d6848;
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 48px;
+            height: 26px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.3s;
+            border-radius: 26px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+
+        .toggle-switch input:checked + .toggle-slider {
+            background-color: #34c759;
+        }
+
+        .toggle-switch input:checked + .toggle-slider:before {
+            transform: translateX(22px);
         }
 
         .actions {
@@ -428,10 +377,6 @@
             font-size: 1.25rem;
             margin-bottom: 0.5rem;
             color: #666;
-        }
-
-        .empty-state p {
-            margin-bottom: 1.5rem;
         }
 
         .table-footer {
@@ -506,11 +451,6 @@
             margin-bottom: 1.5rem;
         }
 
-        .modal-product-name {
-            font-weight: 600;
-            color: #1a1a1a;
-        }
-
         .modal-actions {
             display: flex;
             gap: 1rem;
@@ -521,14 +461,9 @@
             min-width: 120px;
         }
 
-        .format-number {
-            font-variant-numeric: tabular-nums;
-        }
-
-        @media (max-width: 1200px) {
-            .stats-row {
-                grid-template-columns: repeat(2, 1fr);
-            }
+        .table-info-count {
+            font-size: 0.9rem;
+            color: #888;
         }
 
         @media (max-width: 768px) {
@@ -550,10 +485,6 @@
                 align-items: flex-start;
             }
 
-            .search-box input {
-                width: 100%;
-            }
-
             .data-table {
                 font-size: 0.875rem;
             }
@@ -561,6 +492,11 @@
             .data-table th,
             .data-table td {
                 padding: 0.75rem;
+            }
+
+            .slider-image {
+                width: 80px;
+                height: 40px;
             }
         }
     </style>
@@ -580,7 +516,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="${pageContext.request.contextPath}/admin/products" class="active">
+                    <a href="${pageContext.request.contextPath}/admin/products">
                         Sản phẩm
                     </a>
                 </li>
@@ -590,7 +526,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="${pageContext.request.contextPath}/admin/sliders">
+                    <a href="${pageContext.request.contextPath}/admin/sliders" class="active">
                         Slider Images
                     </a>
                 </li>
@@ -600,185 +536,134 @@
 
     <main class="main-content">
         <div class="page-header">
-            <h1>Quản lý Sản phẩm</h1>
+            <h1>Quản lý Slider Images</h1>
             <div class="header-actions">
-                <div class="search-box">
-                    <input type="text" id="searchInput" placeholder="Tìm kiếm sản phẩm...">
-                </div>
-                <a href="${pageContext.request.contextPath}/admin/products/add" class="btn btn-primary">
-                    + Thêm sản phẩm
+                <a href="${pageContext.request.contextPath}/admin/sliders/add" class="btn btn-primary">
+                    + Thêm Slider
                 </a>
             </div>
         </div>
 
         <c:if test="${param.success == 'created'}">
             <div class="alert alert-success" id="alertSuccess">
-                <span>✓</span> Thêm sản phẩm thành công!
+                <span>&#10004;</span> Thêm slider thành công!
                 <button class="close-btn" onclick="this.parentElement.style.display='none'">&times;</button>
             </div>
         </c:if>
         <c:if test="${param.success == 'updated'}">
             <div class="alert alert-success" id="alertSuccess">
-                <span>✓</span> Cập nhật sản phẩm thành công!
+                <span>&#10004;</span> Cập nhật slider thành công!
                 <button class="close-btn" onclick="this.parentElement.style.display='none'">&times;</button>
             </div>
         </c:if>
         <c:if test="${param.success == 'deleted'}">
             <div class="alert alert-success" id="alertSuccess">
-                <span>✓</span> Xóa sản phẩm thành công!
+                <span>&#10004;</span> Xóa slider thành công!
                 <button class="close-btn" onclick="this.parentElement.style.display='none'">&times;</button>
             </div>
         </c:if>
-        <c:if test="${param.error == 'delete_failed'}">
-            <div class="alert alert-error">
-                <span>✕</span> Không thể xóa sản phẩm. Sản phẩm có thể đang được sử dụng trong đơn hàng.
+        <c:if test="${param.success == 'toggled'}">
+            <div class="alert alert-success" id="alertSuccess">
+                <span>&#10004;</span> Cập nhật trạng thái thành công!
                 <button class="close-btn" onclick="this.parentElement.style.display='none'">&times;</button>
             </div>
         </c:if>
         <c:if test="${param.error == 'not_found'}">
             <div class="alert alert-error">
-                <span>✕</span> Không tìm thấy sản phẩm.
+                <span>&#10008;</span> Không tìm thấy slider.
                 <button class="close-btn" onclick="this.parentElement.style.display='none'">&times;</button>
             </div>
         </c:if>
         <c:if test="${param.error == 'invalid_id'}">
             <div class="alert alert-error">
-                <span>✕</span> ID sản phẩm không hợp lệ.
+                <span>&#10008;</span> ID slider không hợp lệ.
+                <button class="close-btn" onclick="this.parentElement.style.display='none'">&times;</button>
+            </div>
+        </c:if>
+        <c:if test="${param.error == 'delete_failed'}">
+            <div class="alert alert-error">
+                <span>&#10008;</span> Không thể xóa slider.
                 <button class="close-btn" onclick="this.parentElement.style.display='none'">&times;</button>
             </div>
         </c:if>
 
         <div class="stats-row">
             <div class="stat-card primary">
-                <div class="label">Tổng sản phẩm</div>
-                <div class="value">${products.size()}</div>
+                <div class="label">Tổng Slider</div>
+                <div class="value">${sliders.size()}</div>
             </div>
             <div class="stat-card success">
-                <div class="label">Còn hàng</div>
-                <div class="value" id="inStockCount">0</div>
+                <div class="label">Đang hiển thị</div>
+                <div class="value">${activeCount}</div>
             </div>
             <div class="stat-card warning">
-                <div class="label">Sắp hết hàng</div>
-                <div class="value" id="lowStockCount">0</div>
-            </div>
-            <div class="stat-card danger">
-                <div class="label">Hết hàng</div>
-                <div class="value" id="outOfStockCount">0</div>
+                <div class="label">Đã ẩn</div>
+                <div class="value">${inactiveCount}</div>
             </div>
         </div>
 
         <div class="table-container">
             <div class="table-header">
-                <h3>Danh sách sản phẩm</h3>
-                <span class="table-info">Hiển thị <span id="displayCount">${products.size()}</span> sản phẩm</span>
+                <h3>Danh sách Slider</h3>
+                <span class="table-info-count">Hiển thị ${sliders.size()} slider</span>
             </div>
             <c:choose>
-                <c:when test="${empty products}">
+                <c:when test="${empty sliders}">
                     <div class="empty-state">
-                        <div class="icon">📱</div>
-                        <h3>Chưa có sản phẩm nào</h3>
-                        <p>Bắt đầu bằng cách thêm sản phẩm đầu tiên cho cửa hàng của bạn</p>
-                        <a href="${pageContext.request.contextPath}/admin/products/add" class="btn btn-primary">
-                            + Thêm sản phẩm đầu tiên
+                        <div class="icon">&#127909;</div>
+                        <h3>Chưa có slider nào</h3>
+                        <p>Bắt đầu bằng cách thêm slider đầu tiên cho trang chủ</p>
+                        <a href="${pageContext.request.contextPath}/admin/sliders/add" class="btn btn-primary">
+                            + Thêm Slider đầu tiên
                         </a>
                     </div>
                 </c:when>
                 <c:otherwise>
-                    <table class="data-table" id="productsTable">
+                    <table class="data-table" id="slidersTable">
                         <thead>
                         <tr>
                             <th>ID</th>
                             <th>Hình ảnh</th>
-                            <th>Sản phẩm</th>
-                            <th>Danh mục</th>
-                            <th>Giá gốc</th>
-                            <th>Giảm giá</th>
-                            <th>Tồn kho</th>
-                            <th>Tình trạng</th>
+                            <th>URL</th>
+                            <th>Trạng thái</th>
                             <th>Thao tác</th>
                         </tr>
                         </thead>
                         <tbody>
-                        <c:forEach var="product" items="${products}">
-                            <tr data-product-id="${product.productId}"
-                                data-product-name="${product.productName}"
-                                data-quantity="${product.totalStock}">
-                                <td>${product.productId}</td>
+                        <c:forEach var="slider" items="${sliders}">
+                            <tr data-slider-id="${slider.id}">
+                                <td>${slider.id}</td>
                                 <td>
-                                    <c:choose>
-                                        <c:when test="${not empty product.displayImage}">
-                                            <img src="${pageContext.request.contextPath}/${product.displayImage}"
-                                                 alt="${product.productName}"
-                                                 class="product-image"
-                                                 loading="lazy">
-                                        </c:when>
-                                        <c:otherwise>
-                                            <div class="product-image-placeholder">&#128241;</div>
-                                        </c:otherwise>
-                                    </c:choose>
+                                    <img src="${pageContext.request.contextPath}/${slider.imageUrl}"
+                                         alt="Slider ${slider.id}"
+                                         class="slider-image"
+                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                    <div class="slider-image-placeholder" style="display:none;">&#127909;</div>
                                 </td>
                                 <td>
-                                    <div class="product-name" title="${product.productName}">${product.productName}</div>
-                                    <div class="product-manufacturer">${product.manufacturer}</div>
-                                    <c:if test="${not empty product.variants}">
-                                        <div style="font-size:0.75rem; color:#888; margin-top:2px;">
-                                            &#128230; ${product.variants.size()} phiên bản
-                                            <span style="color:#34c759;">
-                                                        (Từ <fmt:formatNumber value="${product.displayPrice}" type="number"/>₫)
-                                                    </span>
-                                        </div>
-                                    </c:if>
-                                </td>
-                                <td>${product.category.categoryName}</td>
-
-                                <td class="price format-number">
-                                    <fmt:formatNumber value="${product.displayOriginalPrice}" type="number" groupingUsed="true"/>₫
-                                </td>
-
-                                <td>
-                                    <c:choose>
-                                        <c:when test="${product.discount > 0}">
-                                                <span class="discount-badge" style="background: #ff3b30; color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; font-weight: 700;">
-                                                 -${product.discount}%
-                                                </span>
-                                            <div style="font-size: 0.75rem; color: #888; margin-top: 4px;">
-                                                Bán: <fmt:formatNumber value="${product.displayPrice}" type="number"/>₫
-                                            </div>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <span style="color: #ccc; font-size: 0.85rem;">—</span>
-                                        </c:otherwise>
-                                    </c:choose>
+                                    <div class="slider-url" title="${slider.imageUrl}">${slider.imageUrl}</div>
                                 </td>
                                 <td>
-                                    <c:choose>
-                                        <c:when test="${product.totalStock == 0}">
-                                            <span class="stock out-of-stock">Hết hàng</span>
-                                        </c:when>
-                                        <c:when test="${product.totalStock <= 10}">
-                                            <span class="stock low-stock">${product.totalStock}</span>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <span class="stock in-stock">${product.totalStock}</span>
-                                        </c:otherwise>
-                                    </c:choose>
-                                </td>
-                                <td>
-                                            <span class="condition-badge ${product.productCondition == 'Mới' ? 'new' : ''}">
-                                                    ${product.productCondition}
-                                            </span>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox"
+                                               ${slider.isActive ? 'checked' : ''}
+                                               onchange="toggleActive(${slider.id}, this.checked)">
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                    <span style="margin-left: 8px; font-size: 0.85rem; color: ${slider.isActive ? '#34c759' : '#ff9500'};">
+                                            ${slider.isActive ? 'Hiển thị' : 'Đã ẩn'}
+                                        </span>
                                 </td>
                                 <td class="actions">
-                                    <a href="${pageContext.request.contextPath}/admin/products/edit?id=${product.productId}"
+                                    <a href="${pageContext.request.contextPath}/admin/sliders/edit?id=${slider.id}"
                                        class="btn btn-secondary btn-sm"
-                                       title="Sửa sản phẩm">
+                                       title="Sửa slider">
                                         &#9998; Sửa
                                     </a>
                                     <button type="button"
                                             class="btn btn-danger btn-sm delete-btn"
-                                            data-id="${product.productId}"
-                                            data-name="${product.productName}"
-                                            title="Xóa sản phẩm">
+                                            data-id="${slider.id}"
+                                            title="Xóa slider">
                                         &#128465; Xóa
                                     </button>
                                 </td>
@@ -786,9 +671,6 @@
                         </c:forEach>
                         </tbody>
                     </table>
-                    <div class="table-footer">
-                        <span class="table-info">Tổng cộng: ${products.size()} sản phẩm</span>
-                    </div>
                 </c:otherwise>
             </c:choose>
         </div>
@@ -797,77 +679,28 @@
 
 <div class="modal-overlay" id="deleteModal">
     <div class="modal">
-        <div class="modal-icon warning">⚠️</div>
-        <h3>Xác nhận xóa sản phẩm</h3>
-        <p>Bạn có chắc chắn muốn xóa sản phẩm:<br>
-            <span class="modal-product-name" id="modalProductName"></span>?</p>
+        <div class="modal-icon warning">&#9888;</div>
+        <h3>Xác nhận xóa Slider</h3>
+        <p>Bạn có chắc chắn muốn xóa slider này?</p>
         <p style="font-size: 0.85rem; color: #ff3b30;">Hành động này không thể hoàn tác!</p>
         <div class="modal-actions">
             <button type="button" class="btn btn-secondary" id="cancelDeleteBtn">Hủy bỏ</button>
             <form id="deleteForm" method="POST" style="display: inline;">
-                <button type="submit" class="btn btn-danger">Xóa sản phẩm</button>
+                <button type="submit" class="btn btn-danger">Xóa Slider</button>
             </form>
         </div>
     </div>
 </div>
 
 <script>
-    const searchInput = document.getElementById('searchInput');
-    const productsTable = document.getElementById('productsTable');
     const deleteModal = document.getElementById('deleteModal');
     const deleteForm = document.getElementById('deleteForm');
-    const modalProductName = document.getElementById('modalProductName');
     const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
-
-    function calculateStats() {
-        const rows = document.querySelectorAll('#productsTable tbody tr');
-        let inStock = 0, lowStock = 0, outOfStock = 0;
-
-        rows.forEach(row => {
-            const quantity = parseInt(row.dataset.quantity) || 0;
-            if (quantity === 0) {
-                outOfStock++;
-            } else if (quantity <= 10) {
-                lowStock++;
-            } else {
-                inStock++;
-            }
-        });
-
-        document.getElementById('inStockCount').textContent = inStock;
-        document.getElementById('lowStockCount').textContent = lowStock;
-        document.getElementById('outOfStockCount').textContent = outOfStock;
-    }
-
-    if (searchInput && productsTable) {
-        searchInput.addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase().trim();
-            const rows = productsTable.querySelectorAll('tbody tr');
-            let visibleCount = 0;
-
-            rows.forEach(row => {
-                const productName = row.dataset.productName.toLowerCase();
-                const text = row.textContent.toLowerCase();
-
-                if (productName.includes(searchTerm) || text.includes(searchTerm)) {
-                    row.style.display = '';
-                    visibleCount++;
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-
-            document.getElementById('displayCount').textContent = visibleCount;
-        });
-    }
 
     document.querySelectorAll('.delete-btn').forEach(btn => {
         btn.addEventListener('click', function() {
-            const productId = this.dataset.id;
-            const productName = this.dataset.name;
-
-            modalProductName.textContent = productName;
-            deleteForm.action = '${pageContext.request.contextPath}/admin/products/delete?id=' + productId;
+            const sliderId = this.dataset.id;
+            deleteForm.action = '${pageContext.request.contextPath}/admin/sliders/delete?id=' + sliderId;
             deleteModal.classList.add('active');
         });
     });
@@ -888,6 +721,10 @@
         }
     });
 
+    function toggleActive(id, isActive) {
+        window.location.href = '${pageContext.request.contextPath}/admin/sliders/toggle?id=' + id;
+    }
+
     setTimeout(function() {
         const alerts = document.querySelectorAll('.alert-success');
         alerts.forEach(alert => {
@@ -896,10 +733,6 @@
             setTimeout(() => alert.style.display = 'none', 500);
         });
     }, 5000);
-
-    calculateStats();
 </script>
 </body>
 </html>
-
-
