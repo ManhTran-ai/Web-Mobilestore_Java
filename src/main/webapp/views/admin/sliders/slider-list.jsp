@@ -312,6 +312,19 @@
             color: #666;
         }
 
+        .status-badge {
+            margin-left: 8px;
+            font-size: 0.85rem;
+        }
+
+        .status-badge.status-active {
+            color: #34c759;
+        }
+
+        .status-badge.status-inactive {
+            color: #ff9500;
+        }
+
         .toggle-switch {
             position: relative;
             display: inline-block;
@@ -646,11 +659,12 @@
                                 <td>
                                     <label class="toggle-switch">
                                         <input type="checkbox"
-                                               ${slider.isActive ? 'checked' : ''}
-                                               onchange="toggleActive(${slider.id}, this.checked)">
+                                               <c:if test="${slider.isActive}">checked</c:if>
+                                               data-slider-id="${slider.id}"
+                                               onchange="toggleActive(this)">
                                         <span class="toggle-slider"></span>
                                     </label>
-                                    <span style="margin-left: 8px; font-size: 0.85rem; color: ${slider.isActive ? '#34c759' : '#ff9500'};">
+                                    <span class="status-badge ${slider.isActive ? 'status-active' : 'status-inactive'}">
                                             ${slider.isActive ? 'Hiển thị' : 'Đã ẩn'}
                                         </span>
                                 </td>
@@ -721,7 +735,8 @@
         }
     });
 
-    function toggleActive(id, isActive) {
+    function toggleActive(checkbox) {
+        const id = checkbox.dataset.sliderId;
         window.location.href = '${pageContext.request.contextPath}/admin/sliders/toggle?id=' + id;
     }
 
