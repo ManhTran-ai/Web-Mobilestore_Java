@@ -165,99 +165,6 @@
             overflow: hidden;
         }
 
-        .carousel-container {
-            position: relative;
-            width: 100%;
-            max-width: 1400px;
-            margin: 0 auto;
-            overflow: hidden;
-        }
-
-        .carousel-slides {
-            display: flex;
-            transition: transform 0.6s ease-in-out;
-            will-change: transform;
-            position: relative;
-        }
-
-        .carousel-slide {
-            min-width: 100%;
-            width: 100%;
-            flex: 0 0 100%;
-            flex-shrink: 0;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #ffffff;
-            padding: 4rem 2rem;
-        }
-
-        .carousel-slide img {
-            max-width: 100%;
-            height: auto;
-            max-height: 600px;
-            object-fit: contain;
-        }
-
-        .carousel-nav {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(26, 26, 26, 0.7);
-            color: #ffffff;
-            border: none;
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background 0.2s;
-            z-index: 10;
-        }
-
-        .carousel-nav:hover {
-            background: rgba(26, 26, 26, 0.9);
-        }
-
-        .carousel-nav.prev {
-            left: 24px;
-        }
-
-        .carousel-nav.next {
-            right: 24px;
-        }
-
-        .carousel-dots {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            padding: 2rem 0;
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 10;
-        }
-
-        .carousel-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: rgba(26, 26, 26, 0.3);
-            border: none;
-            cursor: pointer;
-            transition: background 0.3s, transform 0.3s;
-        }
-
-        .carousel-dot.active {
-            background: #1a1a1a;
-            transform: scale(1.2);
-        }
-
         .hero-content {
             text-align: center;
             padding: 3rem 0;
@@ -467,21 +374,16 @@
         </div>
     </div>
     <div class="carousel-container">
-        <c:choose>
-            <c:when test="${not empty sliderImages}">
-                <div class="carousel-slides" id="carouselSlides">
+        <div class="carousel-slides" id="carouselSlides">
+            <c:choose>
+                <c:when test="${not empty sliderImages}">
                     <c:forEach var="slider" items="${sliderImages}">
                         <div class="carousel-slide">
                             <img src="${pageContext.request.contextPath}/${slider.imageUrl}" alt="Slider"/>
                         </div>
                     </c:forEach>
-                </div>
-                <button class="carousel-nav prev" id="carouselPrev">&#10094;</button>
-                <button class="carousel-nav next" id="carouselNext">&#10095;</button>
-                <div class="carousel-dots" id="carouselDots"></div>
-            </c:when>
-            <c:otherwise>
-                <div class="carousel-slides" id="carouselSlides">
+                </c:when>
+                <c:otherwise>
                     <div class="carousel-slide">
                         <img src="${pageContext.request.contextPath}/images/iPhone.png" alt="iPhone"/>
                     </div>
@@ -494,12 +396,12 @@
                     <div class="carousel-slide">
                         <img src="${pageContext.request.contextPath}/images/Apple_Watch.png" alt="Apple Watch"/>
                     </div>
-                </div>
-                <button class="carousel-nav prev" id="carouselPrev">&#10094;</button>
-                <button class="carousel-nav next" id="carouselNext">&#10095;</button>
-                <div class="carousel-dots" id="carouselDots"></div>
-            </c:otherwise>
-        </c:choose>
+                </c:otherwise>
+            </c:choose>
+        </div>
+        <button class="carousel-nav prev" id="carouselPrev">&#10094;</button>
+        <button class="carousel-nav next" id="carouselNext">&#10095;</button>
+        <div class="carousel-dots" id="carouselDots"></div>
     </div>
 </section>
 
