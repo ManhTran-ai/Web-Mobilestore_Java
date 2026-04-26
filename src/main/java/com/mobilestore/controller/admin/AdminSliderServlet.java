@@ -61,6 +61,8 @@ public class AdminSliderServlet extends HttpServlet {
             showEditForm(request, response);
         } else if (pathInfo.equals("/delete")) {
             deleteSlider(request, response);
+        } else if (pathInfo.equals("/toggle")) {
+            processToggleActive(request, response);
         } else {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
