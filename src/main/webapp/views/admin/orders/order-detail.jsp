@@ -417,6 +417,11 @@
                     </a>
                 </li>
                 <li>
+                    <a href="${pageContext.request.contextPath}/admin/dashboard">
+                        Dashboard
+                    </a>
+                </li>
+                <li>
                     <a href="${pageContext.request.contextPath}/admin/products">
                         Sản phẩm
                     </a>
