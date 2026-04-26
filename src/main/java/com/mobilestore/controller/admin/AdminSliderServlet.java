@@ -144,7 +144,6 @@ public class AdminSliderServlet extends HttpServlet {
         try {
             filePart = request.getPart("image");
         } catch (Exception e) {
-            // No file part
         }
 
         if (filePart != null && filePart.getSize() > 0) {
@@ -205,7 +204,6 @@ public class AdminSliderServlet extends HttpServlet {
             try {
                 filePart = request.getPart("image");
             } catch (Exception e) {
-                // No file part
             }
 
             if (filePart != null && filePart.getSize() > 0) {
