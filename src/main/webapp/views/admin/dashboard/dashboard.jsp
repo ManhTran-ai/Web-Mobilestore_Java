@@ -212,7 +212,50 @@
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
-            gap: 0.75rem;
+            gap: 0.5rem;
+        }
+
+        .chart-plot {
+            display: flex;
+            align-items: stretch;
+            gap: 0.65rem;
+        }
+
+        .chart-main {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .chart-y-axis {
+            width: 76px;
+            height: 190px;
+            padding-right: 0.45rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border-right: 1px solid #dbe2ea;
+        }
+
+        .chart-y-tick {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 0.35rem;
+            line-height: 1;
+        }
+
+        .y-tick-label {
+            font-size: 0.67rem;
+            color: #68707a;
+            letter-spacing: 0.15px;
+            white-space: nowrap;
+        }
+
+        .y-tick-mark {
+            width: 7px;
+            height: 1px;
+            background: #bfc9d6;
+            flex-shrink: 0;
         }
 
         .chart-bars {
@@ -221,6 +264,15 @@
             grid-template-columns: repeat(6, 1fr);
             gap: 0.75rem;
             align-items: end;
+            border-bottom: 2px solid #dbe2ea;
+            padding-bottom: 0.4rem;
+            background-image: repeating-linear-gradient(
+                to top,
+                #edf2f8 0,
+                #edf2f8 1px,
+                transparent 1px,
+                transparent 25%
+            );
         }
 
         .bar-item {
@@ -248,6 +300,33 @@
             margin-top: 0.4rem;
             font-size: 0.72rem;
             color: #707070;
+        }
+
+        .chart-x-axis {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 0.75rem;
+            padding-top: 0.15rem;
+        }
+
+        .chart-x-tick {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .tick-mark {
+            width: 1px;
+            height: 8px;
+            background: #bfc9d6;
+        }
+
+        .tick-label {
+            font-size: 0.72rem;
+            color: #636b75;
+            line-height: 1.2;
+            letter-spacing: 0.2px;
         }
 
         .order-status-list {
@@ -338,6 +417,22 @@
                 gap: 0.45rem;
             }
 
+            .chart-y-axis {
+                width: 62px;
+            }
+
+            .chart-x-axis {
+                gap: 0.45rem;
+            }
+
+            .tick-label {
+                font-size: 0.68rem;
+            }
+
+            .y-tick-label {
+                font-size: 0.62rem;
+            }
+
             .bar-fill {
                 max-width: 38px;
             }
@@ -393,7 +488,7 @@
         <section class="quick-metrics">
             <article class="metric-card metric-users">
                 <div class="metric-label">Người dùng mới</div>
-                <div class="metric-value">${newUsersEstimated}</div>
+                <div class="metric-value">${newUsers}</div>
                 <div class="metric-subtext">Ước tính trong tháng hiện tại</div>
             </article>
             <article class="metric-card metric-orders">
@@ -446,14 +541,56 @@
                             <c:set var="maxValue" value="${v}" />
                         </c:if>
                     </c:forEach>
+                    <c:set var="y75" value="${maxValue * 0.75}" />
+                    <c:set var="y50" value="${maxValue * 0.5}" />
+                    <c:set var="y25" value="${maxValue * 0.25}" />
 
-                    <div class="chart-bars">
-                        <c:forEach var="value" items="${chartValues}" varStatus="loop">
-                            <div class="bar-item" title="${chartLabels[loop.index]} - ${value}">
-                                <div class="bar-fill" style="height: ${((value / maxValue) * 100) < 8 ? 8 : ((value / maxValue) * 100)}%;"></div>
-                                <div class="bar-label">${chartLabels[loop.index]}</div>
+                    <div class="chart-plot">
+                        <div class="chart-y-axis">
+                            <div class="chart-y-tick">
+                                <span class="y-tick-label"><fmt:formatNumber value="${maxValue}" type="number" groupingUsed="true" maxFractionDigits="0"/></span>
+                                <span class="y-tick-mark"></span>
                             </div>
-                        </c:forEach>
+                            <div class="chart-y-tick">
+                                <span class="y-tick-label"><fmt:formatNumber value="${y75}" type="number" groupingUsed="true" maxFractionDigits="0"/></span>
+                                <span class="y-tick-mark"></span>
+                            </div>
+                            <div class="chart-y-tick">
+                                <span class="y-tick-label"><fmt:formatNumber value="${y50}" type="number" groupingUsed="true" maxFractionDigits="0"/></span>
+                                <span class="y-tick-mark"></span>
+                            </div>
+                            <div class="chart-y-tick">
+                                <span class="y-tick-label"><fmt:formatNumber value="${y25}" type="number" groupingUsed="true" maxFractionDigits="0"/></span>
+                                <span class="y-tick-mark"></span>
+                            </div>
+                            <div class="chart-y-tick">
+                                <span class="y-tick-label">0</span>
+                                <span class="y-tick-mark"></span>
+                            </div>
+                        </div>
+
+                        <div class="chart-main">
+                            <div class="chart-bars">
+                                <c:forEach var="value" items="${chartValues}" varStatus="loop">
+                                    <c:set var="barHeight" value="${(value / maxValue) * 100}" />
+                                    <c:if test="${barHeight < 8}">
+                                        <c:set var="barHeight" value="8" />
+                                    </c:if>
+                                    <div class="bar-item" title="${chartLabels[loop.index]} - ${value}">
+                                        <div class="bar-fill" data-height="${barHeight}"></div>
+                                    </div>
+                                </c:forEach>
+                            </div>
+
+                            <div class="chart-x-axis">
+                                <c:forEach var="label" items="${chartLabels}">
+                                    <div class="chart-x-tick">
+                                        <span class="tick-mark"></span>
+                                        <span class="tick-label">${label}</span>
+                                    </div>
+                                </c:forEach>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -488,10 +625,26 @@
             </section>
         </section>
 
-        <div class="dashboard-note">
-            Ghi chú: phần này đang ưu tiên giao diện. Với dữ liệu người dùng mới, hệ thống đang dùng số ước tính vì bảng users hiện chưa có trường thời gian tạo tài khoản.
-        </div>
     </main>
 </div>
+
+<script>
+    (function () {
+        var bars = document.querySelectorAll('.bar-fill[data-height]');
+        bars.forEach(function (bar) {
+            var value = parseFloat(bar.getAttribute('data-height'));
+            if (isNaN(value)) {
+                value = 8;
+            }
+            if (value < 8) {
+                value = 8;
+            }
+            if (value > 100) {
+                value = 100;
+            }
+            bar.style.height = value + '%';
+        });
+    })();
+</script>
 </body>
 </html>
