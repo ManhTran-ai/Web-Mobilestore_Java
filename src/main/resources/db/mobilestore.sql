@@ -24,6 +24,7 @@ CREATE TABLE IF NOT EXISTS users (
     note            TEXT            NULL,
     district_id     INT             NULL,
     ward_code       VARCHAR(20)     NULL,
+    created_at      DATETIME        DEFAULT CURRENT_TIMESTAMP,
     UNIQUE KEY UK_username (username),
     UNIQUE KEY UK_email (email),
     KEY idx_users_role (role_name)
@@ -172,6 +173,14 @@ SET @sql = (SELECT IF(
     (SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS
      WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'users' AND COLUMN_NAME = 'ward_code') = 0,
     'ALTER TABLE users ADD COLUMN ward_code VARCHAR(20) NULL AFTER district_id',
+    'SELECT 1'
+));
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+SET @sql = (SELECT IF(
+    (SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS
+     WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'users' AND COLUMN_NAME = 'created_at') = 0,
+    'ALTER TABLE users ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP AFTER ward_code',
     'SELECT 1'
 ));
 PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
