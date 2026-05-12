@@ -27,6 +27,11 @@
                     Slider Images
                 </a>
             </li>
+            <li>
+                <a href="${pageContext.request.contextPath}/admin/reviews" ${activeMenu == 'reviews' ? 'class="active"' : ''}>
+                    Đánh giá
+                </a>
+            </li>
         </ul>
     </nav>
 </aside>
