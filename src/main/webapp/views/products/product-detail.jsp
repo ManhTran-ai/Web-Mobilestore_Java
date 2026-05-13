@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -134,6 +135,241 @@
             opacity: 1;
             transform: translateY(0);
         }
+        .review-section {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e5e5ea;
+        }
+        .review-section h2 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 1rem;
+        }
+        .review-summary {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            background: #f8f9fa;
+            border: 1px solid #e5e5ea;
+            border-radius: 12px;
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .review-score {
+            text-align: center;
+            min-width: 70px;
+        }
+        .review-score .big-score {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            line-height: 1;
+        }
+        .review-score .total-reviews {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 4px;
+        }
+        .review-stars-summary {
+            font-size: 1.1rem;
+            color: #f5a623;
+            letter-spacing: 1px;
+        }
+        .review-form-card {
+            background: #fff;
+            border: 1px solid #e5e5ea;
+            border-radius: 12px;
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .review-form-card h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #1a1a1a;
+        }
+        .star-picker {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 1rem;
+        }
+        .star-picker label {
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: #d0d0d0;
+            transition: color 0.2s;
+        }
+        .star-picker label.filled { color: #f5a623; }
+        .star-picker input { display: none; }
+        .review-form-card textarea {
+            width: 100%;
+            min-height: 80px;
+            border: 1px solid #e5e5ea;
+            border-radius: 8px;
+            padding: 0.75rem;
+            font-size: 0.9rem;
+            resize: vertical;
+            margin-bottom: 0.75rem;
+        }
+        .review-form-card textarea:focus {
+            outline: none;
+            border-color: #0071e3;
+        }
+        .review-list { display: flex; flex-direction: column; gap: 1rem; }
+        .review-item {
+            background: #fff;
+            border: 1px solid #e5e5ea;
+            border-radius: 10px;
+            padding: 1rem 1.25rem;
+        }
+        .review-item-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+        .review-item-user {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .review-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #e5e5ea;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 600;
+            color: #666;
+        }
+        .review-username {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #1a1a1a;
+        }
+        .review-stars {
+            color: #f5a623;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+        }
+        .review-date {
+            font-size: 0.8rem;
+            color: #86868b;
+        }
+        .review-comment {
+            font-size: 0.9rem;
+            color: #333;
+            line-height: 1.5;
+            margin-top: 0.25rem;
+        }
+        .review-login-prompt {
+            background: #f8f9fa;
+            border: 1px solid #e5e5ea;
+            border-radius: 12px;
+            padding: 1.25rem 1.5rem;
+            text-align: center;
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+        .review-login-prompt a {
+            color: #0071e3;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .review-login-prompt a:hover { text-decoration: underline; }
+        .review-submitted-badge {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            font-size: 0.9rem;
+            color: #155724;
+            margin-bottom: 1.5rem;
+        }
+        .btn-edit-review, .btn-delete-review {
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .btn-edit-review {
+            background: #e5e5ea;
+            color: #1a1a1a;
+        }
+        .btn-edit-review:hover {
+            background: #d1d1d6;
+        }
+        .btn-delete-review {
+            background: #ffebee;
+            color: #c62828;
+        }
+        .btn-delete-review:hover {
+            background: #ffcdd2;
+        }
+        .btn-cancel-edit {
+            background: #e5e5ea;
+            color: #1a1a1a;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 16px;
+            font-size: 0.875rem;
+            cursor: pointer;
+        }
+        .btn-cancel-edit:hover {
+            background: #d1d1d6;
+        }
+        .review-edit-form {
+            margin-top: 0.75rem;
+        }
+        .review-edit-form textarea {
+            width: 100%;
+            min-height: 60px;
+            border: 1px solid #e5e5ea;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 0.9rem;
+            resize: vertical;
+            margin-top: 8px;
+            font-family: inherit;
+        }
+        .review-edit-form textarea:focus {
+            outline: none;
+            border-color: #0071e3;
+        }
+        
+        .admin-reply {
+            margin-top: 12px;
+            padding: 10px 14px;
+            background: #f0f0ff;
+            border-left: 5px solid #1a1a1a;
+            border-radius: 0 8px 8px 0;
+            font-size: 0.875rem;
+        }
+        .admin-reply-header {
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .admin-reply-time {
+            font-size: 0.75rem;
+            color: #86868b;
+            font-weight: 400;
+        }
+        .admin-reply-text {
+            color: #1a1a1a;
+            line-height: 1.5;
+            font-weight: 400;
+        }
     </style>
 </head>
 <body>
@@ -249,6 +485,131 @@
             </div>
         </div>
     </c:if>
+
+    <div class="review-section">
+        <h2>Đánh Giá Sản Phẩm</h2>
+
+        <c:if test="${reviewCount > 0}">
+            <div class="review-summary">
+                <div class="review-score">
+                    <div class="big-score"><fmt:formatNumber value="${averageRating}" pattern="#.#"/></div>
+                    <div class="total-reviews">${reviewCount} đánh giá</div>
+                </div>
+                <div>
+                    <div class="review-stars-summary">
+                        <c:forEach begin="1" end="5" var="i">
+                            <c:choose>
+                                <c:when test="${i <= averageRating}">&#9733;</c:when>
+                                <c:when test="${i - 0.5 <= averageRating}">&#9733;</c:when>
+                                <c:otherwise>&#9734;</c:otherwise>
+                            </c:choose>
+                        </c:forEach>
+                    </div>
+                </div>
+            </div>
+        </c:if>
+
+        <c:choose>
+            <c:when test="${not empty sessionScope.user}">
+                <c:choose>
+                    <c:when test="${canReview}">
+                        <div class="review-form-card">
+                            <h4>Viết đánh giá của bạn</h4>
+                            <div class="star-picker" id="starPicker">
+                                <input type="radio" name="rating" id="star5" value="5"><label for="star5" title="5 sao">&#9733;</label>
+                                <input type="radio" name="rating" id="star4" value="4"><label for="star4" title="4 sao">&#9733;</label>
+                                <input type="radio" name="rating" id="star3" value="3"><label for="star3" title="3 sao">&#9733;</label>
+                                <input type="radio" name="rating" id="star2" value="2"><label for="star2" title="2 sao">&#9733;</label>
+                                <input type="radio" name="rating" id="star1" value="1"><label for="star1" title="1 sao">&#9733;</label>
+                            </div>
+                            <textarea id="reviewComment" placeholder="Chia sẻ trải nghiệm của bạn về sản phẩm này..." maxlength="1000"></textarea>
+                            <button class="btn" id="submitReviewBtn" onclick="submitReview(${product.productId})">Gửi đánh giá</button>
+                        </div>
+                    </c:when>
+                    <c:when test="${hasPurchased}">
+                        <div class="review-submitted-badge">
+                            &#10003; Bạn đã đánh giá sản phẩm này. Cảm ơn bạn!
+                        </div>
+                    </c:when>
+                </c:choose>
+            </c:when>
+            <c:otherwise>
+                <div class="review-login-prompt">
+                    Vui lòng <a href="${pageContext.request.contextPath}/login">đăng nhập</a> để đánh giá sản phẩm này.
+                </div>
+            </c:otherwise>
+        </c:choose>
+
+        <div class="review-list" id="reviewList">
+            <c:forEach var="r" items="${reviews}">
+                <div class="review-item" id="review-item-${r.id}">
+                    <div class="review-item-header">
+                        <div class="review-item-user">
+                            <div class="review-avatar">
+                                ${r.user.username.substring(0, 1).toUpperCase()}
+                            </div>
+                            <span class="review-username">${r.user.username}</span>
+                        </div>
+                        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;">
+                            <div class="review-stars">
+                                <c:forEach begin="1" end="5" var="i">
+                                    <c:choose>
+                                        <c:when test="${i <= r.rating}">&#9733;</c:when>
+                                        <c:otherwise>&#9734;</c:otherwise>
+                                    </c:choose>
+                                </c:forEach>
+                            </div>
+                            <span class="review-date">
+                                <fmt:formatDate value="${r.createdAt}" pattern="dd/MM/yyyy"/>
+                            </span>
+                            <c:if test="${not empty sessionScope.user && sessionScope.user.id == r.user.id}">
+                                <div style="display:flex;gap:6px;margin-top:4px;">
+                                    <button class="btn-edit-review" onclick="editReview(${r.id}, ${r.rating}, '${fn:escapeXml(r.comment)}')">Sửa</button>
+                                    <button class="btn-delete-review" onclick="deleteReview(${r.id})">Xóa</button>
+                                </div>
+                            </c:if>
+                        </div>
+                    </div>
+                    <div class="review-content" id="review-content-${r.id}">
+                        <c:if test="${not empty r.comment}">
+                            <div class="review-comment">${r.comment}</div>
+                        </c:if>
+                    </div>
+                    <c:if test="${not empty r.adminReply}">
+                        <div class="admin-reply">
+                            <div class="admin-reply-header">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                                Phản hồi từ MobileStore
+                                <span class="admin-reply-time">
+                                    <fmt:formatDate value="${r.adminReplyAt}" pattern="dd/MM/yyyy HH:mm"/>
+                                </span>
+                            </div>
+                            <div class="admin-reply-text">${r.adminReply}</div>
+                        </div>
+                    </c:if>
+                    <div class="review-edit-form" id="review-edit-${r.id}" style="display:none;">
+                        <div class="star-picker" id="edit-star-${r.id}">
+                            <input type="radio" name="editRating${r.id}" id="edit-star5-${r.id}" value="5"><label for="edit-star5-${r.id}" title="5 sao">&#9733;</label>
+                            <input type="radio" name="editRating${r.id}" id="edit-star4-${r.id}" value="4"><label for="edit-star4-${r.id}" title="4 sao">&#9733;</label>
+                            <input type="radio" name="editRating${r.id}" id="edit-star3-${r.id}" value="3"><label for="edit-star3-${r.id}" title="3 sao">&#9733;</label>
+                            <input type="radio" name="editRating${r.id}" id="edit-star2-${r.id}" value="2"><label for="edit-star2-${r.id}" title="2 sao">&#9733;</label>
+                            <input type="radio" name="editRating${r.id}" id="edit-star1-${r.id}" value="1"><label for="edit-star1-${r.id}" title="1 sao">&#9733;</label>
+                        </div>
+                        <textarea id="edit-comment-${r.id}" placeholder="Chia sẻ trải nghiệm của bạn..." maxlength="1000">${r.comment}</textarea>
+                        <div style="display:flex;gap:8px;margin-top:8px;">
+                            <button class="btn" onclick="submitEditReview(${r.id})">Lưu</button>
+                            <button class="btn-cancel-edit" onclick="cancelEditReview(${r.id})">Hủy</button>
+                        </div>
+                    </div>
+                </div>
+            </c:forEach>
+            <c:if test="${empty reviews}">
+                <div style="text-align:center;color:#86868b;padding:2rem 0;font-size:0.9rem;">
+                    Chưa có đánh giá nào cho sản phẩm này. Hãy là người đầu tiên!
+                </div>
+            </c:if>
+        </div>
+    </div>
 </main>
 
 <footer class="text-light pt-5 pb-3 mt-5" style="background-color: #000000;">
@@ -611,6 +972,162 @@
     }
 
     refreshCartCount();
+
+    const starLabels = document.querySelectorAll('.star-picker label');
+    let selectedRating = 0;
+    starLabels.forEach(function(label) {
+        label.addEventListener('click', function() {
+            const input = document.querySelector('#' + label.getAttribute('for'));
+            if (input) {
+                selectedRating = parseInt(input.value);
+                updateStarDisplay();
+            }
+        });
+        label.addEventListener('mouseenter', function() {
+            const inputVal = parseInt(document.querySelector('#' + label.getAttribute('for')).value);
+            highlightStarsUpTo(inputVal, true);
+        });
+    });
+    document.getElementById('starPicker').addEventListener('mouseleave', function() {
+        updateStarDisplay();
+    });
+
+    function highlightStarsUpTo(n, temp) {
+        starLabels.forEach(function(lbl) {
+            const val = parseInt(document.querySelector('#' + lbl.getAttribute('for')).value);
+            lbl.classList.toggle('filled', val <= n);
+        });
+    }
+
+    function updateStarDisplay() {
+        highlightStarsUpTo(selectedRating, false);
+    }
+
+    function submitReview(productId) {
+        if (selectedRating === 0) {
+            showToast('Vui lòng chọn số sao đánh giá');
+            return;
+        }
+        const comment = document.getElementById('reviewComment').value;
+        const btn = document.getElementById('submitReviewBtn');
+        btn.disabled = true;
+        btn.textContent = 'Đang gửi...';
+
+        fetch('${pageContext.request.contextPath}/api/reviews', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            credentials: 'same-origin',
+            body: 'productId=' + productId + '&rating=' + selectedRating + '&comment=' + encodeURIComponent(comment)
+        }).then(function(res) { return res.json(); })
+        .then(function(data) {
+            showToast(data.message);
+            if (data.status === 'success') {
+                setTimeout(function() { window.location.reload(); }, 1200);
+            } else {
+                btn.disabled = false;
+                btn.textContent = 'Gửi đánh giá';
+            }
+        }).catch(function(err) {
+            showToast('Có lỗi xảy ra!');
+            btn.disabled = false;
+            btn.textContent = 'Gửi đánh giá';
+        });
+    }
+
+    function editReview(reviewId, currentRating, currentComment) {
+        document.getElementById('review-content-' + reviewId).style.display = 'none';
+        document.getElementById('review-edit-' + reviewId).style.display = 'block';
+        document.getElementById('edit-comment-' + reviewId).value = currentComment || '';
+        var radio = document.getElementById('edit-star' + currentRating + '-' + reviewId);
+        if (radio) radio.checked = true;
+        setupEditStars(reviewId);
+    }
+
+    function setupEditStars(reviewId) {
+        var editStarEl = document.getElementById('edit-star-' + reviewId);
+        if (!editStarEl) return;
+        var labels = editStarEl.querySelectorAll('label');
+        labels.forEach(function(label) {
+            label.addEventListener('click', function() {
+                var radioId = label.getAttribute('for');
+                var radio = document.getElementById(radioId);
+                if (radio) radio.checked = true;
+                highlightEditStars(reviewId);
+            });
+            label.addEventListener('mouseenter', function() {
+                var inputVal = parseInt(document.querySelector('#' + label.getAttribute('for')).value);
+                highlightEditStarsUpTo(reviewId, inputVal);
+            });
+        });
+        editStarEl.addEventListener('mouseleave', function() {
+            highlightEditStars(reviewId);
+        });
+    }
+
+    function highlightEditStarsUpTo(reviewId, n) {
+        var editStarEl = document.getElementById('edit-star-' + reviewId);
+        if (!editStarEl) return;
+        editStarEl.querySelectorAll('label').forEach(function(lbl) {
+            var val = parseInt(document.querySelector('#' + lbl.getAttribute('for')).value);
+            lbl.classList.toggle('filled', val <= n);
+        });
+    }
+
+    function highlightEditStars(reviewId) {
+        var editStarEl = document.getElementById('edit-star-' + reviewId);
+        if (!editStarEl) return;
+        var checked = editStarEl.querySelector('input:checked');
+        var rating = checked ? parseInt(checked.value) : 0;
+        highlightEditStarsUpTo(reviewId, rating);
+    }
+
+    function submitEditReview(reviewId) {
+        var editStarEl = document.getElementById('edit-star-' + reviewId);
+        var checked = editStarEl ? editStarEl.querySelector('input:checked') : null;
+        var rating = checked ? parseInt(checked.value) : 0;
+        if (rating === 0) {
+            showToast('Vui lòng chọn số sao đánh giá');
+            return;
+        }
+        var comment = document.getElementById('edit-comment-' + reviewId).value;
+
+        fetch('${pageContext.request.contextPath}/api/reviews', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            credentials: 'same-origin',
+            body: 'reviewId=' + reviewId + '&rating=' + rating + '&comment=' + encodeURIComponent(comment)
+        }).then(function(res) { return res.json(); })
+        .then(function(data) {
+            showToast(data.message);
+            if (data.status === 'success') {
+                setTimeout(function() { window.location.reload(); }, 1200);
+            }
+        }).catch(function(err) {
+            showToast('Có lỗi xảy ra!');
+        });
+    }
+
+    function cancelEditReview(reviewId) {
+        document.getElementById('review-edit-' + reviewId).style.display = 'none';
+        document.getElementById('review-content-' + reviewId).style.display = 'block';
+    }
+
+    function deleteReview(reviewId) {
+        if (!confirm('Bạn có chắc muốn xóa đánh giá này?')) return;
+        fetch('${pageContext.request.contextPath}/api/reviews?reviewId=' + reviewId, {
+            method: 'DELETE',
+            credentials: 'same-origin'
+        }).then(function(res) { return res.json(); })
+        .then(function(data) {
+            showToast(data.message);
+            if (data.status === 'success') {
+                var el = document.getElementById('review-item-' + reviewId);
+                if (el) el.style.display = 'none';
+            }
+        }).catch(function(err) {
+            showToast('Có lỗi xảy ra!');
+        });
+    }
 </script>
 </body>
 </html>
