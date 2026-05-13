@@ -1,4 +1,4 @@
-```jsp
+
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <!DOCTYPE html>
@@ -107,11 +107,12 @@
         </div>
         <nav>
             <ul class="sidebar-nav">
-                <li><a href="${pageContext.request.contextPath}/"><span class="icon">&#127968;</span> Trang chủ</a></li>
-                <li><a href="${pageContext.request.contextPath}/admin/dashboard"><span class="icon">&#128200;</span> Dashboard</a></li>
-                <li><a href="${pageContext.request.contextPath}/admin/products" class="active"><span class="icon">&#128230;</span> Sản phẩm</a></li>
-                <li><a href="${pageContext.request.contextPath}/admin/orders"><span class="icon">&#129534;</span> Đơn hàng</a></li>
-                <li><a href="${pageContext.request.contextPath}/admin/sliders"><span class="icon">&#127909;</span> Slider Images</a></li>
+                <li><a href="${pageContext.request.contextPath}/">Trang chủ</a></li>
+                <li><a href="${pageContext.request.contextPath}/admin/dashboard">Dashboard</a></li>
+                <li><a href="${pageContext.request.contextPath}/admin/products" class="active">Sản phẩm</a></li>
+                <li><a href="${pageContext.request.contextPath}/admin/orders">Đơn hàng</a></li>
+                <li><a href="${pageContext.request.contextPath}/admin/sliders">Slider Images</a></li>
+                <li><a href="${pageContext.request.contextPath}/admin/reviews">Đánh giá</a></li>
             </ul>
         </nav>
     </aside>

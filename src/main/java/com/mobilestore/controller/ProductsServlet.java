@@ -2,9 +2,12 @@ package com.mobilestore.controller;
 
 import com.mobilestore.service.ProductService;
 import com.mobilestore.service.CategoryService;
+import com.mobilestore.service.ReviewService;
 import com.mobilestore.service.impl.ProductServiceImpl;
 import com.mobilestore.service.impl.CategoryServiceImpl;
+import com.mobilestore.service.impl.ReviewServiceImpl;
 import com.mobilestore.entity.Product;
+import com.mobilestore.entity.Review;
 import com.mobilestore.dao.UserLikeDAO;
 import com.mobilestore.entity.User;
 import jakarta.servlet.ServletException;
@@ -187,15 +190,33 @@ public class ProductsServlet extends HttpServlet {
             }
 
             jakarta.servlet.http.HttpSession session = request.getSession(false);
-            if (session != null && session.getAttribute("user") != null) {
-                com.mobilestore.entity.User user = (com.mobilestore.entity.User) session.getAttribute("user");
+            User currentUser = (session != null) ? (User) session.getAttribute("user") : null;
+
+            if (currentUser != null) {
                 com.mobilestore.dao.UserLikeDAO userLikeDAO = new com.mobilestore.dao.UserLikeDAO();
-                List<Integer> likedProductIds = userLikeDAO.findLikedProductIdsByUser(user.getId());
+                List<Integer> likedProductIds = userLikeDAO.findLikedProductIdsByUser(currentUser.getId());
                 request.setAttribute("likedProductIds", likedProductIds);
+            }
+
+            ReviewService reviewService = new ReviewServiceImpl();
+            List<Review> reviews = reviewService.getReviewsByProductId(productId);
+            double averageRating = reviewService.getAverageRating(productId);
+            int reviewCount = reviewService.getReviewCount(productId);
+
+            boolean canReview = false;
+            boolean hasPurchased = false;
+            if (currentUser != null) {
+                canReview = reviewService.canUserReviewProduct(currentUser.getId(), productId);
+                hasPurchased = reviewService.hasUserPurchasedProduct(currentUser.getId(), productId);
             }
 
             request.setAttribute("product", product);
             request.setAttribute("relatedProducts", relatedProducts);
+            request.setAttribute("reviews", reviews);
+            request.setAttribute("averageRating", averageRating);
+            request.setAttribute("reviewCount", reviewCount);
+            request.setAttribute("canReview", canReview);
+            request.setAttribute("hasPurchased", hasPurchased);
             request.getRequestDispatcher("/views/products/product-detail.jsp").forward(request, response);
 
         } catch (NumberFormatException e) {
