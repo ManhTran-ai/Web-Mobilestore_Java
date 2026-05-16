@@ -302,8 +302,7 @@
                 <c:choose>
                     <c:when test="${not empty sessionScope.user}">
                         <c:if test="${sessionScope.user.roleName == 'ADMIN'}">
-                            <a href="${pageContext.request.contextPath}/admin/products" style="color:#0071e3;">Trang
-                                Quản Lý</a>
+                            <a href="${pageContext.request.contextPath}/admin/products" style="color:#0071e3;">Trang Quản Lý</a>
                         </c:if>
                         <a class="user-pill" href="${pageContext.request.contextPath}/profile">
                             <span class="user-avatar">👤</span>
@@ -312,8 +311,7 @@
                         <a href="${pageContext.request.contextPath}/logout">Đăng Xuất</a>
                     </c:when>
                     <c:otherwise>
-                        <a href="${pageContext.request.contextPath}/register" style="color:#fff; font-weight:600;">Đăng
-                            Ký</a>
+                        <a href="${pageContext.request.contextPath}/register" style="color:#fff; font-weight:600;">Đăng Ký</a>
                         <a href="${pageContext.request.contextPath}/login">Đăng Nhập</a>
                     </c:otherwise>
                 </c:choose>
@@ -360,9 +358,11 @@
                     <img src="https://www.google.com/favicon.ico" alt="Google"/>
                     Đăng nhập bằng Google
                 </button>
+
                 <div class="helper" style="margin-top: 0.5rem;">
                     <a href="${pageContext.request.contextPath}/send-otp">Đăng nhập bằng mã OTP</a>
                 </div>
+
                 <div class="helper">
                     <a href="${pageContext.request.contextPath}/forgot-password">Quên mật khẩu?</a>
                 </div>
@@ -399,14 +399,10 @@
             <div class="col-lg-3 col-md-6 mb-4">
                 <h5 class="text-uppercase fw-bold mb-4">Chính sách hỗ trợ</h5>
                 <ul class="list-unstyled">
-                    <li class="mb-2"><a href="policy.jsp?type=warranty" class="text-secondary text-decoration-none">Chính
-                        sách bảo hành</a></li>
-                    <li class="mb-2"><a href="policy.jsp?type=return" class="text-secondary text-decoration-none">Chính
-                        sách đổi trả</a></li>
-                    <li class="mb-2"><a href="policy.jsp?type=shipping" class="text-secondary text-decoration-none">Chính
-                        sách vận chuyển</a></li>
-                    <li class="mb-2"><a href="policy.jsp?type=privacy" class="text-secondary text-decoration-none">Bảo
-                        mật thông tin</a></li>
+                    <li class="mb-2"><a href="policy.jsp?type=warranty" class="text-secondary text-decoration-none">Chính sách bảo hành</a></li>
+                    <li class="mb-2"><a href="policy.jsp?type=return" class="text-secondary text-decoration-none">Chính sách đổi trả</a></li>
+                    <li class="mb-2"><a href="policy.jsp?type=shipping" class="text-secondary text-decoration-none">Chính sách vận chuyển</a></li>
+                    <li class="mb-2"><a href="policy.jsp?type=privacy" class="text-secondary text-decoration-none">Bảo mật thông tin</a></li>
                 </ul>
             </div>
         </div>
