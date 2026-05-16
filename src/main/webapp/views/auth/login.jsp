@@ -363,6 +363,16 @@
                 <div class="helper">
                     <a href="${pageContext.request.contextPath}/forgot-password">Quên mật khẩu?</a>
                 </div>
+                <div class="divider"><span>hoặc</span></div>
+
+                <button type="button" class="btn-google" onclick="loginWithGoogle()">
+                    <img src="https://www.google.com/favicon.ico" alt="Google"/>
+                    Đăng nhập bằng Google
+                </button>
+
+                <div class="helper" style="margin-top: 1rem;">
+                    <a href="${pageContext.request.contextPath}/send-otp">Đăng nhập bằng Email OTP</a>
+                </div>
                 <div class="helper">
                     Chưa có tài khoản? <a href="${pageContext.request.contextPath}/register">Đăng ký ngay</a>
                 </div>

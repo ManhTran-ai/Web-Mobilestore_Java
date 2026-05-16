@@ -669,6 +669,38 @@ LOCK TABLES `users` WRITE;
 INSERT INTO `users` VALUES (5,'$2a$10$342ro1UObsU/8YP0Dy1HNOQ92Fxy3hYI/KLTc0ygh7j5Q6NyeIyP6','levantai','ADMIN',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(6,'$2a$10$w0KzLYHDgs5PI0Q4r3BjRu9RM3UbNa4IHSnfIb74KrHsTAlOnRfzW','manh','CUSTOMER',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(7,'$2a$10$bj4SkPMUK3jTJ7FD.9blzeYmCo.bUF5vd1wJVh2ldpIxQ8F5DHetG','hung','CUSTOMER',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(8,NULL,'tai1','CUSTOMER','google','116054212909485433236','levantai066@gmail.com',NULL,NULL,NULL,NULL,NULL),(9,NULL,'tai2','CUSTOMER','google','110613103348013667969','23130283@st.hcmuaf.edu.vn',NULL,NULL,NULL,NULL,NULL),(13,'$2a$10$KmcjsGN/04htrhRedfIIO.RqacQC3kU9NuhK0Dk84F6P0z7ifEP4K','manh1','CUSTOMER',NULL,NULL,'manht7000@gmail.com',NULL,NULL,NULL,NULL,NULL),(14,'$2a$10$NzkDMZg8oeJ5akLVIPgqRuH3wVU0.7FeBBr0oOpd9jsPBHIvO6b2y','taile','CUSTOMER',NULL,NULL,'levantaii066@gmail.com','22a/6 đường Thống Nhất, khu phố Tân Hoà, phường Đông Hoà, Thành phố Dĩ An, Tỉnh Bình Dương','0978120646',NULL,1454,'20813'),(15,'$2a$10$YybLYnr4agTft9BiBVslxuDrCaT3tD.dF3RROwh1xw4e1zwwlu4cG','tailevan','CUSTOMER',NULL,NULL,'levantai0667@gmail.com',NULL,'0978120646',NULL,2028,'560801');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `otp_tokens`
+--
+
+DROP TABLE IF EXISTS `otp_tokens`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `otp_tokens` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `email` VARCHAR(255) NOT NULL,
+  `otp_code` VARCHAR(6) NOT NULL,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `expired_at` DATETIME NOT NULL,
+  `is_used` TINYINT(1) NOT NULL DEFAULT 0,
+  `attempt_count` INT NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  KEY `idx_email_otp` (`email`, `otp_code`),
+  KEY `idx_expired` (`expired_at`),
+  KEY `idx_email_used` (`email`, `is_used`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `otp_tokens`
+--
+
+LOCK TABLES `otp_tokens` WRITE;
+/*!40000 ALTER TABLE `otp_tokens` DISABLE KEYS */;
+/*!40000 ALTER TABLE `otp_tokens` ENABLE KEYS */;
+UNLOCK TABLES;
+
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;

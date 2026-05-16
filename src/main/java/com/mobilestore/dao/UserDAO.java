@@ -228,7 +228,7 @@ public class UserDAO {
     public User findByEmail(String email) {
         String sql = "SELECT id, username, password, role_name, oauth_provider, oauth_id, email, shipping_address, customer_phone, note, district_id, ward_code " +
                      "FROM users " +
-                     "WHERE email = ?";
+                     "WHERE LOWER(email) = LOWER(?)";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
