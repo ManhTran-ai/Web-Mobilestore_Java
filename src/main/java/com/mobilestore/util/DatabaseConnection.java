@@ -17,7 +17,7 @@ public class DatabaseConnection {
             Properties prop = new Properties();
             if (input == null) {
                 System.out.println("Sorry, unable to find db.properties");
-                URL = "jdbc:mysql://localhost:3306/mobilestore?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
+                URL = "jdbc:mysql://localhost:3306/mobilestore?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Ho_Chi_Minh";
                 USERNAME = "root";
                 PASSWORD = "1317192005";
             } else {
