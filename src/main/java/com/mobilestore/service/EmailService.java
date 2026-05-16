@@ -9,6 +9,9 @@ import jakarta.mail.internet.MimeMessage;
 import jakarta.servlet.ServletContext;
 
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 import java.util.UUID;
 
@@ -22,7 +25,7 @@ public class EmailService {
         boolean enabled = false;
         try (InputStream is = getClass().getClassLoader().getResourceAsStream("mail.properties")) {
             if (is != null) {
-                mailConfig.load(is);
+                mailConfig.load(new InputStreamReader(is, StandardCharsets.UTF_8));
                 enabled = "true".equalsIgnoreCase(mailConfig.getProperty("smtp.enabled", "false"));
             }
         } catch (Exception e) {
@@ -78,7 +81,7 @@ public class EmailService {
 
         try {
             MimeMessage msg = new MimeMessage(session);
-            msg.setFrom(new InternetAddress(from, "Mobile Store"));
+            msg.setFrom(new InternetAddress(from, "MobileStore", "UTF-8"));
             msg.setRecipient(Message.RecipientType.TO, new InternetAddress(toEmail));
             msg.setSubject(subject, "UTF-8");
             msg.setText(textContent, "UTF-8");
@@ -110,5 +113,50 @@ public class EmailService {
 
     public String generateResetToken() {
         return UUID.randomUUID().toString().replace("-", "");
+    }
+
+    public void sendOtpEmail(String toEmail, String otpCode) throws MessagingException, UnsupportedEncodingException {
+        Properties smtpProps = new Properties();
+        smtpProps.put("mail.smtp.host", mailConfig.getProperty("smtp.host"));
+        smtpProps.put("mail.smtp.port", mailConfig.getProperty("smtp.port", "587"));
+        smtpProps.put("mail.smtp.auth", mailConfig.getProperty("smtp.auth", "true"));
+        smtpProps.put("mail.smtp.starttls.enable", mailConfig.getProperty("smtp.starttls.enable", "true"));
+        smtpProps.put("mail.smtp.ssl.trust", mailConfig.getProperty("smtp.ssl.trust", mailConfig.getProperty("smtp.host")));
+
+        String username = mailConfig.getProperty("smtp.username");
+        String password = mailConfig.getProperty("smtp.password");
+        String senderName = mailConfig.getProperty("smtp.from", username);
+
+        Session session = Session.getInstance(smtpProps, new jakarta.mail.Authenticator() {
+            @Override
+            protected jakarta.mail.PasswordAuthentication getPasswordAuthentication() {
+                return new jakarta.mail.PasswordAuthentication(username, password);
+            }
+        });
+
+        MimeMessage message = new MimeMessage(session);
+        message.setFrom(new InternetAddress(senderName, "MobileStore", "UTF-8"));
+        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
+        message.setSubject(mailConfig.getProperty("otp.email.subject", "[MobileStore] Mã xác nhận đăng nhập của bạn"), "UTF-8");
+        message.setContent(buildOtpHtmlBody(otpCode), "text/html; charset=UTF-8");
+        Transport.send(message);
+    }
+
+    private String buildOtpHtmlBody(String otpCode) {
+        StringBuilder html = new StringBuilder();
+        html.append("<div style=\"font-family: Arial, sans-serif; max-width: 480px; margin: auto; border: 1px solid #e0e0e0; border-radius: 8px; padding: 32px;\">");
+        html.append("<h2 style=\"color: #1a1a2e;\">Mã Xác Nhận Đăng Nhập</h2>");
+        html.append("<p>Xin chào,</p>");
+        html.append("<p>Mã OTP của bạn là:</p>");
+        html.append("<div style=\"text-align: center; margin: 24px 0;\">");
+        html.append("<span style=\"font-size: 36px; font-weight: bold; letter-spacing: 12px; color: #e94560; background: #f5f5f5; padding: 12px 24px; border-radius: 8px;\">");
+        html.append(otpCode);
+        html.append("</span></div>");
+        html.append("<p style=\"color: #888;\">Mã có hiệu lực trong <strong>5 phút</strong>.</p>");
+        html.append("<p style=\"color: #888;\">Nếu bạn không yêu cầu mã này, hãy bỏ qua email này.</p>");
+        html.append("<hr style=\"border: none; border-top: 1px solid #eee; margin: 24px 0;\">");
+        html.append("<p style=\"color: #aaa; font-size: 12px;\">MobileStore - Email tự động, vui lòng không trả lời.</p>");
+        html.append("</div>");
+        return html.toString();
     }
 }
