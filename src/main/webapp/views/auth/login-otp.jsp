@@ -119,8 +119,6 @@
     (function() {
         var timeLeft = 5 * 60;
         var countdownInterval;
-
-        // Force-clear OTP input to prevent browser autofill of old codes
         var otpInput = document.getElementById('otpCode');
         if (otpInput) {
             otpInput.value = '';
