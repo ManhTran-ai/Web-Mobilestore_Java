@@ -25,7 +25,6 @@ public class EmailService {
         boolean enabled = false;
         try (InputStream is = getClass().getClassLoader().getResourceAsStream("mail.properties")) {
             if (is != null) {
-                // Dùng InputStreamReader UTF-8 để Properties đọc đúng tiếng Việt
                 mailConfig.load(new InputStreamReader(is, StandardCharsets.UTF_8));
                 enabled = "true".equalsIgnoreCase(mailConfig.getProperty("smtp.enabled", "false"));
             }
