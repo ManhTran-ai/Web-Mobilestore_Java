@@ -360,6 +360,9 @@
                     <img src="https://www.google.com/favicon.ico" alt="Google"/>
                     Đăng nhập bằng Google
                 </button>
+                <div class="helper" style="margin-top: 0.5rem;">
+                    <a href="${pageContext.request.contextPath}/send-otp">Đăng nhập bằng mã OTP</a>
+                </div>
                 <div class="helper">
                     <a href="${pageContext.request.contextPath}/forgot-password">Quên mật khẩu?</a>
                 </div>
