@@ -677,6 +677,8 @@ CREATE TABLE `users` (
   `password` varchar(255) DEFAULT NULL,
   `username` varchar(255) NOT NULL,
   `role_name` varchar(255) DEFAULT NULL,
+  `account_status` varchar(20) NOT NULL DEFAULT 'ACTIVE' COMMENT 'ACTIVE | INACTIVE | DELETED',
+  `deleted_at` datetime DEFAULT NULL COMMENT 'Thời điểm xóa mềm',
   `oauth_provider` varchar(20) DEFAULT NULL,
   `oauth_id` varchar(255) DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
@@ -687,7 +689,8 @@ CREATE TABLE `users` (
   `ward_code` varchar(20) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `UKr43af9ap4edm43mmtq01oddj6` (`username`),
-  KEY `FK6e7f1kfvvn2k48olww485qvo3` (`role_name`)
+  KEY `FK6e7f1kfvvn2k48olww485qvo3` (`role_name`),
+  KEY `idx_users_account_status` (`account_status`)
 ) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -697,7 +700,15 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (5,'$2a$10$342ro1UObsU/8YP0Dy1HNOQ92Fxy3hYI/KLTc0ygh7j5Q6NyeIyP6','levantai','ADMIN',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(6,'$2a$10$w0KzLYHDgs5PI0Q4r3BjRu9RM3UbNa4IHSnfIb74KrHsTAlOnRfzW','manh','CUSTOMER',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(7,'$2a$10$bj4SkPMUK3jTJ7FD.9blzeYmCo.bUF5vd1wJVh2ldpIxQ8F5DHetG','hung','CUSTOMER',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(8,NULL,'tai1','CUSTOMER','google','116054212909485433236','levantai066@gmail.com',NULL,NULL,NULL,NULL,NULL),(9,NULL,'tai2','CUSTOMER','google','110613103348013667969','23130283@st.hcmuaf.edu.vn',NULL,NULL,NULL,NULL,NULL),(13,'$2a$10$KmcjsGN/04htrhRedfIIO.RqacQC3kU9NuhK0Dk84F6P0z7ifEP4K','manh1','CUSTOMER',NULL,NULL,'manht7000@gmail.com',NULL,NULL,NULL,NULL,NULL),(14,'$2a$10$NzkDMZg8oeJ5akLVIPgqRuH3wVU0.7FeBBr0oOpd9jsPBHIvO6b2y','taile','CUSTOMER',NULL,NULL,'levantaii066@gmail.com','22a/6 đường Thống Nhất, khu phố Tân Hoà, phường Đông Hoà, Thành phố Dĩ An, Tỉnh Bình Dương','0978120646',NULL,1454,'20813'),(15,'$2a$10$YybLYnr4agTft9BiBVslxuDrCaT3tD.dF3RROwh1xw4e1zwwlu4cG','tailevan','CUSTOMER',NULL,NULL,'levantai0667@gmail.com',NULL,'0978120646',NULL,2028,'560801');
+INSERT INTO `users` VALUES
+(5,'$2a$10$342ro1UObsU/8YP0Dy1HNOQ92Fxy3hYI/KLTc0ygh7j5Q6NyeIyP6','levantai','ADMIN','ACTIVE',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+(6,'$2a$10$w0KzLYHDgs5PI0Q4r3BjRu9RM3UbNa4IHSnfIb74KrHsTAlOnRfzW','manh','CUSTOMER','ACTIVE',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+(7,'$2a$10$bj4SkPMUK3jTJ7FD.9blzeYmCo.bUF5vd1wJVh2ldpIxQ8F5DHetG','hung','CUSTOMER','ACTIVE',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+(8,NULL,'tai1','CUSTOMER','ACTIVE',NULL,'google','116054212909485433236','levantai066@gmail.com',NULL,NULL,NULL,NULL,NULL),
+(9,NULL,'tai2','CUSTOMER','ACTIVE',NULL,'google','110613103348013667969','23130283@st.hcmuaf.edu.vn',NULL,NULL,NULL,NULL,NULL),
+(13,'$2a$10$KmcjsGN/04htrhRedfIIO.RqacQC3kU9NuhK0Dk84F6P0z7ifEP4K','manh1','CUSTOMER','ACTIVE',NULL,NULL,NULL,'manht7000@gmail.com',NULL,NULL,NULL,NULL,NULL),
+(14,'$2a$10$NzkDMZg8oeJ5akLVIPgqRuH3wVU0.7FeBBr0oOpd9jsPBHIvO6b2y','taile','CUSTOMER','ACTIVE',NULL,NULL,NULL,'levantaii066@gmail.com','22a/6 đường Thống Nhất, khu phố Tân Hoà, phường Đông Hoà, Thành phố Dĩ An, Tỉnh Bình Dương','0978120646',NULL,1454,'20813'),
+(15,'$2a$10$YybLYnr4agTft9BiBVslxuDrCaT3tD.dF3RROwh1xw4e1zwwlu4cG','tailevan','CUSTOMER','ACTIVE',NULL,NULL,NULL,'levantai0667@gmail.com',NULL,'0978120646',NULL,2028,'560801');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
