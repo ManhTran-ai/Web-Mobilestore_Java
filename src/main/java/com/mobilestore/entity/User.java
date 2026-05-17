@@ -5,6 +5,8 @@ import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
+import java.util.Date;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -14,6 +16,8 @@ public class User {
     private String username;
     private String password;
     private String roleName;
+    private String accountStatus;
+    private Date deletedAt;
     private String oauthProvider;
     private String oauthId;
     private String email;
