@@ -86,6 +86,7 @@
                 <li><a href="${pageContext.request.contextPath}/admin/orders"><span class="icon">&#129534;</span> Đơn hàng</a></li>
                 <li><a href="${pageContext.request.contextPath}/admin/sliders" class="active"><span class="icon">&#127909;</span> Slider Images</a></li>
                 <li><a href="${pageContext.request.contextPath}/admin/reviews"><span class="icon">&#127881;</span> Đánh giá</a></li>
+                <li><a href="${pageContext.request.contextPath}/admin/users"><span class="icon">&#128101;</span> Người dùng</a></li>
             </ul>
         </nav>
     </aside>
