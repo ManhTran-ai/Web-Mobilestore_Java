@@ -121,7 +121,7 @@ public class ReviewDAO {
             SELECT 1 FROM order_details od
             JOIN orders o ON od.order_id = o.order_id
             JOIN product_variants pv ON od.variant_id = pv.variant_id
-            WHERE o.user_id = ? AND pv.product_id = ? AND o.order_status = 'DELIVERED'
+            WHERE o.user_id = ? AND pv.product_id = ? AND o.order_status = 'COMPLETED'
             LIMIT 1
             """;
         try (Connection conn = DatabaseConnection.getConnection();
