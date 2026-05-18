@@ -597,19 +597,11 @@
                                     <span><fmt:formatNumber value="${total}" type="number" groupingUsed="true"/>₫</span>
                                 </div>
                                 <div class="order-total-row">
-                                    <span>Phí vận chuyển:</span>
-                                    <span id="shippingFeeDisplay">
-                                        <c:choose>
-                                            <c:when test="${shippingCost > 0}">
-                                                <fmt:formatNumber value="${shippingCost}" type="number" groupingUsed="true"/>₫
-                                            </c:when>
-                                            <c:otherwise>Miễn phí</c:otherwise>
-                                        </c:choose>
-                                    </span>
+                                    <span>Phí vận chuyển: Miễn phí</span>
                                 </div>
                                 <div class="order-total-row final">
                                     <span>Tổng cộng:</span>
-                                    <span class="amount" id="totalAmountDisplay"><fmt:formatNumber value="${total + (shippingCost != null ? shippingCost : 0)}" type="number"
+                                    <span class="amount" id="totalAmountDisplay"><fmt:formatNumber value="${total}" type="number"
                                                                            groupingUsed="true"/>₫</span>
                                 </div>
                             </div>
