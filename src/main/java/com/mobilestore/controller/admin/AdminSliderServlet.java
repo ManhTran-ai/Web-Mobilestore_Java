@@ -141,11 +141,7 @@ public class AdminSliderServlet extends HttpServlet {
         String imageUrl = null;
         Part filePart = null;
 
-        try {
-            filePart = request.getPart("image");
-        } catch (Exception e) {
-            // No file part
-        }
+        filePart = getFilePart(request, "image");
 
         if (filePart != null && filePart.getSize() > 0) {
             imageUrl = uploadImage(filePart);
@@ -202,11 +198,7 @@ public class AdminSliderServlet extends HttpServlet {
             String imageUrl = existingSlider.getImageUrl();
             Part filePart = null;
 
-            try {
-                filePart = request.getPart("image");
-            } catch (Exception e) {
-                // No file part
-            }
+            filePart = getFilePart(request, "image");
 
             if (filePart != null && filePart.getSize() > 0) {
                 String newImageUrl = uploadImage(filePart);
@@ -387,6 +379,18 @@ public class AdminSliderServlet extends HttpServlet {
             }
         } catch (Exception e) {
             System.err.println("Lỗi khi xóa file ảnh: " + e.getMessage());
+        }
+    }
+
+    private Part getFilePart(HttpServletRequest request, String fieldName) {
+        String contentType = request.getContentType();
+        if (contentType == null || !contentType.toLowerCase().startsWith("multipart/")) {
+            return null;
+        }
+        try {
+            return request.getPart(fieldName);
+        } catch (ServletException | IOException e) {
+            return null;
         }
     }
 
