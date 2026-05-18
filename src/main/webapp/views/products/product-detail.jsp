@@ -515,12 +515,12 @@
                     <c:when test="${canReview}">
                         <div class="review-form-card">
                             <h4>Viết đánh giá của bạn</h4>
-                            <div class="star-picker" id="starPicker">
-                                <input type="radio" name="rating" id="star5" value="5"><label for="star5" title="5 sao">&#9733;</label>
-                                <input type="radio" name="rating" id="star4" value="4"><label for="star4" title="4 sao">&#9733;</label>
-                                <input type="radio" name="rating" id="star3" value="3"><label for="star3" title="3 sao">&#9733;</label>
-                                <input type="radio" name="rating" id="star2" value="2"><label for="star2" title="2 sao">&#9733;</label>
-                                <input type="radio" name="rating" id="star1" value="1"><label for="star1" title="1 sao">&#9733;</label>
+                            <div class="star-picker" id="edit-star-${r.id}">
+                                <input type="radio" name="editRating${r.id}" id="edit-star1-${r.id}" value="1"><label for="edit-star1-${r.id}" title="1 sao">&#9733;</label>
+                                <input type="radio" name="editRating${r.id}" id="edit-star2-${r.id}" value="2"><label for="edit-star2-${r.id}" title="2 sao">&#9733;</label>
+                                <input type="radio" name="editRating${r.id}" id="edit-star3-${r.id}" value="3"><label for="edit-star3-${r.id}" title="3 sao">&#9733;</label>
+                                <input type="radio" name="editRating${r.id}" id="edit-star4-${r.id}" value="4"><label for="edit-star4-${r.id}" title="4 sao">&#9733;</label>
+                                <input type="radio" name="editRating${r.id}" id="edit-star5-${r.id}" value="5"><label for="edit-star5-${r.id}" title="5 sao">&#9733;</label>
                             </div>
                             <textarea id="reviewComment" placeholder="Chia sẻ trải nghiệm của bạn về sản phẩm này..." maxlength="1000"></textarea>
                             <button class="btn" id="submitReviewBtn" onclick="submitReview(${product.productId})">Gửi đánh giá</button>
@@ -528,7 +528,7 @@
                     </c:when>
                     <c:when test="${hasPurchased}">
                         <div class="review-submitted-badge">
-                            &#10003; Bạn đã đánh giá sản phẩm này. Cảm ơn bạn!
+                            &#10003; Cảm ơn bạn đã đánh giá, đánh giá của bạn đang được duyệt bởi ADMIN!
                         </div>
                     </c:when>
                 </c:choose>
