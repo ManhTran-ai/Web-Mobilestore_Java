@@ -20,6 +20,7 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @WebServlet(name = "ProductsServlet", urlPatterns = {"/products", "/products/*"})
 public class ProductsServlet extends HttpServlet {
@@ -199,9 +200,22 @@ public class ProductsServlet extends HttpServlet {
             }
 
             ReviewService reviewService = new ReviewServiceImpl();
-            List<Review> reviews = reviewService.getReviewsByProductId(productId);
+
+            String ratingParam = request.getParameter("rating");
+            Integer ratingFilter = null;
+            if (ratingParam != null && !ratingParam.trim().isEmpty()) {
+                try {
+                    int parsed = Integer.parseInt(ratingParam.trim());
+                    if (parsed >= 1 && parsed <= 5) {
+                        ratingFilter = parsed;
+                    }
+                } catch (NumberFormatException ignored) {}
+            }
+
+            List<Review> reviews = reviewService.getReviewsByProductId(productId, ratingFilter);
             double averageRating = reviewService.getAverageRating(productId);
             int reviewCount = reviewService.getReviewCount(productId);
+            Map<Integer, Integer> ratingCounts = reviewService.getReviewCountByRatingGroup(productId);
 
             boolean canReview = false;
             boolean hasPurchased = false;
@@ -215,6 +229,8 @@ public class ProductsServlet extends HttpServlet {
             request.setAttribute("reviews", reviews);
             request.setAttribute("averageRating", averageRating);
             request.setAttribute("reviewCount", reviewCount);
+            request.setAttribute("ratingCounts", ratingCounts);
+            request.setAttribute("currentRatingFilter", ratingFilter);
             request.setAttribute("canReview", canReview);
             request.setAttribute("hasPurchased", hasPurchased);
             request.getRequestDispatcher("/views/products/product-detail.jsp").forward(request, response);
