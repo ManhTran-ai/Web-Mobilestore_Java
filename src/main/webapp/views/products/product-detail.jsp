@@ -370,6 +370,50 @@
             line-height: 1.5;
             font-weight: 400;
         }
+        .rating-filter-bar {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .rating-filter-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 12px;
+            border: 1px solid #d0d0d0;
+            border-radius: 20px;
+            background: #fff;
+            color: #333;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .rating-filter-btn:hover {
+            border-color: #0071e3;
+            color: #0071e3;
+        }
+        .rating-filter-btn.active {
+            background: #0071e3;
+            border-color: #0071e3;
+            color: #fff;
+        }
+        .rating-filter-btn .star-icon {
+            font-size: 0.75rem;
+        }
+        .review-count-badge {
+            display: inline-block;
+            background: rgba(0,0,0,0.06);
+            border-radius: 10px;
+            padding: 0 5px;
+            font-size: 0.7rem;
+            line-height: 1.4;
+            min-width: 18px;
+            text-align: center;
+        }
+        .rating-filter-btn.active .review-count-badge {
+            background: rgba(255,255,255,0.25);
+        }
     </style>
 </head>
 <body>
@@ -505,6 +549,25 @@
                             </c:choose>
                         </c:forEach>
                     </div>
+                    <div class="rating-filter-bar" id="ratingFilterBar" style="margin-top:10px;">
+                        <button class="rating-filter-btn<c:if test="${empty currentRatingFilter}"> active</c:if>"
+                                onclick="filterByRating(null)">
+                            Tất cả
+                        </button>
+                        <c:forEach begin="1" end="5" var="i">
+                            <c:set var="star" value="${6 - i}" />
+
+                            <c:set var="isActive" value="false" />
+                            <c:if test="${not empty currentRatingFilter and currentRatingFilter == star}">
+                                <c:set var="isActive" value="true" />
+                            </c:if>
+                            <button class="rating-filter-btn<c:if test="${isActive}"> active</c:if>"
+                                    onclick="filterByRating(${star})">
+                                <span class="star-icon">&#9733;</span> ${star}
+                                <span class="review-count-badge">${ratingCounts[star]}</span>
+                            </button>
+                        </c:forEach>
+                    </div>
                 </div>
             </div>
         </c:if>
@@ -515,12 +578,12 @@
                     <c:when test="${canReview}">
                         <div class="review-form-card">
                             <h4>Viết đánh giá của bạn</h4>
-                            <div class="star-picker" id="starPicker">
-                                <input type="radio" name="rating" id="star5" value="5"><label for="star5" title="5 sao">&#9733;</label>
-                                <input type="radio" name="rating" id="star4" value="4"><label for="star4" title="4 sao">&#9733;</label>
-                                <input type="radio" name="rating" id="star3" value="3"><label for="star3" title="3 sao">&#9733;</label>
-                                <input type="radio" name="rating" id="star2" value="2"><label for="star2" title="2 sao">&#9733;</label>
-                                <input type="radio" name="rating" id="star1" value="1"><label for="star1" title="1 sao">&#9733;</label>
+                            <div class="star-picker" id="edit-star-${r.id}">
+                                <input type="radio" name="editRating${r.id}" id="edit-star1-${r.id}" value="1"><label for="edit-star1-${r.id}" title="1 sao">&#9733;</label>
+                                <input type="radio" name="editRating${r.id}" id="edit-star2-${r.id}" value="2"><label for="edit-star2-${r.id}" title="2 sao">&#9733;</label>
+                                <input type="radio" name="editRating${r.id}" id="edit-star3-${r.id}" value="3"><label for="edit-star3-${r.id}" title="3 sao">&#9733;</label>
+                                <input type="radio" name="editRating${r.id}" id="edit-star4-${r.id}" value="4"><label for="edit-star4-${r.id}" title="4 sao">&#9733;</label>
+                                <input type="radio" name="editRating${r.id}" id="edit-star5-${r.id}" value="5"><label for="edit-star5-${r.id}" title="5 sao">&#9733;</label>
                             </div>
                             <textarea id="reviewComment" placeholder="Chia sẻ trải nghiệm của bạn về sản phẩm này..." maxlength="1000"></textarea>
                             <button class="btn" id="submitReviewBtn" onclick="submitReview(${product.productId})">Gửi đánh giá</button>
@@ -528,7 +591,7 @@
                     </c:when>
                     <c:when test="${hasPurchased}">
                         <div class="review-submitted-badge">
-                            &#10003; Bạn đã đánh giá sản phẩm này. Cảm ơn bạn!
+                            &#10003; Cảm ơn bạn đã đánh giá, đánh giá của bạn đang được duyệt bởi ADMIN!
                         </div>
                     </c:when>
                 </c:choose>
@@ -1126,6 +1189,133 @@
             }
         }).catch(function(err) {
             showToast('Có lỗi xảy ra!');
+        });
+    }
+
+    function filterByRating(rating) {
+        document.querySelectorAll('.rating-filter-btn').forEach(function(btn) {
+            btn.classList.remove('active');
+        });
+        if (rating === null) {
+            var allBtn = document.querySelector('.rating-filter-btn[onclick*="filterByRating(null)"]');
+            if (allBtn) allBtn.classList.add('active');
+        } else {
+            var clickedBtn = document.querySelector('.rating-filter-btn[onclick="filterByRating(' + rating + ')"]');
+            if (clickedBtn) clickedBtn.classList.add('active');
+        }
+
+        var reviewList = document.getElementById('reviewList');
+        reviewList.innerHTML = '<div style="text-align:center;padding:2rem;color:#666;">Đang tải đánh giá...</div>';
+
+        var productId = ${product.productId};
+        var url = '${pageContext.request.contextPath}/api/reviews?productId=' + productId;
+        if (rating !== null) {
+            url += '&rating=' + rating;
+        }
+
+        fetch(url, {
+            method: 'GET',
+            credentials: 'same-origin'
+        }).then(function(res) { return res.json(); })
+        .then(function(data) {
+            if (data.status === 'success') {
+                renderReviews(data.reviews, ${sessionScope.user != null ? sessionScope.user.id : 'null'});
+            } else {
+                reviewList.innerHTML = '<div style="text-align:center;color:#dc3545;padding:2rem;">Lỗi tải dữ liệu!</div>';
+                showToast(data.message || 'Có lỗi xảy ra!');
+            }
+        }).catch(function(err) {
+            console.error('Lỗi khi tải đánh giá:', err);
+            reviewList.innerHTML = '<div style="text-align:center;color:#dc3545;padding:2rem;">Lỗi tải dữ liệu!</div>';
+            showToast('Không thể tải danh sách đánh giá lúc này.');
+        });
+    }
+
+    function renderReviews(reviews, currentUserId) {
+        var reviewList = document.getElementById('reviewList');
+        reviewList.innerHTML = '';
+
+        if (!reviews || reviews.length === 0) {
+            reviewList.innerHTML = '<div style="text-align:center;color:#86868b;padding:2rem 0;font-size:0.9rem;">Chưa có đánh giá nào cho bộ lọc này.</div>';
+            return;
+        }
+
+        reviews.forEach(function(r) {
+            var starsHtml = '';
+            for (var i = 1; i <= 5; i++) {
+                starsHtml += (i <= r.rating) ? '&#9733;' : '&#9734;';
+            }
+
+            var dateString = '';
+            if (r.createdAt) {
+                var parts = r.createdAt.split(' ')[0];
+                if (parts) dateString = parts.split('-').reverse().join('/');
+            }
+
+            var actionButtons = '';
+            if (currentUserId !== null && r.userId === currentUserId) {
+                actionButtons = '<div style="display:flex;gap:6px;margin-top:4px;">' +
+                    '<button class="btn-edit-review" onclick="editReview(' + r.id + ', ' + r.rating + ', \'' + (r.comment || '').replace(/'/g, "\\'") + '\')">Sửa</button>' +
+                    '<button class="btn-delete-review" onclick="deleteReview(' + r.id + ')">Xóa</button>' +
+                    '</div>';
+            }
+
+            var adminReplyHtml = '';
+            if (r.adminReply) {
+                var replyDate = '';
+                if (r.adminReplyAt) {
+                    var rp = r.adminReplyAt.split(' ')[0];
+                    if (rp) replyDate = rp.split('-').reverse().join('/');
+                }
+                adminReplyHtml = '<div class="admin-reply">' +
+                    '<div class="admin-reply-header">' +
+                    '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>' +
+                    'Phản hồi từ MobileStore' +
+                    '<span class="admin-reply-time">' + replyDate + '</span>' +
+                    '</div>' +
+                    '<div class="admin-reply-text">' + r.adminReply + '</div>' +
+                    '</div>';
+            }
+
+            var editFormHtml = '<div class="review-edit-form" id="review-edit-' + r.id + '" style="display:none;">' +
+                '<div class="star-picker" id="edit-star-' + r.id + '">' +
+                '<input type="radio" name="editRating' + r.id + '" id="edit-star5-' + r.id + '" value="5"><label for="edit-star5-' + r.id + '" title="5 sao">&#9733;</label>' +
+                '<input type="radio" name="editRating' + r.id + '" id="edit-star4-' + r.id + '" value="4"><label for="edit-star4-' + r.id + '" title="4 sao">&#9733;</label>' +
+                '<input type="radio" name="editRating' + r.id + '" id="edit-star3-' + r.id + '" value="3"><label for="edit-star3-' + r.id + '" title="3 sao">&#9733;</label>' +
+                '<input type="radio" name="editRating' + r.id + '" id="edit-star2-' + r.id + '" value="2"><label for="edit-star2-' + r.id + '" title="2 sao">&#9733;</label>' +
+                '<input type="radio" name="editRating' + r.id + '" id="edit-star1-' + r.id + '" value="1"><label for="edit-star1-' + r.id + '" title="1 sao">&#9733;</label>' +
+                '</div>' +
+                '<textarea id="edit-comment-' + r.id + '" placeholder="Chia sẻ trải nghiệm của bạn..." maxlength="1000">' + (r.comment || '') + '</textarea>' +
+                '<div style="display:flex;gap:8px;margin-top:8px;">' +
+                '<button class="btn" onclick="submitEditReview(' + r.id + ')">Lưu</button>' +
+                '<button class="btn-cancel-edit" onclick="cancelEditReview(' + r.id + ')">Hủy</button>' +
+                '</div></div>';
+
+            var commentHtml = r.comment ? '<div class="review-comment">' + r.comment + '</div>' : '';
+
+            var reviewHtml = '<div class="review-item" id="review-item-' + r.id + '">' +
+                '<div class="review-item-header">' +
+                '<div class="review-item-user">' +
+                '<div class="review-avatar">' + (r.username ? r.username.substring(0, 1).toUpperCase() : '?') + '</div>' +
+                '<span class="review-username">' + r.username + '</span>' +
+                '</div>' +
+                '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;">' +
+                '<div class="review-stars">' + starsHtml + '</div>' +
+                '<span class="review-date">' + dateString + '</span>' +
+                actionButtons +
+                '</div>' +
+                '</div>' +
+                '<div class="review-content" id="review-content-' + r.id + '">' + commentHtml + '</div>' +
+                adminReplyHtml +
+                editFormHtml +
+                '</div>';
+
+            reviewList.insertAdjacentHTML('beforeend', reviewHtml);
+        });
+
+        document.querySelectorAll('.review-item').forEach(function(item) {
+            var reviewId = item.id.replace('review-item-', '');
+            setupEditStars(reviewId);
         });
     }
 </script>
