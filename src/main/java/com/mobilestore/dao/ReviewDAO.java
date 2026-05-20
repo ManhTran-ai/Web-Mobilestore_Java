@@ -7,7 +7,9 @@ import com.mobilestore.util.DatabaseConnection;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ReviewDAO {
 
@@ -35,6 +37,64 @@ public class ReviewDAO {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public List<Review> findByProductId(int productId, Integer ratingFilter) {
+        List<Review> reviews = new ArrayList<>();
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT r.id, r.rating, r.comment, r.created_at, r.updated_at, r.is_approved,\n");
+        sql.append("       r.admin_reply, r.admin_reply_at,\n");
+        sql.append("       u.id AS user_id, u.username, u.oauth_provider,\n");
+        sql.append("       p.product_id, p.product_name\n");
+        sql.append("FROM reviews r\n");
+        sql.append("JOIN users u ON r.user_id = u.id\n");
+        sql.append("JOIN products p ON r.product_id = p.product_id\n");
+        sql.append("WHERE r.product_id = ? AND r.is_approved = TRUE\n");
+        if (ratingFilter != null && ratingFilter >= 1 && ratingFilter <= 5) {
+            sql.append("AND r.rating = ?\n");
+        }
+        sql.append("ORDER BY r.created_at DESC");
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+            ps.setInt(1, productId);
+            if (ratingFilter != null && ratingFilter >= 1 && ratingFilter <= 5) {
+                ps.setInt(2, ratingFilter);
+            }
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    reviews.add(mapResultSetToReview(rs));
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Lỗi ReviewDAO.findByProductId: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return reviews;
+    }
+
+    public Map<Integer, Integer> getReviewCountByRatingGroup(int productId) {
+        Map<Integer, Integer> result = new LinkedHashMap<>();
+        for (int i = 1; i <= 5; i++) {
+            result.put(i, 0);
+        }
+        String sql = "SELECT rating, COUNT(*) AS cnt FROM reviews WHERE product_id = ? AND is_approved = TRUE GROUP BY rating";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, productId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int rating = rs.getInt("rating");
+                    int cnt = rs.getInt("cnt");
+                    if (rating >= 1 && rating <= 5) {
+                        result.put(rating, cnt);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Lỗi ReviewDAO.getReviewCountByRatingGroup: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return result;
     }
 
     public List<Review> findByProductId(int productId) {
