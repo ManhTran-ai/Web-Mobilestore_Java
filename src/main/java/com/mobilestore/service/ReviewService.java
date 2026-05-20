@@ -2,9 +2,11 @@ package com.mobilestore.service;
 
 import com.mobilestore.entity.Review;
 import java.util.List;
+import java.util.Map;
 
 public interface ReviewService {
     List<Review> getReviewsByProductId(int productId);
+    List<Review> getReviewsByProductId(int productId, Integer ratingFilter);
     List<Review> getAllReviews();
     List<Review> getPendingReviewsForAdmin();
     boolean canUserReviewProduct(int userId, int productId);
@@ -17,4 +19,5 @@ public interface ReviewService {
     boolean replyReview(int reviewId, String adminReply);
     double getAverageRating(int productId);
     int getReviewCount(int productId);
+    Map<Integer, Integer> getReviewCountByRatingGroup(int productId);
 }
