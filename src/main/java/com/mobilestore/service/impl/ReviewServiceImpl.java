@@ -7,6 +7,7 @@ import com.mobilestore.entity.User;
 import com.mobilestore.service.ReviewService;
 
 import java.util.List;
+import java.util.Map;
 
 public class ReviewServiceImpl implements ReviewService {
     private final ReviewDAO reviewDAO = new ReviewDAO();
@@ -104,6 +105,16 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public double getAverageRating(int productId) {
         return reviewDAO.getAverageRating(productId);
+    }
+
+    @Override
+    public List<Review> getReviewsByProductId(int productId, Integer ratingFilter) {
+        return reviewDAO.findByProductId(productId, ratingFilter);
+    }
+
+    @Override
+    public Map<Integer, Integer> getReviewCountByRatingGroup(int productId) {
+        return reviewDAO.getReviewCountByRatingGroup(productId);
     }
 
     @Override
