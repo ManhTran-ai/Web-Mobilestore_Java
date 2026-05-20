@@ -2,6 +2,7 @@ package com.mobilestore.controller;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.mobilestore.entity.Review;
 import com.mobilestore.entity.User;
 import com.mobilestore.service.ReviewService;
 import com.mobilestore.service.impl.ReviewServiceImpl;
@@ -15,12 +16,72 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 
 @WebServlet("/api/reviews")
 public class ReviewServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private final ReviewService reviewService = new ReviewServiceImpl();
     private final Gson gson = new Gson();
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        request.setCharacterEncoding("UTF-8");
+        PrintWriter out = response.getWriter();
+        JsonObject jsonResponse = new JsonObject();
+
+        String productIdParam = request.getParameter("productId");
+        if (productIdParam == null || productIdParam.trim().isEmpty()) {
+            jsonResponse.addProperty("status", "error");
+            jsonResponse.addProperty("message", "Thiếu thông tin sản phẩm");
+            out.print(gson.toJson(jsonResponse));
+            return;
+        }
+
+        try {
+            int productId = Integer.parseInt(productIdParam.trim());
+            String ratingParam = request.getParameter("rating");
+            Integer ratingFilter = null;
+            if (ratingParam != null && !ratingParam.trim().isEmpty()) {
+                try {
+                    int parsed = Integer.parseInt(ratingParam.trim());
+                    if (parsed >= 1 && parsed <= 5) {
+                        ratingFilter = parsed;
+                    }
+                } catch (NumberFormatException ignored) {}
+            }
+
+            List<Review> reviews = reviewService.getReviewsByProductId(productId, ratingFilter);
+            List<JsonObject> reviewList = new java.util.ArrayList<>();
+            for (Review r : reviews) {
+                JsonObject obj = new JsonObject();
+                obj.addProperty("id", r.getId());
+                obj.addProperty("rating", r.getRating());
+                obj.addProperty("comment", r.getComment() != null ? r.getComment() : "");
+                obj.addProperty("userId", r.getUser().getId());
+                obj.addProperty("username", r.getUser().getUsername());
+                obj.addProperty("createdAt", r.getCreatedAt() != null ? r.getCreatedAt().toString() : "");
+                obj.addProperty("adminReply", r.getAdminReply() != null ? r.getAdminReply() : "");
+                obj.addProperty("adminReplyAt", r.getAdminReplyAt() != null ? r.getAdminReplyAt().toString() : "");
+                reviewList.add(obj);
+            }
+
+            jsonResponse.addProperty("status", "success");
+            jsonResponse.add("reviews", gson.toJsonTree(reviewList));
+        } catch (NumberFormatException e) {
+            jsonResponse.addProperty("status", "error");
+            jsonResponse.addProperty("message", "Dữ liệu không hợp lệ");
+        } catch (Exception e) {
+            jsonResponse.addProperty("status", "error");
+            jsonResponse.addProperty("message", "Có lỗi xảy ra, vui lòng thử lại sau!");
+            e.printStackTrace();
+        }
+
+        out.print(gson.toJson(jsonResponse));
+        out.flush();
+    }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
