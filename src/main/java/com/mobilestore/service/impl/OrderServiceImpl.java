@@ -1,5 +1,6 @@
 package com.mobilestore.service.impl;
 
+import com.mobilestore.config.VNPayConfig;
 import com.mobilestore.dao.OrderDAO;
 import com.mobilestore.entity.Order;
 import com.mobilestore.entity.CartItem;
@@ -78,5 +79,47 @@ public class OrderServiceImpl implements OrderService {
             return false;
         }
         return orderDAO.updateTrackingNumber(orderId, trackingNumber);
+    }
+
+    @Override
+    public boolean cancelOrder(Integer orderId, Integer userId) {
+        if (orderId == null || userId == null) {
+            return false;
+        }
+        Order order = orderDAO.findById(orderId);
+        if (order == null) {
+            return false;
+        }
+        if (order.getUser() == null || !order.getUser().getId().equals(userId)) {
+            return false;
+        }
+        if (!"PENDING".equals(order.getOrderStatus())) {
+            return false;
+        }
+        boolean updated = orderDAO.cancelOrder(orderId, "CANCELLED");
+        if (!updated) {
+            return false;
+        }
+        orderDAO.restoreStockByOrderId(orderId);
+        if ("VNPAY".equals(order.getPaymentMethod()) && "PAID".equals(order.getPaymentStatus())) {
+            String ipAddr = "127.0.0.1";
+            String response = VNPayConfig.refund(
+                    order.getVnpOrderId(),
+                    order.getVnpTransactionId(),
+                    (long) Math.round(order.getTotalAmount() * 100),
+                    ipAddr,
+                    order.getOrderDate(),
+                    "customer"
+            );
+            System.out.println("[REFUND] orderId=" + orderId
+                    + " | vnpTxnRef=" + order.getVnpOrderId()
+                    + " | vnpTransNo=" + order.getVnpTransactionId()
+                    + " | refundAmount=" + (long) Math.round(order.getTotalAmount() * 100)
+                    + " | response=" + response);
+            if (response != null && response.contains("\"vnp_ResponseCode\":\"00\"")) {
+                orderDAO.updatePaymentStatus(orderId, "REFUNDED");
+            }
+        }
+        return true;
     }
 }
