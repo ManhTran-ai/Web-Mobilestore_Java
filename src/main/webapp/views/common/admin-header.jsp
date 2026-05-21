@@ -13,6 +13,11 @@
                 </a>
             </li>
             <li>
+                <a href="${pageContext.request.contextPath}/admin/dashboard" ${activeMenu == 'dashboard' ? 'class="active"' : ''}>
+                    Dashboard
+                </a>
+            </li>
+            <li>
                 <a href="${pageContext.request.contextPath}/admin/products" ${activeMenu == 'products' ? 'class="active"' : ''}>
                     Sản phẩm
                 </a>
@@ -30,6 +35,11 @@
             <li>
                 <a href="${pageContext.request.contextPath}/admin/reviews" ${activeMenu == 'reviews' ? 'class="active"' : ''}>
                     Đánh giá
+                </a>
+            </li>
+            <li>
+                <a href="${pageContext.request.contextPath}/admin/users" ${activeMenu == 'users' ? 'class="active"' : ''}>
+                    Người dùng
                 </a>
             </li>
         </ul>
