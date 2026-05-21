@@ -36,12 +36,12 @@
     </filter-mapping>
 
     <error-page>
-        <error-code>500</error-code>
-        <location>/WEB-INF/views/error/500.jsp</location>
-    </error-page>
-    <error-page>
         <error-code>404</error-code>
         <location>/WEB-INF/views/error/404.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>500</error-code>
+        <location>/WEB-INF/views/error/500.jsp</location>
     </error-page>
     <error-page>
         <exception-type>java.lang.Exception</exception-type>
@@ -57,5 +57,4 @@
         <param-name>maxUploadSize</param-name>
         <param-value>5242880</param-value>
     </context-param>
-
 </web-app>

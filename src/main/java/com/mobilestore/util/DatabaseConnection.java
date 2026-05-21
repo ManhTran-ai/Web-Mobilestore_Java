@@ -35,15 +35,30 @@ public class DatabaseConnection {
         } catch (ClassNotFoundException e) {
             throw new RuntimeException("Không tìm thấy MySQL JDBC Driver", e);
         }
+
+        try {
+            java.util.TimeZone.setDefault(java.util.TimeZone.getTimeZone("Asia/Ho_Chi_Minh"));
+        } catch (Exception e) {
+            System.err.println("Không thể đặt Timezone mặc định: " + e.getMessage());
+        }
     }
-    
+
     public static Connection getConnection() throws SQLException {
         try {
             Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+
+            try (var stmt = connection.createStatement()) {
+                stmt.execute("SET time_zone = '+07:00'");
+            }
+
             return connection;
         } catch (SQLException e) {
             System.err.println("Lỗi kết nối database: " + e.getMessage());
             throw e;
         }
+    }
+
+    public static String getServerTimezone() {
+        return "Asia/Ho_Chi_Minh (GMT+07:00)";
     }
 }
