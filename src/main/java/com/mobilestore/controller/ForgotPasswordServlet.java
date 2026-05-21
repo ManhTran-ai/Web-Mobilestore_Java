@@ -28,26 +28,28 @@ public class ForgotPasswordServlet extends HttpServlet {
             return;
         }
 
-        email = email.trim();
+        email = email.trim().toLowerCase();
 
-        String result = passwordResetService.requestPasswordReset(email, getServletContext());
+        String result = passwordResetService.requestPasswordReset(email, req);
 
         switch (result) {
             case "SUCCESS":
-                req.setAttribute("success", "Liên kết đặt lại mật khẩu đã được gửi đến email của bạn. Vui lòng kiểm tra hộp thư (bao gồm thư rác).");
-                req.getRequestDispatcher("/views/auth/forgot-password.jsp").forward(req, resp);
-                break;
-            case "EMAIL_NOT_FOUND":
-                req.setAttribute("error", "Email không tồn tại trong hệ thống");
-                req.getRequestDispatcher("/views/auth/forgot-password.jsp").forward(req, resp);
+                req.setAttribute("success",
+                        "Liên kết đặt lại mật khẩu đã được gửi đến email của bạn. Vui lòng kiểm tra hộp thư (bao gồm thư rác).");
                 break;
             case "OAUTH_USER":
                 req.setAttribute("error", "Tài khoản này được đăng nhập qua Google. Vui lòng đăng nhập bằng Google.");
-                req.getRequestDispatcher("/views/auth/forgot-password.jsp").forward(req, resp);
                 break;
+            case "ERROR":
+                req.setAttribute("error", "Đã xảy ra lỗi khi gửi email. Vui lòng thử lại sau.");
+                break;
+            case "SUCCESS_GENERIC":
             default:
-                req.setAttribute("error", "Đã xảy ra lỗi. Vui lòng thử lại sau.");
-                req.getRequestDispatcher("/views/auth/forgot-password.jsp").forward(req, resp);
+                req.setAttribute("success",
+                        "Nếu email tồn tại trong hệ thống, liên kết đặt lại mật khẩu sẽ được gửi đến đó. Vui lòng kiểm tra hộp thư (bao gồm thư rác).");
+                break;
         }
+
+        req.getRequestDispatcher("/views/auth/forgot-password.jsp").forward(req, resp);
     }
 }
