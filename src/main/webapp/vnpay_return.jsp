@@ -57,10 +57,10 @@
                         + " | UserId=" + userId
                         + " | DistrictId=" + districtId
                         + " | WardCode=" + wardCode
-                        + " | PhiShipThucTe=" + (shippingFee != null ? (long) shippingFee : 0L) + " VND"
+                        + " | PhiShipThucTe=" + (shippingFee != null ? Math.round(shippingFee) : 0L) + " VND"
                         + " | PhiShipUserTra=0 VND (Freeship)"
-                        + " | TongTruocShip=" + (long) totalAmount + " VND"
-                        + " | TongSauShip=" + (long) (totalAmount + (shippingFee != null ? shippingFee : 0.0)) + " VND"
+                        + " | TongTruocShip=" + Math.round(totalAmount) + " VND"
+                        + " | TongSauShip=" + Math.round(totalAmount + (shippingFee != null ? shippingFee : 0.0)) + " VND"
                         + " | PaymentMethod=VNPAY"
                         + " | VNPayTxnRef=" + vnp_TxnRef
                         + " | VNPayTransNo=" + vnp_TransactionNo);
