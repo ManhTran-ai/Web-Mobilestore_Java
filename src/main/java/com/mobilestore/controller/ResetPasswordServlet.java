@@ -23,8 +23,16 @@ public class ResetPasswordServlet extends HttpServlet {
             return;
         }
 
-        if (!passwordResetService.isTokenValid(token)) {
-            req.setAttribute("error", "Liên kết đặt lại mật khẩu đã hết hạn hoặc không hợp lệ");
+        try {
+            if (!passwordResetService.isTokenValid(token)) {
+                req.setAttribute("error", "Liên kết đặt lại mật khẩu đã hết hạn hoặc không hợp lệ");
+                req.getRequestDispatcher("/views/auth/forgot-password.jsp").forward(req, resp);
+                return;
+            }
+        } catch (Exception e) {
+            System.err.println("[RESET-PASSWORD-SERVLET] Error validating token: " + e.getMessage());
+            e.printStackTrace();
+            req.setAttribute("error", "Đã xảy ra lỗi khi xác thực liên kết. Vui lòng thử lại.");
             req.getRequestDispatcher("/views/auth/forgot-password.jsp").forward(req, resp);
             return;
         }
@@ -66,19 +74,36 @@ public class ResetPasswordServlet extends HttpServlet {
             return;
         }
 
-        if (!passwordResetService.isTokenValid(token)) {
-            req.setAttribute("error", "Liên kết đặt lại mật khẩu đã hết hạn hoặc không hợp lệ");
-            req.getRequestDispatcher("/views/auth/forgot-password.jsp").forward(req, resp);
+        try {
+            if (!passwordResetService.isTokenValid(token)) {
+                req.setAttribute("error", "Liên kết đặt lại mật khẩu đã hết hạn hoặc không hợp lệ");
+                req.getRequestDispatcher("/views/auth/forgot-password.jsp").forward(req, resp);
+                return;
+            }
+        } catch (Exception e) {
+            System.err.println("[RESET-PASSWORD-SERVLET] Error validating token: " + e.getMessage());
+            e.printStackTrace();
+            req.setAttribute("error", "Đã xảy ra lỗi khi xác thực liên kết. Vui lòng thử lại.");
+            req.setAttribute("token", token);
+            req.getRequestDispatcher("/views/auth/reset-password.jsp").forward(req, resp);
             return;
         }
 
-        boolean success = passwordResetService.resetPassword(token, newPassword);
+        try {
+            boolean success = passwordResetService.resetPassword(token, newPassword);
 
-        if (success) {
-            req.setAttribute("success", "Mật khẩu đã được đặt lại thành công. Vui lòng đăng nhập với mật khẩu mới.");
-            req.getRequestDispatcher("/views/auth/login.jsp").forward(req, resp);
-        } else {
-            req.setAttribute("error", "Đặt lại mật khẩu thất bại. Vui lòng thử lại.");
+            if (success) {
+                req.setAttribute("success", "Mật khẩu đã được đặt lại thành công. Vui lòng đăng nhập với mật khẩu mới.");
+                req.getRequestDispatcher("/views/auth/login.jsp").forward(req, resp);
+            } else {
+                req.setAttribute("error", "Đặt lại mật khẩu thất bại. Vui lòng thử lại.");
+                req.setAttribute("token", token);
+                req.getRequestDispatcher("/views/auth/reset-password.jsp").forward(req, resp);
+            }
+        } catch (Exception e) {
+            System.err.println("[RESET-PASSWORD-SERVLET] Error resetting password: " + e.getMessage());
+            e.printStackTrace();
+            req.setAttribute("error", "Đã xảy ra lỗi khi đặt lại mật khẩu. Vui lòng thử lại.");
             req.setAttribute("token", token);
             req.getRequestDispatcher("/views/auth/reset-password.jsp").forward(req, resp);
         }
