@@ -166,7 +166,7 @@
             <div class="center">
                 <div class="card">
                     <h2>Đặt lại mật khẩu</h2>
-                    <p class="description">Nhập mật khẩu mới cho tài khoản của bạn.</p>
+                    <p class="description">Nhập mật khẩu mới cho tài khoản của bạn. Liên kết này chỉ có hiệu lực trong 30 phút.</p>
                     
                     <c:if test="${not empty error}">
                         <div class="error">${error}</div>

@@ -159,7 +159,7 @@
             <div class="center">
                 <div class="card">
                     <h2>Quên mật khẩu</h2>
-                    <p class="description">Nhập địa chỉ email bạn đã sử dụng khi đăng ký. Chúng tôi sẽ gửi cho bạn một liên kết để đặt lại mật khẩu.</p>
+                    <p class="description">Nhập địa chỉ email bạn đã sử dụng khi đăng ký. Chúng tôi sẽ gửi cho bạn một liên kết để đặt lại mật khẩu trong vòng 30 phút.</p>
                     
                     <c:if test="${not empty error}">
                         <div class="error">${error}</div>
