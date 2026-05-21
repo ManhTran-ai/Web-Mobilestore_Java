@@ -517,13 +517,25 @@
                 <label for="status" style="font-weight: 500;">Cập nhật trạng thái:</label>
                 <select name="status" id="status">
                     <option value="PENDING" ${order.orderStatus=='PENDING' ? 'selected' : ''}>PENDING - Chờ xử lý</option>
-                    <option value="PROCESSING" ${order.orderStatus=='PROCESSING' ? 'selected' : ''}>PROCESSING - Đang xử lý</option>
+                    <option value="PROCESSING" ${order.orderStatus=='PROCESSING' ? 'selected' : ''}>PROCESSING - Đang xác nhận</option>
                     <option value="SHIPPED" ${order.orderStatus=='SHIPPED' ? 'selected' : ''}>SHIPPED - Đang giao hàng</option>
-                    <option value="COMPLETED" ${order.orderStatus=='COMPLETED' ? 'selected' : ''}>COMPLETED - Hoàn thành</option>
+                    <option value="DELIVERED" ${order.orderStatus=='DELIVERED' ? 'selected' : ''}>DELIVERED - Hoàn thành</option>
                     <option value="CANCELLED" ${order.orderStatus=='CANCELLED' ? 'selected' : ''}>CANCELLED - Đã hủy</option>
                 </select>
                 <button type="submit" class="btn btn-primary">Cập nhật</button>
             </form>
+
+            <div id="cancel-reason-section" style="margin-top: 12px; display: none;">
+                <label for="cancelReason" style="font-weight: 500; color: #dc2626;">Lý do hủy (bắt buộc):</label>
+                <textarea name="cancelReason" id="cancelReason" rows="3" style="width: 100%; max-width: 400px; padding: 8px; border: 1px solid #ddd; border-radius: 4px;" placeholder="Nhập lý do hủy đơn hàng..."></textarea>
+            </div>
+
+            <script>
+                document.getElementById('status').addEventListener('change', function() {
+                    var section = document.getElementById('cancel-reason-section');
+                    section.style.display = (this.value === 'CANCELLED') ? 'block' : 'none';
+                });
+            </script>
         </div>
 
         <div class="table-container">

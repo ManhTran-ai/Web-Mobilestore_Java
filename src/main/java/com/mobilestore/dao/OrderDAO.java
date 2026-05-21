@@ -17,7 +17,7 @@ public class OrderDAO {
     public List<Order> findAll() {
         List<Order> orders = new ArrayList<>();
         String sql = "SELECT o.order_id, o.order_status, o.order_date, o.total_amount, o.user_id, " +
-                "u.username, o.shipping_address, o.customer_phone, o.note, o.shipping_cost, " +
+                "u.username, u.email, o.shipping_address, o.customer_phone, o.note, o.shipping_cost, " +
                 "o.district_id, o.ward_code, o.tracking_number " +
                 "FROM orders o LEFT JOIN users u ON o.user_id = u.id ORDER BY o.order_id DESC";
         try (Connection conn = DatabaseConnection.getConnection();
@@ -45,6 +45,7 @@ public class OrderDAO {
                     User u = new User();
                     u.setId(uid);
                     u.setUsername(rs.getString("username"));
+                    u.setEmail(rs.getString("email"));
                     o.setUser(u);
                 }
                 orders.add(o);
@@ -58,9 +59,8 @@ public class OrderDAO {
 
     public Order findById(int orderId) {
         String sql = "SELECT o.order_id, o.order_status, o.order_date, o.total_amount, o.user_id, " +
-                "u.username, o.shipping_address, o.customer_phone, o.note, o.shipping_cost, " +
-                "o.district_id, o.ward_code, o.tracking_number, o.payment_method, o.payment_status, " +
-                "o.vnp_transaction_id, o.vnp_order_id " +
+                "u.username, u.email, o.shipping_address, o.customer_phone, o.note, o.shipping_cost, " +
+                "o.district_id, o.ward_code, o.tracking_number " +
                 "FROM orders o LEFT JOIN users u ON o.user_id = u.id WHERE o.order_id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -92,6 +92,7 @@ public class OrderDAO {
                         User u = new User();
                         u.setId(uid);
                         u.setUsername(rs.getString("username"));
+                        u.setEmail(rs.getString("email"));
                         o.setUser(u);
                     }
                     o.setDetails(findDetailsByOrderId(orderId));
