@@ -113,6 +113,7 @@
                 <li><a href="${pageContext.request.contextPath}/admin/orders">Đơn hàng</a></li>
                 <li><a href="${pageContext.request.contextPath}/admin/sliders">Slider Images</a></li>
                 <li><a href="${pageContext.request.contextPath}/admin/reviews">Đánh giá</a></li>
+                <li><a href="${pageContext.request.contextPath}/admin/users">Người dùng</a></li>
             </ul>
         </nav>
     </aside>
