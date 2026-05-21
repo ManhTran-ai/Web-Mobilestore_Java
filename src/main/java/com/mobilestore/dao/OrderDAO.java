@@ -79,6 +79,10 @@ public class OrderDAO {
                     o.setShippingAddress(rs.getString("shipping_address"));
                     o.setCustomerPhone(rs.getString("customer_phone"));
                     o.setNote(rs.getString("note"));
+                    o.setPaymentMethod(rs.getString("payment_method"));
+                    o.setPaymentStatus(rs.getString("payment_status"));
+                    o.setVnpTransactionId(rs.getString("vnp_transaction_id"));
+                    o.setVnpOrderId(rs.getString("vnp_order_id"));
                     Integer districtId = (Integer) rs.getObject("district_id");
                     o.setDistrictId(districtId);
                     o.setWardCode(rs.getString("ward_code"));
@@ -270,8 +274,8 @@ public class OrderDAO {
 
         String orderSql = "INSERT INTO orders (order_status, order_date, total_amount, user_id, " +
                 "shipping_address, customer_phone, note, shipping_cost, district_id, ward_code, " +
-                "vnp_transaction_id, vnp_order_id) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "vnp_transaction_id, vnp_order_id, payment_method, payment_status) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         String detailSql = "INSERT INTO order_details (price, quantity, order_id, variant_id) VALUES (?, ?, ?, ?)";
         String updateVariantSql = "UPDATE product_variants SET quantity_in_stock = quantity_in_stock - ? WHERE variant_id = ?";
 
@@ -297,6 +301,8 @@ public class OrderDAO {
                 psOrder.setString(10, wardCode);
                 psOrder.setString(11, vnpTransactionId);
                 psOrder.setString(12, vnpOrderId);
+                psOrder.setString(13, "VNPAY");
+                psOrder.setString(14, "PAID");
                 psOrder.executeUpdate();
 
                 try (ResultSet rs = psOrder.getGeneratedKeys()) {
@@ -388,7 +394,7 @@ public class OrderDAO {
     public Order findByIdAndUserId(int orderId, int userId) {
         String sql = "SELECT o.order_id, o.order_status, o.order_date, o.total_amount, o.user_id, " +
                 "o.shipping_address, o.customer_phone, o.note, o.shipping_cost, o.payment_method, " +
-                "o.district_id, o.ward_code, o.tracking_number " +
+                "o.district_id, o.ward_code, o.tracking_number, o.vnp_transaction_id, o.vnp_order_id " +
                 "FROM orders o WHERE o.order_id = ? AND o.user_id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -413,6 +419,8 @@ public class OrderDAO {
                     o.setDistrictId(districtId);
                     o.setWardCode(rs.getString("ward_code"));
                     o.setTrackingNumber(rs.getString("tracking_number"));
+                    o.setVnpTransactionId(rs.getString("vnp_transaction_id"));
+                    o.setVnpOrderId(rs.getString("vnp_order_id"));
                     User u = new User();
                     u.setId(rs.getInt("user_id"));
                     o.setUser(u);
@@ -453,6 +461,50 @@ public class OrderDAO {
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             System.err.println("Lỗi OrderDAO.updateTrackingNumber: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean restoreStockByOrderId(int orderId) {
+        String sql = "UPDATE product_variants pv " +
+                "JOIN order_details od ON pv.variant_id = od.variant_id " +
+                "SET pv.quantity_in_stock = pv.quantity_in_stock + od.quantity " +
+                "WHERE od.order_id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, orderId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.err.println("Loi restoreStockByOrderId: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean updatePaymentStatus(int orderId, String status) {
+        String sql = "UPDATE orders SET payment_status = ? WHERE order_id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, status);
+            ps.setInt(2, orderId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.err.println("Loi updatePaymentStatus: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean cancelOrder(int orderId, String status) {
+        String sql = "UPDATE orders SET order_status = ? WHERE order_id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, status);
+            ps.setInt(2, orderId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.err.println("Loi cancelOrder: " + e.getMessage());
             e.printStackTrace();
         }
         return false;

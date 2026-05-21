@@ -597,7 +597,7 @@
                                     <span><fmt:formatNumber value="${total}" type="number" groupingUsed="true"/>₫</span>
                                 </div>
                                 <div class="order-total-row">
-                                    <span>Phí vận chuyển: Miễn phí</span>
+                                    <span>Phí vận chuyển: <span id="shippingFeeDisplay">Miễn phí</span></span>
                                 </div>
                                 <div class="order-total-row final">
                                     <span>Tổng cộng:</span>
@@ -784,7 +784,7 @@
                 hiddenWard.value = preselectCode;
                 await calculateShippingFee();
             } else {
-                updateShippingDisplay(0);
+                updateShippingDisplay(0, districtId, preselectCode || wardSel.value);
             }
         }
     }
@@ -794,7 +794,7 @@
         const wardCode = wardSel.value;
 
         if (!districtId || !wardCode) {
-            updateShippingDisplay(0);
+            updateShippingDisplay(0, parseInt(districtId) || null, wardCode || null);
             return;
         }
 
@@ -811,26 +811,21 @@
         const json = await res.json();
 
         const fee = json.success && json.fee ? json.fee : 0;
-        updateShippingDisplay(fee);
+        updateShippingDisplay(fee, body.to_district_id, body.to_ward_code);
     }
 
-    function updateShippingDisplay(fee) {
-        hiddenDistrict.value = districtSel.value || '';
-        hiddenWard.value = wardSel.value || '';
+    function updateShippingDisplay(fee, districtId, wardCode) {
+        if (districtId) hiddenDistrict.value = districtId;
+        if (wardCode) hiddenWard.value = wardCode;
 
         const shippingEl = document.getElementById('shippingFeeDisplay');
         const totalEl = document.getElementById('totalAmountDisplay');
-        const grandTotal = cartTotal + fee;
 
         if (shippingEl) {
-            if (fee > 0) {
-                shippingEl.textContent = new Intl.NumberFormat('vi-VN').format(fee) + '₫';
-            } else {
-                shippingEl.textContent = 'Miễn phí';
-            }
+            shippingEl.textContent = 'Miễn phí';
         }
         if (totalEl) {
-            totalEl.textContent = new Intl.NumberFormat('vi-VN').format(grandTotal) + '₫';
+            totalEl.textContent = new Intl.NumberFormat('vi-VN').format(cartTotal) + '₫';
         }
     }
 
@@ -912,10 +907,8 @@
             }
             return;
         }
-        const form = document.createElement('form');
-        form.method = 'POST';
+        const form = document.getElementById('checkoutForm');
         form.action = '${pageContext.request.contextPath}/vnpay-payment';
-        document.body.appendChild(form);
         form.submit();
     }
 
