@@ -389,9 +389,78 @@
             background: #fff8e1;
             color: #f57f17;
         }
+
+        .cancel-section {
+            margin-top: 16px;
+        }
+
+        .btn-cancel {
+            width: 100%;
+            justify-content: center;
+            background: #dc3545;
+            color: #ffffff;
+            margin-top: 10px;
+        }
+
+        .btn-cancel:hover {
+            background: #c82333;
+        }
+
+        .toast-container {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            padding: 14px 20px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideIn 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .toast.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .toast.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
     </style>
 </head>
 <body>
+    <c:if test="${not empty param.cancelled}">
+        <div class="toast-container">
+            <div class="toast success">
+                <span>&#10003;</span> Đơn hàng đã được hủy thành công!
+            </div>
+        </div>
+    </c:if>
+    <c:if test="${not empty param.cancelFailed}">
+        <div class="toast-container">
+            <div class="toast error">
+                <span>&#10007;</span> Không thể hủy đơn hàng này!
+            </div>
+        </div>
+    </c:if>
     <header class="header">
         <div class="container">
             <div class="header-content">
@@ -584,6 +653,15 @@
                     </a>
                 </c:if>
 
+                <c:if test="${userOrder.orderStatus == 'PENDING'}">
+                    <form action="${pageContext.request.contextPath}/cancel-order" method="POST" id="cancelForm">
+                        <input type="hidden" name="orderId" value="${userOrder.orderId}" />
+                        <button type="button" class="btn btn-cancel" onclick="confirmCancel()">
+                            Hủy đơn hàng
+                        </button>
+                    </form>
+                </c:if>
+
                 <a href="${pageContext.request.contextPath}/profile?tab=orders" class="btn btn-back">
                     ← Quay lại danh sách
                 </a>
@@ -603,6 +681,22 @@
                 }).catch(() => {});
         }
         refreshCartCount();
+
+        function confirmCancel() {
+            if (confirm('Bạn có chắc muốn hủy đơn hàng này?\n\nSau khi hủy, đơn hàng sẽ không thể khôi phục.')) {
+                document.getElementById('cancelForm').submit();
+            }
+        }
+
+        const toasts = document.querySelectorAll('.toast');
+        toasts.forEach(toast => {
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(100%)';
+                toast.style.transition = 'all 0.4s ease';
+                setTimeout(() => toast.remove(), 400);
+            }, 3500);
+        });
     </script>
 </body>
 </html>

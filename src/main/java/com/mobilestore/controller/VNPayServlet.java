@@ -82,7 +82,6 @@ public class VNPayServlet extends HttpServlet {
             System.out.println("[VNPAY-SHIPPING] UserId=" + user.getId() + " | KHONG co districtId/WardCode -> Mien phi");
         }
 
-        double total = cartTotal + shippingFee;
 
         String orderId = "ORDER_" + System.currentTimeMillis();
 
@@ -100,7 +99,7 @@ public class VNPayServlet extends HttpServlet {
         String ipAddr = getClientIP(request);
 
         String paymentUrl = VNPayConfig.createPaymentUrl(
-                (long) total,
+                (long) cartTotal,
                 orderId,
                 "Thanh toan don hang " + orderId,
                 ipAddr

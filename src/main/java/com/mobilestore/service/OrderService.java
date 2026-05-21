@@ -21,4 +21,5 @@ public interface OrderService {
     Order findByIdAndUserId(Integer orderId, Integer userId);
     List<ShippingStep> getShippingHistory(Integer orderId);
     boolean updateTrackingNumber(Integer orderId, String trackingNumber);
+    boolean cancelOrder(Integer orderId, Integer userId);
 }
