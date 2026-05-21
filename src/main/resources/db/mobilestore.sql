@@ -613,17 +613,17 @@ DROP TABLE IF EXISTS `otp_tokens`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `otp_tokens` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `email` varchar(255) NOT NULL,
-  `otp_code` varchar(6) NOT NULL,
-  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `expired_at` datetime NOT NULL,
-  `is_used` tinyint(1) NOT NULL DEFAULT '0',
-  `attempt_count` int NOT NULL DEFAULT '0',
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `email` VARCHAR(255) NOT NULL,
+  `otp_code` VARCHAR(6) NOT NULL,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `expired_at` DATETIME NOT NULL,
+  `is_used` TINYINT(1) NOT NULL DEFAULT '0',
+  `attempt_count` INT NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
-  KEY `idx_email_otp` (`email`,`otp_code`),
+  KEY `idx_email_otp` (`email`, `otp_code`),
   KEY `idx_expired` (`expired_at`),
-  KEY `idx_email_valid` (`email`,`is_used`,`expired_at`,`attempt_count`)
+  KEY `idx_email_valid` (`email`, `is_used`, `expired_at`, `attempt_count`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

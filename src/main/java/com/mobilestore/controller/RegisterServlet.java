@@ -8,6 +8,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 
 @WebServlet(name = "RegisterServlet", urlPatterns = "/register")
@@ -17,6 +18,13 @@ public class RegisterServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        HttpSession session = req.getSession(false);
+        if (session != null) {
+            session.removeAttribute("regUsername");
+            session.removeAttribute("regEmail");
+            session.removeAttribute("regPassword");
+            session.removeAttribute("regOtpSent");
+        }
         req.getRequestDispatcher("/views/auth/register.jsp").forward(req, resp);
     }
 
@@ -25,6 +33,8 @@ public class RegisterServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        System.out.println("[REGISTER-SERVLET] DEPRECATED doPost called - redirecting to OTP flow");
+
         String username = req.getParameter("username");
         String email = req.getParameter("email");
         String password = req.getParameter("password");
@@ -87,7 +97,7 @@ public class RegisterServlet extends HttpServlet {
         newUser.setRoleName("CUSTOMER");
 
         User createdUser = authService.create(newUser);
-        
+
         if (createdUser != null) {
             req.setAttribute("success", "Đăng ký thành công! Vui lòng đăng nhập.");
             req.getRequestDispatcher("/views/auth/login.jsp").forward(req, resp);

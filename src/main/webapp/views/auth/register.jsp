@@ -275,6 +275,17 @@
             color: #666;
             margin-top: 6px;
         }
+
+        .info-box {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            color: #1e40af;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -313,14 +324,17 @@
     <div class="container">
         <div class="center">
             <div class="card">
-                <h2>Đăng ký tài khoản</h2>
+                <h2>Đăng ký tài khoản mới</h2>
                 <c:if test="${not empty error}">
                     <div class="error">${error}</div>
                 </c:if>
                 <c:if test="${not empty success}">
                     <div class="success">${success}</div>
                 </c:if>
-                <form method="post" action="${pageContext.request.contextPath}/register" id="registerForm" novalidate>
+                <form method="post" action="${pageContext.request.contextPath}/register/send-otp" id="registerForm" novalidate>
+                    <div class="info-box" style="margin-bottom: 1.5rem;">
+                        Sau khi đăng ký, chúng tôi sẽ gửi <strong>mã xác minh 6 số</strong> đến email của bạn. Nhập mã để kích hoạt tài khoản.
+                    </div>
                     <div class="field" id="usernameField">
                         <label for="username">Tên đăng nhập</label>
                         <input type="text" id="username" name="username" required
@@ -358,7 +372,7 @@
                                placeholder="Nhập lại mật khẩu"/>
                         <div class="error-message" id="confirmPasswordError">Mật khẩu xác nhận không khớp</div>
                     </div>
-                    <button class="btn" type="submit" id="submitBtn">Đăng ký</button>
+                    <button class="btn" type="submit" id="submitBtn">Đăng ký và xác minh Email</button>
                 </form>
                 <div class="helper">
                     Đã có tài khoản? <a href="${pageContext.request.contextPath}/login">Đăng nhập ngay</a>

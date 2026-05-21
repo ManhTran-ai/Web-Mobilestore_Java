@@ -17,7 +17,7 @@ public class OrderDAO {
     public List<Order> findAll() {
         List<Order> orders = new ArrayList<>();
         String sql = "SELECT o.order_id, o.order_status, o.order_date, o.total_amount, o.user_id, " +
-                "u.username, o.shipping_address, o.customer_phone, o.note, o.shipping_cost, " +
+                "u.username, u.email, o.shipping_address, o.customer_phone, o.note, o.shipping_cost, " +
                 "o.district_id, o.ward_code, o.tracking_number " +
                 "FROM orders o LEFT JOIN users u ON o.user_id = u.id ORDER BY o.order_id DESC";
         try (Connection conn = DatabaseConnection.getConnection();
@@ -45,6 +45,7 @@ public class OrderDAO {
                     User u = new User();
                     u.setId(uid);
                     u.setUsername(rs.getString("username"));
+                    u.setEmail(rs.getString("email"));
                     o.setUser(u);
                 }
                 orders.add(o);
@@ -92,6 +93,7 @@ public class OrderDAO {
                         User u = new User();
                         u.setId(uid);
                         u.setUsername(rs.getString("username"));
+                        u.setEmail(rs.getString("email"));
                         o.setUser(u);
                     }
                     o.setDetails(findDetailsByOrderId(orderId));
