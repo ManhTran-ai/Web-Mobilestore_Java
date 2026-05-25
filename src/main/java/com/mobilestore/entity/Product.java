@@ -40,6 +40,10 @@ public class Product {
         return Math.round(displayPrice * 100.0 / (100 - discount));
     }
 
+    public Long getEffectiveDisplayPrice() {
+        return getDisplayPrice();
+    }
+
     public String getDisplayImage() {
         if (variants != null && !variants.isEmpty()) {
             ProductVariant first = variants.get(0);
