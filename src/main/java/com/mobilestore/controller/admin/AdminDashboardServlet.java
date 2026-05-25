@@ -46,6 +46,7 @@ public class AdminDashboardServlet extends HttpServlet {
 
         request.setAttribute("chartLabels", data.getChartLabels());
         request.setAttribute("chartValues", data.getChartValues());
+        request.setAttribute("topSellingProducts", data.getTopSellingProducts());
 
         request.getRequestDispatcher("/views/admin/dashboard/dashboard.jsp").forward(request, response);
     }
