@@ -1,6 +1,7 @@
 package com.mobilestore.controller;
 
 import com.mobilestore.constant.ProductPriceRange;
+import com.mobilestore.constant.ProductSortOrder;
 import com.mobilestore.service.ProductService;
 import com.mobilestore.service.CategoryService;
 import com.mobilestore.service.ReviewService;
@@ -23,6 +24,7 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -57,6 +59,7 @@ public class ProductsServlet extends HttpServlet {
         String priceRangeParam = request.getParameter("priceRange");
         String minPriceParam = request.getParameter("minPrice");
         String maxPriceParam = request.getParameter("maxPrice");
+        String sortParam = request.getParameter("sort");
 
         boolean favoritesOnly = favoritesParam != null && (
             "1".equals(favoritesParam) ||
@@ -97,6 +100,10 @@ public class ProductsServlet extends HttpServlet {
             priceRangeCode = "custom";
             priceRangeLabel = buildCustomPriceLabel(minPrice, maxPrice);
         }
+
+        ProductSortOrder sortOrder = ProductSortOrder.fromCode(trimToNull(sortParam));
+        String sortCode = sortOrder.getCode();
+        String sortLabel = sortOrder == ProductSortOrder.DEFAULT ? null : sortOrder.getLabel();
 
         List<Product> products;
         int totalItems;
@@ -139,6 +146,7 @@ public class ProductsServlet extends HttpServlet {
                             .filter(p -> ProductPriceUtil.matchesPriceRange(p, finalMin, finalMax))
                             .toList();
                 }
+                filtered = applyPriceSort(filtered, sortOrder);
 
                 totalItems = filtered.size();
                 totalPages = (int) Math.ceil((double) totalItems / pageSize);
@@ -157,19 +165,19 @@ public class ProductsServlet extends HttpServlet {
             totalPages = (int) Math.ceil((double) totalItems / pageSize);
             if (page > totalPages && totalPages > 0) page = totalPages;
 
-            products = productService.searchWithFilter(normalizedSearch, categoryId, minPrice, maxPrice, page, pageSize).getContent();
+            products = productService.searchWithFilter(normalizedSearch, categoryId, minPrice, maxPrice, sortCode, page, pageSize).getContent();
         } else if (categoryId != null) {
             totalItems = productService.countSearch(null, categoryId, minPrice, maxPrice);
             totalPages = (int) Math.ceil((double) totalItems / pageSize);
             if (page > totalPages && totalPages > 0) page = totalPages;
 
-            products = productService.searchWithFilter(null, categoryId, minPrice, maxPrice, page, pageSize).getContent();
+            products = productService.searchWithFilter(null, categoryId, minPrice, maxPrice, sortCode, page, pageSize).getContent();
         } else {
             totalItems = productService.countAll(minPrice, maxPrice);
             totalPages = (int) Math.ceil((double) totalItems / pageSize);
             if (page > totalPages && totalPages > 0) page = totalPages;
 
-            products = productService.findByPage(page, pageSize, minPrice, maxPrice).getContent();
+            products = productService.findByPage(page, pageSize, minPrice, maxPrice, sortCode).getContent();
         }
 
         List<com.mobilestore.entity.Category> categories = categoryService.findAll();
@@ -194,13 +202,31 @@ public class ProductsServlet extends HttpServlet {
         request.setAttribute("maxPrice", maxPrice);
         request.setAttribute("minPriceInput", minPriceParam != null ? minPriceParam.trim() : "");
         request.setAttribute("maxPriceInput", maxPriceParam != null ? maxPriceParam.trim() : "");
-        request.setAttribute("filterQuery", buildFilterQuery(normalizedSearch, categoryId, favoritesOnly, priceRangeCode, minPriceParam, maxPriceParam));
+        request.setAttribute("selectedSort", sortCode);
+        request.setAttribute("sortLabel", sortLabel);
+        request.setAttribute("filterQuery", buildFilterQuery(normalizedSearch, categoryId, favoritesOnly,
+                priceRangeCode, minPriceParam, maxPriceParam, sortCode));
 
         request.getRequestDispatcher("/views/products/product-list.jsp").forward(request, response);
     }
 
+    private List<Product> applyPriceSort(List<Product> products, ProductSortOrder sortOrder) {
+        if (sortOrder == ProductSortOrder.PRICE_ASC) {
+            return products.stream()
+                    .sorted(Comparator.comparingLong(ProductPriceUtil::getEffectiveDisplayPrice))
+                    .toList();
+        }
+        if (sortOrder == ProductSortOrder.PRICE_DESC) {
+            return products.stream()
+                    .sorted(Comparator.comparingLong(ProductPriceUtil::getEffectiveDisplayPrice).reversed())
+                    .toList();
+        }
+        return products;
+    }
+
     private String buildFilterQuery(String search, Integer categoryId, boolean favoritesOnly,
-                                    String priceRange, String minPriceInput, String maxPriceInput) {
+                                    String priceRange, String minPriceInput, String maxPriceInput,
+                                    String sortOrder) {
         StringBuilder q = new StringBuilder();
         appendParam(q, "search", search);
         if (categoryId != null) {
@@ -219,6 +245,9 @@ public class ProductsServlet extends HttpServlet {
                 && (maxPriceInput == null || maxPriceInput.trim().isEmpty())
                 && priceRange != null && !priceRange.isBlank()) {
             appendParam(q, "priceRange", priceRange);
+        }
+        if (sortOrder != null && !sortOrder.isBlank()) {
+            appendParam(q, "sort", sortOrder);
         }
         return q.toString();
     }

@@ -9,8 +9,9 @@ public interface ProductService {
     Product findById(Integer id);
     List<Product> findByCategory(Integer categoryId);
     List<Product> searchByName(String keyword);
-    PageResponse<Product> findByPage(int page, int size, Long minPrice, Long maxPrice);
-    PageResponse<Product> searchWithFilter(String keyword, Integer categoryId, Long minPrice, Long maxPrice, int page, int size);
+    PageResponse<Product> findByPage(int page, int size, Long minPrice, Long maxPrice, String sortOrder);
+    PageResponse<Product> searchWithFilter(String keyword, Integer categoryId, Long minPrice, Long maxPrice,
+                                           String sortOrder, int page, int size);
     Product save(Product product);
     Product create(Product product);
     Product update(Product product);

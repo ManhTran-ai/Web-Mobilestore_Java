@@ -1,5 +1,6 @@
 package com.mobilestore.dao;
 
+import com.mobilestore.constant.ProductSortOrder;
 import com.mobilestore.entity.Product;
 import com.mobilestore.entity.Category;
 import com.mobilestore.entity.ProductVariant;
@@ -11,10 +12,14 @@ import java.util.List;
 
 public class ProductDAO {
 
-    private static final String EFFECTIVE_MIN_PRICE_SQL =
-            "(SELECT MIN(CASE WHEN COALESCE(p.discount, 0) > 0 " +
-            "THEN ROUND(pv.price * (100.0 - p.discount) / 100.0) ELSE pv.price END) " +
-            "FROM product_variants pv WHERE pv.product_id = p.product_id)";
+    private static final String PRICE_AGG_JOIN =
+            " LEFT JOIN (SELECT pv.product_id AS agg_product_id, " +
+            "MIN(pv.price) AS effective_price " +
+            "FROM product_variants pv " +
+            "INNER JOIN products pr ON pr.product_id = pv.product_id " +
+            "GROUP BY pv.product_id) price_agg ON price_agg.agg_product_id = p.product_id ";
+
+    private static final String EFFECTIVE_PRICE_COLUMN = "price_agg.effective_price";
 
     public Product findById(Integer id) {
         String sql = "SELECT p.product_id, p.product_name, " +
@@ -132,7 +137,9 @@ public class ProductDAO {
     }
 
     public int countSearch(String keyword, Integer categoryId, Long minPrice, Long maxPrice) {
-        StringBuilder sql = new StringBuilder("SELECT COUNT(*) AS total FROM products p WHERE 1=1");
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) AS total FROM products p ");
+        appendPriceJoin(sql, minPrice, maxPrice, null);
+        sql.append("WHERE 1=1");
         appendKeywordFilter(sql, keyword);
         appendCategoryFilter(sql, categoryId);
         appendPriceFilter(sql, minPrice, maxPrice);
@@ -156,20 +163,22 @@ public class ProductDAO {
     }
 
     public List<Product> searchWithFilter(String keyword, Integer categoryId, Long minPrice, Long maxPrice,
-                                          int offset, int limit) {
+                                          String sortOrder, int offset, int limit) {
         List<Product> products = new ArrayList<>();
         StringBuilder sql = new StringBuilder("SELECT p.product_id, p.product_name, ")
                 .append("p.manufacturer, p.product_condition, ")
                 .append("p.discount, p.product_info, p.category_id, ")
                 .append("c.category_name ")
                 .append("FROM products p ")
-                .append("LEFT JOIN categories c ON p.category_id = c.category_id ")
-                .append("WHERE 1=1");
+                .append("LEFT JOIN categories c ON p.category_id = c.category_id ");
+        appendPriceJoin(sql, minPrice, maxPrice, sortOrder);
+        sql.append("WHERE 1=1");
 
         appendKeywordFilter(sql, keyword);
         appendCategoryFilter(sql, categoryId);
         appendPriceFilter(sql, minPrice, maxPrice);
-        sql.append(" ORDER BY p.product_id DESC LIMIT ? OFFSET ?");
+        appendOrderBy(sql, sortOrder);
+        sql.append(" LIMIT ? OFFSET ?");
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql.toString())) {
@@ -194,7 +203,9 @@ public class ProductDAO {
     }
 
     public int countAll(Long minPrice, Long maxPrice) {
-        StringBuilder sql = new StringBuilder("SELECT COUNT(*) AS total FROM products p WHERE 1=1");
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) AS total FROM products p ");
+        appendPriceJoin(sql, minPrice, maxPrice, null);
+        sql.append("WHERE 1=1");
         appendPriceFilter(sql, minPrice, maxPrice);
 
         try (Connection conn = DatabaseConnection.getConnection();
@@ -214,18 +225,20 @@ public class ProductDAO {
         return 0;
     }
 
-    public List<Product> findPage(int offset, int limit, Long minPrice, Long maxPrice) {
+    public List<Product> findPage(int offset, int limit, Long minPrice, Long maxPrice, String sortOrder) {
         List<Product> products = new ArrayList<>();
         StringBuilder sql = new StringBuilder("SELECT p.product_id, p.product_name, ")
                 .append("p.manufacturer, p.product_condition, ")
                 .append("p.discount, p.product_info, p.category_id, ")
                 .append("c.category_name ")
                 .append("FROM products p ")
-                .append("LEFT JOIN categories c ON p.category_id = c.category_id ")
-                .append("WHERE 1=1");
+                .append("LEFT JOIN categories c ON p.category_id = c.category_id ");
+        appendPriceJoin(sql, minPrice, maxPrice, sortOrder);
+        sql.append("WHERE 1=1");
 
         appendPriceFilter(sql, minPrice, maxPrice);
-        sql.append(" ORDER BY p.product_id DESC LIMIT ? OFFSET ?");
+        appendOrderBy(sql, sortOrder);
+        sql.append(" LIMIT ? OFFSET ?");
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql.toString())) {
@@ -260,16 +273,41 @@ public class ProductDAO {
         }
     }
 
+    private void appendPriceJoin(StringBuilder sql, Long minPrice, Long maxPrice, String sortOrder) {
+        if (needsPriceJoin(minPrice, maxPrice, sortOrder)) {
+            sql.append(PRICE_AGG_JOIN);
+        }
+    }
+
+    private boolean needsPriceJoin(Long minPrice, Long maxPrice, String sortOrder) {
+        if (minPrice != null || maxPrice != null) {
+            return true;
+        }
+        ProductSortOrder order = ProductSortOrder.fromCode(sortOrder);
+        return order == ProductSortOrder.PRICE_ASC || order == ProductSortOrder.PRICE_DESC;
+    }
+
     private void appendPriceFilter(StringBuilder sql, Long minPrice, Long maxPrice) {
         if (minPrice == null && maxPrice == null) {
             return;
         }
-        sql.append(" AND ").append(EFFECTIVE_MIN_PRICE_SQL).append(" IS NOT NULL");
+        sql.append(" AND ").append(EFFECTIVE_PRICE_COLUMN).append(" IS NOT NULL");
         if (minPrice != null) {
-            sql.append(" AND ").append(EFFECTIVE_MIN_PRICE_SQL).append(" >= ?");
+            sql.append(" AND ").append(EFFECTIVE_PRICE_COLUMN).append(" >= ?");
         }
         if (maxPrice != null) {
-            sql.append(" AND ").append(EFFECTIVE_MIN_PRICE_SQL).append(" <= ?");
+            sql.append(" AND ").append(EFFECTIVE_PRICE_COLUMN).append(" <= ?");
+        }
+    }
+
+    private void appendOrderBy(StringBuilder sql, String sortOrder) {
+        ProductSortOrder order = ProductSortOrder.fromCode(sortOrder);
+        if (order == ProductSortOrder.PRICE_ASC) {
+            sql.append(" ORDER BY COALESCE(").append(EFFECTIVE_PRICE_COLUMN).append(", 0) ASC, p.product_id DESC");
+        } else if (order == ProductSortOrder.PRICE_DESC) {
+            sql.append(" ORDER BY COALESCE(").append(EFFECTIVE_PRICE_COLUMN).append(", 0) DESC, p.product_id DESC");
+        } else {
+            sql.append(" ORDER BY p.product_id DESC");
         }
     }
 
