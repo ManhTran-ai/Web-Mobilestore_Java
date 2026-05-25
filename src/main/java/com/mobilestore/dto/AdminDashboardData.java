@@ -23,6 +23,7 @@ public class AdminDashboardData {
     private List<String> chartLabels;
     private List<Double> chartValues;
     private List<TopSellingProduct> topSellingProducts;
+    private List<LowStockVariant> lowStockVariants;
 
     public static class TopSellingProduct {
         private int productId;
@@ -70,6 +71,86 @@ public class AdminDashboardData {
 
         public void setTotalSold(int totalSold) {
             this.totalSold = totalSold;
+        }
+    }
+
+    public static class LowStockVariant {
+        private int variantId;
+        private int productId;
+        private String productName;
+        private String manufacturer;
+        private String color;
+        private String storage;
+        private int quantityInStock;
+
+        public LowStockVariant() {
+        }
+
+        public LowStockVariant(int variantId, int productId, String productName, String manufacturer,
+                               String color, String storage, int quantityInStock) {
+            this.variantId = variantId;
+            this.productId = productId;
+            this.productName = productName;
+            this.manufacturer = manufacturer;
+            this.color = color;
+            this.storage = storage;
+            this.quantityInStock = quantityInStock;
+        }
+
+        public int getVariantId() {
+            return variantId;
+        }
+
+        public void setVariantId(int variantId) {
+            this.variantId = variantId;
+        }
+
+        public int getProductId() {
+            return productId;
+        }
+
+        public void setProductId(int productId) {
+            this.productId = productId;
+        }
+
+        public String getProductName() {
+            return productName;
+        }
+
+        public void setProductName(String productName) {
+            this.productName = productName;
+        }
+
+        public String getManufacturer() {
+            return manufacturer;
+        }
+
+        public void setManufacturer(String manufacturer) {
+            this.manufacturer = manufacturer;
+        }
+
+        public String getColor() {
+            return color;
+        }
+
+        public void setColor(String color) {
+            this.color = color;
+        }
+
+        public String getStorage() {
+            return storage;
+        }
+
+        public void setStorage(String storage) {
+            this.storage = storage;
+        }
+
+        public int getQuantityInStock() {
+            return quantityInStock;
+        }
+
+        public void setQuantityInStock(int quantityInStock) {
+            this.quantityInStock = quantityInStock;
         }
     }
 
@@ -199,5 +280,13 @@ public class AdminDashboardData {
 
     public void setTopSellingProducts(List<TopSellingProduct> topSellingProducts) {
         this.topSellingProducts = topSellingProducts;
+    }
+
+    public List<LowStockVariant> getLowStockVariants() {
+        return lowStockVariants;
+    }
+
+    public void setLowStockVariants(List<LowStockVariant> lowStockVariants) {
+        this.lowStockVariants = lowStockVariants;
     }
 }

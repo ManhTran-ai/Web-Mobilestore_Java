@@ -34,6 +34,7 @@ public class AdminDashboardServiceImpl implements AdminDashboardService {
         data.setChartLabels(dashboardDAO.labelsLastNMonths(6));
         data.setChartValues(dashboardDAO.revenueLastNMonths(6));
         data.setTopSellingProducts(dashboardDAO.findTopSellingProducts(10));
+        data.setLowStockVariants(dashboardDAO.findLowStockVariants(5));
 
         return data;
     }

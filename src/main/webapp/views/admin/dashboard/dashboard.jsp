@@ -448,6 +448,36 @@
             padding: 1rem;
         }
 
+        .low-stock-panel {
+            margin-top: 1rem;
+        }
+
+        .stock-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 42px;
+            padding: 0.28rem 0.55rem;
+            border-radius: 999px;
+            background: #fff4e5;
+            border: 1px solid #ffd59a;
+            color: #b45309;
+            font-weight: 700;
+            font-size: 0.82rem;
+        }
+
+        .variant-meta {
+            display: inline-block;
+            color: #6b7280;
+            font-size: 0.86rem;
+            margin-top: 0.18rem;
+        }
+
+        .low-stock-urgency {
+            color: #9a3412;
+            font-weight: 600;
+        }
+
         @media (max-width: 1280px) {
             .revenue-grid {
                 grid-template-columns: repeat(3, 1fr);
@@ -738,6 +768,55 @@
                         <c:otherwise>
                             <tr>
                                 <td class="empty-row" colspan="5">Chưa có dữ liệu bán hàng từ đơn DELIVERED.</td>
+                            </tr>
+                        </c:otherwise>
+                    </c:choose>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="panel low-stock-panel">
+            <div class="panel-header">
+                <h3>Sản phẩm tồn kho thấp</h3>
+                <span>Chỉ lấy biến thể có số lượng dưới 5</span>
+            </div>
+            <div class="table-wrapper">
+                <table class="stats-table">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Mã biến thể</th>
+                        <th>Sản phẩm</th>
+                        <th>Phiên bản</th>
+                        <th>Tồn kho</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <c:choose>
+                        <c:when test="${not empty lowStockVariants}">
+                            <c:forEach var="item" items="${lowStockVariants}" varStatus="loop">
+                                <tr>
+                                    <td><span class="rank-pill">${loop.index + 1}</span></td>
+                                    <td>#${item.variantId}</td>
+                                    <td>
+                                        <div class="product-main">${item.productName}</div>
+                                        <div class="variant-meta">${item.manufacturer}</div>
+                                    </td>
+                                    <td>
+                                        <div>${item.color}</div>
+                                        <div class="variant-meta">${item.storage}</div>
+                                    </td>
+                                    <td>
+                                        <span class="stock-badge">${item.quantityInStock}</span>
+                                        <span class="variant-meta low-stock-urgency">Cần nhập thêm</span>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+                        </c:when>
+                        <c:otherwise>
+                            <tr>
+                                <td class="empty-row" colspan="5">Không có sản phẩm tồn kho dưới 5.</td>
                             </tr>
                         </c:otherwise>
                     </c:choose>
