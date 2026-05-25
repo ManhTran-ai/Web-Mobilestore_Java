@@ -205,6 +205,46 @@ public class AdminDashboardDAO {
         return result;
     }
 
+    public List<AdminDashboardData.LowStockVariant> findLowStockVariants(int limit) {
+        if (limit <= 0) {
+            return List.of();
+        }
+
+        List<AdminDashboardData.LowStockVariant> result = new ArrayList<>();
+        String sql = "SELECT pv.variant_id, pv.product_id, p.product_name, p.manufacturer, " +
+                "pv.color, pv.storage, pv.quantity_in_stock " +
+                "FROM product_variants pv " +
+                "JOIN products p ON pv.product_id = p.product_id " +
+                "WHERE pv.quantity_in_stock < 5 " +
+                "ORDER BY pv.quantity_in_stock ASC, p.product_name ASC, pv.variant_id ASC " +
+                "LIMIT ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, limit);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    result.add(new AdminDashboardData.LowStockVariant(
+                            rs.getInt("variant_id"),
+                            rs.getInt("product_id"),
+                            rs.getString("product_name"),
+                            rs.getString("manufacturer"),
+                            rs.getString("color"),
+                            rs.getString("storage"),
+                            rs.getInt("quantity_in_stock")
+                    ));
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Loi findLowStockVariants: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
     private int queryInt(String sql) {
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
