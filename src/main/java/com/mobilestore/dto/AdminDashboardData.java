@@ -22,6 +22,56 @@ public class AdminDashboardData {
 
     private List<String> chartLabels;
     private List<Double> chartValues;
+    private List<TopSellingProduct> topSellingProducts;
+
+    public static class TopSellingProduct {
+        private int productId;
+        private String productName;
+        private String manufacturer;
+        private int totalSold;
+
+        public TopSellingProduct() {
+        }
+
+        public TopSellingProduct(int productId, String productName, String manufacturer, int totalSold) {
+            this.productId = productId;
+            this.productName = productName;
+            this.manufacturer = manufacturer;
+            this.totalSold = totalSold;
+        }
+
+        public int getProductId() {
+            return productId;
+        }
+
+        public void setProductId(int productId) {
+            this.productId = productId;
+        }
+
+        public String getProductName() {
+            return productName;
+        }
+
+        public void setProductName(String productName) {
+            this.productName = productName;
+        }
+
+        public String getManufacturer() {
+            return manufacturer;
+        }
+
+        public void setManufacturer(String manufacturer) {
+            this.manufacturer = manufacturer;
+        }
+
+        public int getTotalSold() {
+            return totalSold;
+        }
+
+        public void setTotalSold(int totalSold) {
+            this.totalSold = totalSold;
+        }
+    }
 
     public int getNewUsers() {
         return newUsers;
@@ -141,5 +191,13 @@ public class AdminDashboardData {
 
     public void setChartValues(List<Double> chartValues) {
         this.chartValues = chartValues;
+    }
+
+    public List<TopSellingProduct> getTopSellingProducts() {
+        return topSellingProducts;
+    }
+
+    public void setTopSellingProducts(List<TopSellingProduct> topSellingProducts) {
+        this.topSellingProducts = topSellingProducts;
     }
 }
