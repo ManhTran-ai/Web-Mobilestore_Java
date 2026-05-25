@@ -30,18 +30,19 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public PageResponse<Product> findByPage(int page, int size) {
+    public PageResponse<Product> findByPage(int page, int size, Long minPrice, Long maxPrice) {
         int offset = (page - 1) * size;
-        List<Product> products = productDAO.findPage(offset, size);
-        int total = productDAO.countAll();
+        List<Product> products = productDAO.findPage(offset, size, minPrice, maxPrice);
+        int total = productDAO.countAll(minPrice, maxPrice);
         return PageResponse.of(products, page, size, total);
     }
 
     @Override
-    public PageResponse<Product> searchWithFilter(String keyword, Integer categoryId, int page, int size) {
+    public PageResponse<Product> searchWithFilter(String keyword, Integer categoryId, Long minPrice, Long maxPrice,
+                                                  int page, int size) {
         int offset = (page - 1) * size;
-        List<Product> products = productDAO.searchWithFilter(keyword, categoryId, offset, size);
-        int total = productDAO.countSearch(keyword, categoryId);
+        List<Product> products = productDAO.searchWithFilter(keyword, categoryId, minPrice, maxPrice, offset, size);
+        int total = productDAO.countSearch(keyword, categoryId, minPrice, maxPrice);
         return PageResponse.of(products, page, size, total);
     }
 
@@ -67,13 +68,13 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public int countAll() {
-        return productDAO.countAll();
+    public int countAll(Long minPrice, Long maxPrice) {
+        return productDAO.countAll(minPrice, maxPrice);
     }
 
     @Override
-    public int countSearch(String keyword, Integer categoryId) {
-        return productDAO.countSearch(keyword, categoryId);
+    public int countSearch(String keyword, Integer categoryId, Long minPrice, Long maxPrice) {
+        return productDAO.countSearch(keyword, categoryId, minPrice, maxPrice);
     }
 
     @Override
