@@ -51,7 +51,7 @@ public class HomeServlet extends HttpServlet {
             com.mobilestore.service.SliderImageService sliderService = new com.mobilestore.service.impl.SliderImageServiceImpl();
             com.mobilestore.dao.UserLikeDAO userLikeDAO = new com.mobilestore.dao.UserLikeDAO();
 
-            java.util.List<com.mobilestore.entity.Product> products = productService.findByPage(1, 5).getContent();
+            java.util.List<com.mobilestore.entity.Product> products = productService.findByPage(1, 5, null, null, null).getContent();
 
             java.util.List<com.mobilestore.entity.Product> saleProducts = productService.findSales(5);
             request.setAttribute("saleProducts", saleProducts);

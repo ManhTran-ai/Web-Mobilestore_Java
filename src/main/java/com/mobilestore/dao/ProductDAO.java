@@ -1,5 +1,6 @@
 package com.mobilestore.dao;
 
+import com.mobilestore.constant.ProductSortOrder;
 import com.mobilestore.entity.Product;
 import com.mobilestore.entity.Category;
 import com.mobilestore.entity.ProductVariant;
@@ -10,6 +11,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProductDAO {
+
+    private static final String PRICE_AGG_JOIN =
+            " LEFT JOIN (SELECT pv.product_id AS agg_product_id, " +
+            "MIN(pv.price) AS effective_price " +
+            "FROM product_variants pv " +
+            "INNER JOIN products pr ON pr.product_id = pv.product_id " +
+            "GROUP BY pv.product_id) price_agg ON price_agg.agg_product_id = p.product_id ";
+
+    private static final String EFFECTIVE_PRICE_COLUMN = "price_agg.effective_price";
 
     public Product findById(Integer id) {
         String sql = "SELECT p.product_id, p.product_name, " +
@@ -126,31 +136,19 @@ public class ProductDAO {
         return products;
     }
 
-    public int countSearch(String keyword, Integer categoryId) {
-        StringBuilder sql = new StringBuilder("SELECT COUNT(*) AS total FROM products p WHERE 1=1");
-
-        if (keyword != null && !keyword.trim().isEmpty()) {
-            sql.append(" AND (p.product_name LIKE ? OR p.product_info LIKE ?)");
-        }
-
-        if (categoryId != null) {
-            sql.append(" AND p.category_id = ?");
-        }
+    public int countSearch(String keyword, Integer categoryId, Long minPrice, Long maxPrice) {
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) AS total FROM products p ");
+        appendPriceJoin(sql, minPrice, maxPrice, null);
+        sql.append("WHERE 1=1");
+        appendKeywordFilter(sql, keyword);
+        appendCategoryFilter(sql, categoryId);
+        appendPriceFilter(sql, minPrice, maxPrice);
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql.toString())) {
 
-            int paramIndex = 1;
-
-            if (keyword != null && !keyword.trim().isEmpty()) {
-                String searchPattern = "%" + keyword + "%";
-                ps.setString(paramIndex++, searchPattern);
-                ps.setString(paramIndex++, searchPattern);
-            }
-
-            if (categoryId != null) {
-                ps.setInt(paramIndex, categoryId);
-            }
+            int paramIndex = bindKeywordAndCategory(ps, 1, keyword, categoryId);
+            bindPriceParams(ps, paramIndex, minPrice, maxPrice);
 
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
@@ -164,41 +162,29 @@ public class ProductDAO {
         return 0;
     }
 
-    public List<Product> searchWithFilter(String keyword, Integer categoryId, int offset, int limit) {
+    public List<Product> searchWithFilter(String keyword, Integer categoryId, Long minPrice, Long maxPrice,
+                                          String sortOrder, int offset, int limit) {
         List<Product> products = new ArrayList<>();
         StringBuilder sql = new StringBuilder("SELECT p.product_id, p.product_name, ")
                 .append("p.manufacturer, p.product_condition, ")
                 .append("p.discount, p.product_info, p.category_id, ")
                 .append("c.category_name ")
                 .append("FROM products p ")
-                .append("LEFT JOIN categories c ON p.category_id = c.category_id ")
-                .append("WHERE 1=1");
+                .append("LEFT JOIN categories c ON p.category_id = c.category_id ");
+        appendPriceJoin(sql, minPrice, maxPrice, sortOrder);
+        sql.append("WHERE 1=1");
 
-        if (keyword != null && !keyword.trim().isEmpty()) {
-            sql.append(" AND (p.product_name LIKE ? OR p.product_info LIKE ?)");
-        }
-
-        if (categoryId != null) {
-            sql.append(" AND p.category_id = ?");
-        }
-
-        sql.append(" ORDER BY p.product_id DESC LIMIT ? OFFSET ?");
+        appendKeywordFilter(sql, keyword);
+        appendCategoryFilter(sql, categoryId);
+        appendPriceFilter(sql, minPrice, maxPrice);
+        appendOrderBy(sql, sortOrder);
+        sql.append(" LIMIT ? OFFSET ?");
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql.toString())) {
 
-            int paramIndex = 1;
-
-            if (keyword != null && !keyword.trim().isEmpty()) {
-                String searchPattern = "%" + keyword + "%";
-                ps.setString(paramIndex++, searchPattern);
-                ps.setString(paramIndex++, searchPattern);
-            }
-
-            if (categoryId != null) {
-                ps.setInt(paramIndex++, categoryId);
-            }
-
+            int paramIndex = bindKeywordAndCategory(ps, 1, keyword, categoryId);
+            paramIndex = bindPriceParams(ps, paramIndex, minPrice, maxPrice);
             ps.setInt(paramIndex++, limit);
             ps.setInt(paramIndex, offset);
 
@@ -216,13 +202,21 @@ public class ProductDAO {
         return products;
     }
 
-    public int countAll() {
-        String sql = "SELECT COUNT(*) AS total FROM products";
+    public int countAll(Long minPrice, Long maxPrice) {
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) AS total FROM products p ");
+        appendPriceJoin(sql, minPrice, maxPrice, null);
+        sql.append("WHERE 1=1");
+        appendPriceFilter(sql, minPrice, maxPrice);
+
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) {
-                return rs.getInt("total");
+             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+
+            bindPriceParams(ps, 1, minPrice, maxPrice);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("total");
+                }
             }
         } catch (SQLException e) {
             System.err.println("Lỗi khi đếm products: " + e.getMessage());
@@ -231,21 +225,27 @@ public class ProductDAO {
         return 0;
     }
 
-    public List<Product> findPage(int offset, int limit) {
+    public List<Product> findPage(int offset, int limit, Long minPrice, Long maxPrice, String sortOrder) {
         List<Product> products = new ArrayList<>();
-        String sql = "SELECT p.product_id, p.product_name, " +
-                "p.manufacturer, p.product_condition, " +
-                "p.discount, p.product_info, p.category_id, " +
-                "c.category_name " +
-                "FROM products p " +
-                "LEFT JOIN categories c ON p.category_id = c.category_id " +
-                "ORDER BY p.product_id DESC " +
-                "LIMIT ? OFFSET ?";
+        StringBuilder sql = new StringBuilder("SELECT p.product_id, p.product_name, ")
+                .append("p.manufacturer, p.product_condition, ")
+                .append("p.discount, p.product_info, p.category_id, ")
+                .append("c.category_name ")
+                .append("FROM products p ")
+                .append("LEFT JOIN categories c ON p.category_id = c.category_id ");
+        appendPriceJoin(sql, minPrice, maxPrice, sortOrder);
+        sql.append("WHERE 1=1");
+
+        appendPriceFilter(sql, minPrice, maxPrice);
+        appendOrderBy(sql, sortOrder);
+        sql.append(" LIMIT ? OFFSET ?");
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, limit);
-            ps.setInt(2, offset);
+             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+
+            int paramIndex = bindPriceParams(ps, 1, minPrice, maxPrice);
+            ps.setInt(paramIndex++, limit);
+            ps.setInt(paramIndex, offset);
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -259,6 +259,81 @@ public class ProductDAO {
             e.printStackTrace();
         }
         return products;
+    }
+
+    private void appendKeywordFilter(StringBuilder sql, String keyword) {
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql.append(" AND (p.product_name LIKE ? OR p.product_info LIKE ?)");
+        }
+    }
+
+    private void appendCategoryFilter(StringBuilder sql, Integer categoryId) {
+        if (categoryId != null) {
+            sql.append(" AND p.category_id = ?");
+        }
+    }
+
+    private void appendPriceJoin(StringBuilder sql, Long minPrice, Long maxPrice, String sortOrder) {
+        if (needsPriceJoin(minPrice, maxPrice, sortOrder)) {
+            sql.append(PRICE_AGG_JOIN);
+        }
+    }
+
+    private boolean needsPriceJoin(Long minPrice, Long maxPrice, String sortOrder) {
+        if (minPrice != null || maxPrice != null) {
+            return true;
+        }
+        ProductSortOrder order = ProductSortOrder.fromCode(sortOrder);
+        return order == ProductSortOrder.PRICE_ASC || order == ProductSortOrder.PRICE_DESC;
+    }
+
+    private void appendPriceFilter(StringBuilder sql, Long minPrice, Long maxPrice) {
+        if (minPrice == null && maxPrice == null) {
+            return;
+        }
+        sql.append(" AND ").append(EFFECTIVE_PRICE_COLUMN).append(" IS NOT NULL");
+        if (minPrice != null) {
+            sql.append(" AND ").append(EFFECTIVE_PRICE_COLUMN).append(" >= ?");
+        }
+        if (maxPrice != null) {
+            sql.append(" AND ").append(EFFECTIVE_PRICE_COLUMN).append(" <= ?");
+        }
+    }
+
+    private void appendOrderBy(StringBuilder sql, String sortOrder) {
+        ProductSortOrder order = ProductSortOrder.fromCode(sortOrder);
+        if (order == ProductSortOrder.PRICE_ASC) {
+            sql.append(" ORDER BY COALESCE(").append(EFFECTIVE_PRICE_COLUMN).append(", 0) ASC, p.product_id DESC");
+        } else if (order == ProductSortOrder.PRICE_DESC) {
+            sql.append(" ORDER BY COALESCE(").append(EFFECTIVE_PRICE_COLUMN).append(", 0) DESC, p.product_id DESC");
+        } else {
+            sql.append(" ORDER BY p.product_id DESC");
+        }
+    }
+
+    private int bindKeywordAndCategory(PreparedStatement ps, int startIndex, String keyword, Integer categoryId)
+            throws SQLException {
+        int paramIndex = startIndex;
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            String searchPattern = "%" + keyword + "%";
+            ps.setString(paramIndex++, searchPattern);
+            ps.setString(paramIndex++, searchPattern);
+        }
+        if (categoryId != null) {
+            ps.setInt(paramIndex++, categoryId);
+        }
+        return paramIndex;
+    }
+
+    private int bindPriceParams(PreparedStatement ps, int startIndex, Long minPrice, Long maxPrice) throws SQLException {
+        int paramIndex = startIndex;
+        if (minPrice != null) {
+            ps.setLong(paramIndex++, minPrice);
+        }
+        if (maxPrice != null) {
+            ps.setLong(paramIndex++, maxPrice);
+        }
+        return paramIndex;
     }
 
     public Product create(Product product) {
