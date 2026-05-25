@@ -652,11 +652,11 @@
                     </c:if>
                     <div class="review-edit-form" id="review-edit-${r.id}" style="display:none;">
                         <div class="star-picker" id="edit-star-${r.id}">
-                            <input type="radio" name="editRating${r.id}" id="edit-star5-${r.id}" value="5"><label for="edit-star5-${r.id}" title="5 sao">&#9733;</label>
-                            <input type="radio" name="editRating${r.id}" id="edit-star4-${r.id}" value="4"><label for="edit-star4-${r.id}" title="4 sao">&#9733;</label>
-                            <input type="radio" name="editRating${r.id}" id="edit-star3-${r.id}" value="3"><label for="edit-star3-${r.id}" title="3 sao">&#9733;</label>
-                            <input type="radio" name="editRating${r.id}" id="edit-star2-${r.id}" value="2"><label for="edit-star2-${r.id}" title="2 sao">&#9733;</label>
                             <input type="radio" name="editRating${r.id}" id="edit-star1-${r.id}" value="1"><label for="edit-star1-${r.id}" title="1 sao">&#9733;</label>
+                            <input type="radio" name="editRating${r.id}" id="edit-star2-${r.id}" value="2"><label for="edit-star2-${r.id}" title="2 sao">&#9733;</label>
+                            <input type="radio" name="editRating${r.id}" id="edit-star3-${r.id}" value="3"><label for="edit-star3-${r.id}" title="3 sao">&#9733;</label>
+                            <input type="radio" name="editRating${r.id}" id="edit-star4-${r.id}" value="4"><label for="edit-star4-${r.id}" title="4 sao">&#9733;</label>
+                            <input type="radio" name="editRating${r.id}" id="edit-star5-${r.id}" value="5"><label for="edit-star5-${r.id}" title="5 sao">&#9733;</label>
                         </div>
                         <textarea id="edit-comment-${r.id}" placeholder="Chia sẻ trải nghiệm của bạn..." maxlength="1000">${r.comment}</textarea>
                         <div style="display:flex;gap:8px;margin-top:8px;">
