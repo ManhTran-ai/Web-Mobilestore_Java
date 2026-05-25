@@ -87,6 +87,17 @@
             width: 100%;
         }
         .price-hint { font-size: 0.72rem; color: #999; margin-top: 0.25rem; line-height: 1.3; }
+        .filter-select {
+            width: 100%;
+            padding: 0.45rem 0.55rem;
+            border: 1px solid #e5e5ea;
+            border-radius: 6px;
+            font-size: 0.86rem;
+            font-family: inherit;
+            background: #fff;
+            cursor: pointer;
+        }
+        .filter-select:focus { outline: none; border-color: #1a1a1a; }
         .filter-checkbox {
             display: flex;
             align-items: center;
@@ -390,6 +401,15 @@
                 </div>
 
                 <div class="filter-section">
+                    <label class="filter-label" for="sort">Sắp xếp theo giá</label>
+                    <select id="sort" name="sort" class="filter-select">
+                        <option value="" ${empty selectedSort ? 'selected' : ''}>Mặc định (mới nhất)</option>
+                        <option value="price_asc" ${selectedSort == 'price_asc' ? 'selected' : ''}>Giá: Thấp đến cao</option>
+                        <option value="price_desc" ${selectedSort == 'price_desc' ? 'selected' : ''}>Giá: Cao đến thấp</option>
+                    </select>
+                </div>
+
+                <div class="filter-section">
                     <label class="filter-checkbox" for="favoritesOnly">
                         <input id="favoritesOnly" type="checkbox" name="favorites" value="1"
                                ${favoritesOnly ? 'checked' : ''}>
@@ -413,7 +433,7 @@
                 </div>
             </c:if>
 
-            <c:if test="${favoritesOnly or not empty searchKeyword or not empty selectedCategory or not empty priceRangeLabel}">
+            <c:if test="${favoritesOnly or not empty searchKeyword or not empty selectedCategory or not empty priceRangeLabel or not empty sortLabel}">
                 <div class="results-bar">
                     <span>Đang lọc:</span>
                     <div class="active-tags">
@@ -432,6 +452,9 @@
                         </c:if>
                         <c:if test="${not empty priceRangeLabel}">
                             <span class="active-tag">${priceRangeLabel}</span>
+                        </c:if>
+                        <c:if test="${not empty sortLabel}">
+                            <span class="active-tag">${sortLabel}</span>
                         </c:if>
                     </div>
                 </div>
@@ -461,7 +484,7 @@
                     <div class="manufacturer">${product.manufacturer}</div>
                     <div class="product-info-price">
                         <c:choose>
-                            <c:when test="${product.discount > 0}">
+                            <c:when test="${not empty product.discount and product.discount > 0}">
                                 <div class="current-price">
                                     <fmt:formatNumber value="${product.displayOriginalPrice * (100 - product.discount) / 100}"
                                                       type="number"/>₫

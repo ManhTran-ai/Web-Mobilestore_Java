@@ -30,18 +30,18 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public PageResponse<Product> findByPage(int page, int size, Long minPrice, Long maxPrice) {
+    public PageResponse<Product> findByPage(int page, int size, Long minPrice, Long maxPrice, String sortOrder) {
         int offset = (page - 1) * size;
-        List<Product> products = productDAO.findPage(offset, size, minPrice, maxPrice);
+        List<Product> products = productDAO.findPage(offset, size, minPrice, maxPrice, sortOrder);
         int total = productDAO.countAll(minPrice, maxPrice);
         return PageResponse.of(products, page, size, total);
     }
 
     @Override
     public PageResponse<Product> searchWithFilter(String keyword, Integer categoryId, Long minPrice, Long maxPrice,
-                                                  int page, int size) {
+                                                  String sortOrder, int page, int size) {
         int offset = (page - 1) * size;
-        List<Product> products = productDAO.searchWithFilter(keyword, categoryId, minPrice, maxPrice, offset, size);
+        List<Product> products = productDAO.searchWithFilter(keyword, categoryId, minPrice, maxPrice, sortOrder, offset, size);
         int total = productDAO.countSearch(keyword, categoryId, minPrice, maxPrice);
         return PageResponse.of(products, page, size, total);
     }
