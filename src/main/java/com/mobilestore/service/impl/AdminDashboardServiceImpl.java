@@ -28,11 +28,13 @@ public class AdminDashboardServiceImpl implements AdminDashboardService {
         data.setPendingCount(statusCounts.getOrDefault("PENDING", 0));
         data.setProcessingCount(statusCounts.getOrDefault("PROCESSING", 0));
         data.setShippedCount(statusCounts.getOrDefault("SHIPPED", 0));
-        data.setCompletedCount(statusCounts.getOrDefault("COMPLETED", 0));
+        data.setCompletedCount(statusCounts.getOrDefault("DELIVERED", 0));
         data.setCancelledCount(statusCounts.getOrDefault("CANCELLED", 0));
 
         data.setChartLabels(dashboardDAO.labelsLastNMonths(6));
         data.setChartValues(dashboardDAO.revenueLastNMonths(6));
+        data.setTopSellingProducts(dashboardDAO.findTopSellingProducts(10));
+        data.setLowStockVariants(dashboardDAO.findLowStockVariants(5));
 
         return data;
     }
