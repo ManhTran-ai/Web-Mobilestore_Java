@@ -2,6 +2,7 @@ package com.mobilestore.constant;
 
 public enum RoleConstants {
     ADMIN("ADMIN", "Administrator"),
+    INVENTORY_MANAGER("INVENTORY_MANAGER", "INVENTORY_MANAGER"),
     CUSTOMER("CUSTOMER", "Customer");
 
     private final String roleName;

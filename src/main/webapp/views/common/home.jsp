@@ -338,9 +338,8 @@
                 <a href="${pageContext.request.contextPath}/cart">Giỏ Hàng(<span id="cartCount">0</span>)</a>
                 <c:choose>
                     <c:when test="${not empty sessionScope.user}">
-                        <c:if test="${sessionScope.user.roleName == 'ADMIN'}">
-                            <a href="${pageContext.request.contextPath}/admin/dashboard" style="color: #0071e3;">Trang
-                                Quản Lý</a>
+                        <c:if test="${sessionScope.user.roleName == 'ADMIN' || sessionScope.user.roleName == 'INVENTORY_MANAGER'}">
+                            <a href="${pageContext.request.contextPath}/admin/inventory" style="color:#0071e3;">Trang Quản Lý</a>
                         </c:if>
                         <a class="user-pill" href="${pageContext.request.contextPath}/profile">
                             <span class="user-avatar">👤</span>
