@@ -90,6 +90,7 @@
                         <select class="form-control" id="roleName" name="roleName" required>
                             <option value="CUSTOMER" ${user.roleName == 'CUSTOMER' ? 'selected' : ''}>Khách hàng (CUSTOMER)</option>
                             <option value="ADMIN" ${user.roleName == 'ADMIN' ? 'selected' : ''}>Quản trị (ADMIN)</option>
+                            <option value="INVENTORY_MANAGER" ${user.roleName == 'INVENTORY_MANAGER' ? 'selected' : ''}>Quản lý kho (INVENTORY_MANAGER)</option>
                         </select>
                     </div>
 

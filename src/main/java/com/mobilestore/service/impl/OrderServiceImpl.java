@@ -122,4 +122,9 @@ public class OrderServiceImpl implements OrderService {
         }
         return true;
     }
+
+    @Override
+    public Integer createOfflineOrder(int variantId, int quantity, long price, String customerPhone, String note) {
+        return orderDAO.createOfflineOrder(variantId, quantity, price, customerPhone, note);
+    }
 }

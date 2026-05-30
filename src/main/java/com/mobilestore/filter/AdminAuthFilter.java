@@ -32,10 +32,22 @@ public class AdminAuthFilter implements Filter {
 
         User user = (User) session.getAttribute("user");
 
-        if (user.getRoleName() == null || !"ADMIN".equals(user.getRoleName())) {
+        if (user.getRoleName() == null) {
             httpResponse.sendRedirect(httpRequest.getContextPath() + "/?error=access_denied");
             return;
         }
+
+        String role = user.getRoleName();
+        boolean isAdmin = "ADMIN".equals(role);
+        boolean isInventoryManager = "INVENTORY_MANAGER".equals(role);
+
+        if (!isAdmin && !isInventoryManager) {
+            httpResponse.sendRedirect(httpRequest.getContextPath() + "/?error=access_denied");
+            return;
+        }
+
+        request.setAttribute("isAdmin", isAdmin);
+        request.setAttribute("isInventoryManager", isInventoryManager);
 
         chain.doFilter(request, response);
     }
