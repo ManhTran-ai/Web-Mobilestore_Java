@@ -1,4 +1,4 @@
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+﻿<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <!DOCTYPE html>
 <html lang="vi">
@@ -6,70 +6,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Xác nhận Email – MobileStore</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/user-layout.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
-            line-height: 1.6;
-            color: #1a1a1a;
-            background-color: #ffffff;
-        }
-
-        .header {
-            background: #1a1a1a;
-            border-bottom: none;
-            height: 72px;
-            padding: 0;
-        }
-
-        .container {
-            max-width: 976px;
-            margin: 0 auto;
-            padding: 0 24px;
-        }
-
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            height: 100%;
-        }
-
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #ffffff;
-            letter-spacing: -0.5px;
-            display: flex;
-            align-items: center;
-            height: 72px;
-        }
-
-        .nav {
-            display: flex;
-            gap: 2rem;
-            align-items: center;
-        }
-
-        .nav a {
-            color: #ffffff;
-            text-decoration: none;
-            font-size: 0.95rem;
-            font-weight: 400;
-            transition: opacity 0.2s;
-            display: inline-flex;
-            align-items: center;
-            height: 72px;
-            line-height: normal;
-        }
-
-        .nav a:hover { opacity: 0.7; }
-
         .page {
             padding: 4rem 0;
             min-height: calc(100vh - 200px);
@@ -345,35 +285,9 @@
         }
     </style>
 </head>
+<c:set var="activePage" value="register-otp" scope="request"/>
 <body>
-<header class="header">
-    <div class="container">
-        <div class="header-content">
-            <div class="logo">Mobile Store</div>
-            <nav class="nav">
-                <a href="${pageContext.request.contextPath}/">Trang Chủ</a>
-                <a href="${pageContext.request.contextPath}/products">Sản Phẩm</a>
-                <a href="${pageContext.request.contextPath}/cart">Giỏ Hàng(<span id="cartCount">0</span>)</a>
-                <c:choose>
-                    <c:when test="${not empty sessionScope.user}">
-                        <c:if test="${sessionScope.user.roleName == 'ADMIN'}">
-                            <a href="${pageContext.request.contextPath}/admin/products" style="color:#0071e3;">Trang Quản Lý</a>
-                        </c:if>
-                        <a class="user-pill" href="${pageContext.request.contextPath}/profile">
-                            <span class="user-avatar">👤</span>
-                            <span class="user-name">${sessionScope.user.username}</span>
-                        </a>
-                        <a href="${pageContext.request.contextPath}/logout">Đăng Xuất</a>
-                    </c:when>
-                    <c:otherwise>
-                        <a href="${pageContext.request.contextPath}/register">Đăng Ký</a>
-                        <a href="${pageContext.request.contextPath}/login">Đăng Nhập</a>
-                    </c:otherwise>
-                </c:choose>
-            </nav>
-        </div>
-    </div>
-</header>
+<jsp:include page="/views/common/header.jsp"/>
 
 <section class="page">
     <div class="container">
@@ -448,34 +362,7 @@
     </div>
 </section>
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-<footer class="text-light pt-5 pb-3 mt-5" style="background-color: #000000;">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-3 col-md-6 mb-4">
-                <h5 class="text-uppercase fw-bold mb-4">Mobile Store</h5>
-                <p><i class="fas fa-map-marker-alt me-2"></i> 123 Đường ABC, Quận 1, TP.HCM</p>
-                <p><i class="fas fa-phone-alt me-2"></i> Hotline: 1800.1234</p>
-                <p><i class="fas fa-envelope me-2"></i> support@mobilestore.com</p>
-            </div>
-            <div class="col-lg-3 col-md-6 mb-4">
-                <h5 class="text-uppercase fw-bold mb-4">Chính sách hỗ trợ</h5>
-                <ul class="list-unstyled">
-                    <li class="mb-2"><a href="policy.jsp?type=warranty" class="text-secondary text-decoration-none">Chính sách bảo hành</a></li>
-                    <li class="mb-2"><a href="policy.jsp?type=return" class="text-secondary text-decoration-none">Chính sách đổi trả</a></li>
-                </ul>
-            </div>
-        </div>
-        <hr class="my-4 border-secondary">
-        <div class="row align-items-center">
-            <div class="col-md-12 text-center">
-                <p class="mb-0 text-secondary">&copy; 2026 Mobile Store. Thiết kế bởi Sinh viên IT.</p>
-            </div>
-        </div>
-    </div>
-</footer>
+<jsp:include page="/views/common/footer.jsp"/>
 
 <script>
     const otpInputs = document.querySelectorAll('.otp-inputs input');
