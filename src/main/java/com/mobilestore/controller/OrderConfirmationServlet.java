@@ -58,7 +58,6 @@ public class OrderConfirmationServlet extends HttpServlet {
             req.getRequestDispatcher("/views/auth/profile.jsp").forward(req, resp);
             return;
         }
-
         if (order.getOrderDate() == null) {
             order.setOrderDate(new java.util.Date());
         }

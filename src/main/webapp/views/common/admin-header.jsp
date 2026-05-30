@@ -12,6 +12,7 @@
                    Trang chủ
                 </a>
             </li>
+            <c:if test="${sessionScope.user.roleName == 'ADMIN'}">
             <li>
                 <a href="${pageContext.request.contextPath}/admin/dashboard" ${activeMenu == 'dashboard' ? 'class="active"' : ''}>
                     Dashboard
@@ -42,6 +43,14 @@
                     Người dùng
                 </a>
             </li>
+            </c:if>
+            <c:if test="${sessionScope.user.roleName == 'ADMIN' || sessionScope.user.roleName == 'INVENTORY_MANAGER'}">
+            <li>
+                <a href="${pageContext.request.contextPath}/admin/inventory" ${activeMenu == 'inventory' ? 'class="active"' : ''}>
+                    Quản Lý Kho
+                </a>
+            </li>
+            </c:if>
         </ul>
     </nav>
 </aside>

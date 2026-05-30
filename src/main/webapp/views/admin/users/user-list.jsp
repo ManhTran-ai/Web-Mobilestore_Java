@@ -67,6 +67,7 @@
         .user-email { color: #666; font-size: 0.9rem; }
         .role-badge, .status-badge, .auth-badge { display: inline-block; padding: 0.35rem 0.7rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }
         .role-badge.admin { background: #e8f4fd; color: #0071e3; }
+        .role-badge.inventory-manager { background: #f3e8ff; color: #7c3aed; }
         .role-badge.customer { background: #f0f0f5; color: #555; }
         .status-badge.active { background: #d4edda; color: #155724; }
         .status-badge.inactive { background: #fff3cd; color: #856404; }
@@ -119,6 +120,7 @@
                 <select id="filterRole" class="filter-select">
                     <option value="">Tất cả</option>
                     <option value="ADMIN">Admin</option>
+                    <option value="INVENTORY_MANAGER">Quản lý kho</option>
                     <option value="CUSTOMER">Khách hàng</option>
                 </select>
             </div>
@@ -200,7 +202,11 @@
                                     </c:if>
                                 </td>
                                 <td>
-                                    <span class="role-badge ${u.roleName == 'ADMIN' ? 'admin' : 'customer'}">${u.roleName}</span>
+                                    <span class="role-badge ${
+                                        u.roleName == 'ADMIN' ? 'admin' :
+                                        u.roleName == 'INVENTORY_MANAGER' ? 'inventory-manager' :
+                                        'customer'
+                                    }">${u.roleName}</span>
                                 </td>
                                 <td>
                                     <span class="status-badge ${accStatus == 'ACTIVE' ? 'active' : accStatus == 'INACTIVE' ? 'inactive' : 'deleted'}">
