@@ -183,9 +183,15 @@ public class CartServlet extends HttpServlet {
                     }
                     int cartTotal = 0;
                     for (CartItem item : cart) {
-                        long price = item.getVariant() != null ? item.getVariant().getPrice() : 0;
-                        long discount = item.getProduct() != null ? item.getProduct().getDiscount() : 0;
-                        cartTotal += (long)(price * (100 - discount) / 100.0) * item.getQuantity();
+                        long itemPrice;
+                        if (item.getVariant() != null && item.getVariant().getPrice() != null && item.getVariant().getPrice() > 0) {
+                            itemPrice = item.getVariant().getPrice();
+                        } else if (item.getProduct() != null && item.getProduct().getDisplayPrice() != null) {
+                            itemPrice = item.getProduct().getDisplayPrice();
+                        } else {
+                            itemPrice = 0;
+                        }
+                        cartTotal += itemPrice * item.getQuantity();
                     }
 
                     if (isAjax) {
@@ -318,14 +324,13 @@ public class CartServlet extends HttpServlet {
 
                 request.getSession().setAttribute("cart", cart);
 
-                long price = variant != null ? variant.getPrice() : 0;
-                long discount = itemToUpdate.getProduct() != null ? itemToUpdate.getProduct().getDiscount() : 0;
-                double itemTotal = (price * (100 - discount) / 100.0) * qty;
+                long basePrice = variant != null && variant.getPrice() != null ? variant.getPrice() : 0;
+
+                double itemTotal = basePrice * qty;
                 double cartTotal = 0;
                 for (CartItem item : cart) {
-                    long vp = item.getVariant() != null ? item.getVariant().getPrice() : 0;
-                    long vd = item.getProduct() != null ? item.getProduct().getDiscount() : 0;
-                    cartTotal += (vp * (100 - vd) / 100.0) * item.getQuantity();
+                    long vp = item.getVariant() != null && item.getVariant().getPrice() != null ? item.getVariant().getPrice() : 0;
+                    cartTotal += vp * item.getQuantity();
                 }
 
                 if (isAjax) {
