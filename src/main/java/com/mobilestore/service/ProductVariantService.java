@@ -8,6 +8,8 @@ public interface ProductVariantService {
     ProductVariant findById(Integer variantId);
     ProductVariant findByIdWithProduct(Integer variantId);
     boolean updateStock(Integer variantId, int quantityChange);
+    boolean addStock(Integer variantId, int quantity);
+    List<ProductVariant> findAllWithProduct();
     ProductVariant create(ProductVariant variant);
     boolean update(ProductVariant variant);
     boolean delete(Integer variantId);

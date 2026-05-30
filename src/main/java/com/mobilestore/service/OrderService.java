@@ -17,6 +17,7 @@ public interface OrderService {
                                   String shippingAddress, String customerPhone, String note,
                                   Double shippingCost, Integer districtId, String wardCode,
                                   String vnpTransactionId, String vnpOrderId);
+    Integer createOfflineOrder(int variantId, int quantity, long price, String customerPhone, String note);
     List<Order> findByUserId(Integer userId);
     Order findByIdAndUserId(Integer orderId, Integer userId);
     List<ShippingStep> getShippingHistory(Integer orderId);

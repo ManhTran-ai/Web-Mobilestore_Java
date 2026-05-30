@@ -338,9 +338,8 @@
                 <a href="${pageContext.request.contextPath}/cart">Giỏ Hàng(<span id="cartCount">0</span>)</a>
                 <c:choose>
                     <c:when test="${not empty sessionScope.user}">
-                        <c:if test="${sessionScope.user.roleName == 'ADMIN'}">
-                            <a href="${pageContext.request.contextPath}/admin/dashboard" style="color: #0071e3;">Trang
-                                Quản Lý</a>
+                        <c:if test="${sessionScope.user.roleName == 'ADMIN' || sessionScope.user.roleName == 'INVENTORY_MANAGER'}">
+                            <a href="${pageContext.request.contextPath}/admin/inventory" style="color:#0071e3;">Trang Quản Lý</a>
                         </c:if>
                         <a class="user-pill" href="${pageContext.request.contextPath}/profile">
                             <span class="user-avatar">👤</span>
@@ -463,7 +462,7 @@
                          style="border:1px solid #e5e5ea; border-radius:12px; padding:1rem; text-align:left; background:#fff; position: relative;">
                         <span class="sale-badge"
                               style="position: absolute; top: 10px; right: 10px; z-index: 1;">-${p.discount}%</span>
-                        
+
                         <c:set var="isLiked" value="false" />
                         <c:if test="${not empty likedProductIds and likedProductIds.contains(p.productId)}">
                             <c:set var="isLiked" value="true" />
@@ -611,9 +610,9 @@
         toast.className = 'toast';
         toast.textContent = message;
         container.appendChild(toast);
-        
+
         setTimeout(() => toast.classList.add('show'), 10);
-        
+
         setTimeout(() => {
             toast.classList.remove('show');
             setTimeout(() => toast.remove(), 300);
@@ -626,10 +625,10 @@
             btn.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
-                
+
                 const productId = this.getAttribute('data-id');
                 const currentBtn = this;
-                
+
                 fetch('${pageContext.request.contextPath}/api/toggle-like', {
                     method: 'POST',
                     headers: {

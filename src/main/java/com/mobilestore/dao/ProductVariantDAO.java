@@ -100,6 +100,43 @@ public class ProductVariantDAO {
         return false;
     }
 
+    public boolean addStock(Integer variantId, int quantity) {
+        String sql = "UPDATE product_variants SET quantity_in_stock = quantity_in_stock + ? WHERE variant_id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, quantity);
+            ps.setInt(2, variantId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.err.println("Lỗi addStock: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public List<ProductVariant> findAllWithProduct() {
+        List<ProductVariant> variants = new ArrayList<>();
+        String sql = "SELECT pv.variant_id, pv.product_id, pv.color, pv.storage, " +
+                "pv.price, pv.quantity_in_stock, pv.variant_image, " +
+                "p.product_name, p.manufacturer, p.product_condition, p.product_info, " +
+                "p.category_id, p.discount, c.category_name " +
+                "FROM product_variants pv " +
+                "JOIN products p ON pv.product_id = p.product_id " +
+                "LEFT JOIN categories c ON p.category_id = c.category_id " +
+                "ORDER BY p.product_name ASC, pv.price ASC";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                variants.add(mapResultSetToVariant(rs));
+            }
+        } catch (SQLException e) {
+            System.err.println("Lỗi findAllWithProduct: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return variants;
+    }
+
     public ProductVariant create(ProductVariant variant) {
         String sql = "INSERT INTO product_variants (product_id, color, storage, price, quantity_in_stock, variant_image) " +
                 "VALUES (?, ?, ?, ?, ?, ?)";

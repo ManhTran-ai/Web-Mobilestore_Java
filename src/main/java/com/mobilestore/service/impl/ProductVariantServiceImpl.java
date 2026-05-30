@@ -29,6 +29,16 @@ public class ProductVariantServiceImpl implements ProductVariantService {
     }
 
     @Override
+    public boolean addStock(Integer variantId, int quantity) {
+        return variantDAO.addStock(variantId, quantity);
+    }
+
+    @Override
+    public List<ProductVariant> findAllWithProduct() {
+        return variantDAO.findAllWithProduct();
+    }
+
+    @Override
     public ProductVariant create(ProductVariant variant) {
         return variantDAO.create(variant);
     }

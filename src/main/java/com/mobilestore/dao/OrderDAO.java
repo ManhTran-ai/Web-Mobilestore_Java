@@ -196,7 +196,6 @@ public class OrderDAO {
         String detailSql = "INSERT INTO order_details (price, quantity, order_id, variant_id) VALUES (?, ?, ?, ?)";
         String updateVariantSql = "UPDATE product_variants SET quantity_in_stock = quantity_in_stock - ? WHERE variant_id = ?";
 
-        
         if (totalAmount < 0) totalAmount = 0;
         if (shippingCost < 0) shippingCost = 0;
 
@@ -229,7 +228,7 @@ public class OrderDAO {
                                 ProductVariant variant = item.getVariant();
                                 Product product = item.getProduct();
 
-                                psDetail.setDouble(1, variant != null && variant.getPrice() != null ? variant.getPrice().doubleValue() : product.getDisplayPrice().doubleValue());
+                                psDetail.setDouble(1, variant != null ? variant.getPrice() : product.getDisplayPrice());
                                 psDetail.setInt(2, item.getQuantity());
                                 psDetail.setInt(3, orderId);
                                 if (variant != null) {
@@ -279,7 +278,6 @@ public class OrderDAO {
         String detailSql = "INSERT INTO order_details (price, quantity, order_id, variant_id) VALUES (?, ?, ?, ?)";
         String updateVariantSql = "UPDATE product_variants SET quantity_in_stock = quantity_in_stock - ? WHERE variant_id = ?";
 
-        
         if (totalAmount < 0) totalAmount = 0;
         if (shippingCost < 0) shippingCost = 0;
 
@@ -316,7 +314,7 @@ public class OrderDAO {
                                 ProductVariant variant = item.getVariant();
                                 Product product = item.getProduct();
 
-                                psDetail.setDouble(1, variant != null && variant.getPrice() != null ? variant.getPrice().doubleValue() : product.getDisplayPrice().doubleValue());
+                                psDetail.setDouble(1, variant != null ? variant.getPrice() : product.getDisplayPrice());
                                 psDetail.setInt(2, item.getQuantity());
                                 psDetail.setInt(3, orderId);
                                 if (variant != null) {
@@ -509,5 +507,66 @@ public class OrderDAO {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public Integer createOfflineOrder(int variantId, int quantity, long price, String customerPhone, String note) {
+        String orderSql = "INSERT INTO orders (order_status, order_date, total_amount, customer_phone, note, payment_method, payment_status) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String detailSql = "INSERT INTO order_details (price, quantity, order_id, variant_id) VALUES (?, ?, ?, ?)";
+        String updateVariantSql = "UPDATE product_variants SET quantity_in_stock = quantity_in_stock - ? WHERE variant_id = ? AND quantity_in_stock >= ?";
+
+        double totalAmount = price * quantity;
+
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            conn.setAutoCommit(false);
+            try (PreparedStatement psOrder = conn.prepareStatement(orderSql, Statement.RETURN_GENERATED_KEYS)) {
+                psOrder.setString(1, "COMPLETED");
+                psOrder.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
+                psOrder.setDouble(3, totalAmount);
+                psOrder.setString(4, customerPhone);
+                psOrder.setString(5, note);
+                psOrder.setString(6, "OFFLINE");
+                psOrder.setString(7, "PAID");
+                psOrder.executeUpdate();
+
+                try (ResultSet rs = psOrder.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        int orderId = rs.getInt(1);
+
+                        try (PreparedStatement psDetail = conn.prepareStatement(detailSql);
+                             PreparedStatement psUpdateVariant = conn.prepareStatement(updateVariantSql)) {
+                            psDetail.setDouble(1, price);
+                            psDetail.setInt(2, quantity);
+                            psDetail.setInt(3, orderId);
+                            psDetail.setInt(4, variantId);
+                            psDetail.addBatch();
+
+                            psUpdateVariant.setInt(1, quantity);
+                            psUpdateVariant.setInt(2, variantId);
+                            psUpdateVariant.setInt(3, quantity);
+                            psUpdateVariant.addBatch();
+
+                            psDetail.executeBatch();
+                            int updated = psUpdateVariant.executeUpdate();
+                            if (updated == 0) {
+                                throw new SQLException("Khong du so luong trong kho");
+                            }
+                        }
+
+                        conn.commit();
+                        return orderId;
+                    }
+                }
+            } catch (SQLException e) {
+                conn.rollback();
+                throw e;
+            } finally {
+                conn.setAutoCommit(true);
+            }
+        } catch (SQLException e) {
+            System.err.println("Loi createOfflineOrder: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return null;
     }
 }

@@ -11,6 +11,155 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; background: #fff; color: #1a1a1a; }
         .container { max-width: 976px; margin: 0 auto; padding: 0 24px; }
+        .shop-container { max-width: 1280px; }
+        .shop-layout { display: flex; gap: 1.25rem; align-items: flex-start; }
+        .filter-sidebar { width: 248px; flex-shrink: 0; position: sticky; top: 88px; }
+        .filter-panel {
+            background: #fff;
+            border: 1px solid #e5e5ea;
+            border-radius: 10px;
+            padding: 0.9rem 1rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+        }
+        .filter-panel-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 0.65rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #e5e5ea;
+        }
+        .filter-section { margin-bottom: 0.75rem; }
+        .filter-section:last-of-type { margin-bottom: 0; }
+        .filter-label {
+            display: block;
+            font-size: 0.72rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            color: #666;
+            margin-bottom: 0.35rem;
+        }
+        .filter-input {
+            width: 100%;
+            padding: 0.5rem 0.65rem;
+            border: 1px solid #e5e5ea;
+            border-radius: 6px;
+            font-size: 0.88rem;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+        .filter-input:focus {
+            outline: none;
+            border-color: #1a1a1a;
+        }
+        .category-list {
+            list-style: none;
+            max-height: 160px;
+            overflow-y: auto;
+            padding-right: 2px;
+        }
+        .category-list::-webkit-scrollbar { width: 3px; }
+        .category-list::-webkit-scrollbar-thumb { background: #d1d1d6; border-radius: 3px; }
+        .category-item {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.28rem 0;
+            cursor: pointer;
+            font-size: 0.86rem;
+            color: #333;
+            line-height: 1.3;
+        }
+        .category-item input { accent-color: #1a1a1a; width: 14px; height: 14px; flex-shrink: 0; }
+        .category-item:hover { color: #000; }
+        .price-range-list { max-height: none; overflow: visible; }
+        .price-custom-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.35rem;
+            margin-top: 0.4rem;
+        }
+        .price-custom-row input {
+            padding: 0.45rem 0.5rem;
+            border: 1px solid #e5e5ea;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            width: 100%;
+        }
+        .price-hint { font-size: 0.72rem; color: #999; margin-top: 0.25rem; line-height: 1.3; }
+        .filter-select {
+            width: 100%;
+            padding: 0.45rem 0.55rem;
+            border: 1px solid #e5e5ea;
+            border-radius: 6px;
+            font-size: 0.86rem;
+            font-family: inherit;
+            background: #fff;
+            cursor: pointer;
+        }
+        .filter-select:focus { outline: none; border-color: #1a1a1a; }
+        .filter-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+            padding: 0.45rem 0.55rem;
+            border: 1px solid #e5e5ea;
+            border-radius: 6px;
+            background: #fafafa;
+            cursor: pointer;
+            font-size: 0.86rem;
+        }
+        .filter-checkbox input { width: 15px; height: 15px; accent-color: #1a1a1a; }
+        .filter-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid #e5e5ea;
+        }
+        .filter-actions .btn {
+            width: 100%;
+            text-align: center;
+            justify-content: center;
+            padding: 0.55rem 0.75rem;
+            font-size: 0.88rem;
+        }
+        .filter-actions .btn-clear {
+            background: transparent !important;
+            color: #666 !important;
+            border: 1px solid #e5e5ea;
+        }
+        .filter-actions .btn-clear:hover { background: #f5f5f7 !important; color: #1a1a1a !important; }
+        .shop-main { flex: 1; min-width: 0; }
+        .results-bar {
+            margin-bottom: 1.25rem;
+            padding: 0.85rem 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: #666;
+            line-height: 1.5;
+        }
+        .results-bar strong { color: #1a1a1a; }
+        .results-count { font-size: 0.95rem; color: #888; margin-bottom: 1rem; }
+        .active-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; }
+        .active-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.25rem 0.65rem;
+            background: #fff;
+            border: 1px solid #e5e5ea;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: #333;
+        }
+        .shop-main .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
         .header { background: #1a1a1a; height: 72px; padding: 0; position: sticky; top: 0; z-index: 100; }
         .header-content { display: flex; justify-content: space-between; align-items: center; height: 100%; }
         .logo { font-size: 1.5rem; font-weight: 600; color: #fff; letter-spacing: -0.5px; display: flex; align-items: center; height: 72px; }
@@ -22,21 +171,58 @@
         .user-avatar { width: 26px; height: 26px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.35); display: inline-flex; align-items: center; justify-content: center; font-size: 13px; }
         .user-name { font-weight: 600; }
         .page-title { padding: 2rem 0; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem; }
-        .card { border: 1px solid #e5e5ea; border-radius: 12px; padding: 1rem; background: #fff; }
-        .card img { width: 100%; height: 160px; object-fit: contain; display: block; margin-bottom: 0.5rem; }
-        .card .name { font-weight: 600; margin-bottom: 0.25rem; }
-        .card .manufacturer { color: #666; font-size: 0.9rem; margin-bottom: 0.5rem; }
+        .grid { display: grid; gap: 1.5rem; }
+        .card {
+            border: 1px solid #e5e5ea;
+            border-radius: 14px;
+            padding: 1.25rem;
+            background: #fff;
+            transition: box-shadow 0.2s, transform 0.2s;
+        }
+        .card:hover {
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+            transform: translateY(-2px);
+        }
+        .card img {
+            width: 100%;
+            height: 220px;
+            object-fit: contain;
+            display: block;
+            margin-bottom: 0.75rem;
+        }
+        .card .name {
+            font-weight: 600;
+            font-size: 1.05rem;
+            line-height: 1.35;
+            margin-bottom: 0.35rem;
+        }
+        .card .manufacturer { color: #666; font-size: 0.95rem; margin-bottom: 0.65rem; }
+        .card .product-info-price { margin-bottom: 0.5rem; }
         .pagination { display: flex; justify-content: center; gap: 0.5rem; margin: 1.5rem 0; }
-        .current-price { font-size: 1.1rem; font-weight: 700; color: #1a1a1a; }
+        .current-price { font-size: 1.25rem; font-weight: 700; color: #1a1a1a; }
         .current-price.sale { color: #ff3b30; }
-        .discount-tag { background: #000; color: #fff; padding: 2px 8px; border-radius: 4px; font-size: 0.9rem; font-weight: 600; }
-        .old-price { font-size: 1.2rem; color: #86868b; text-decoration: line-through; }
-        .btn { display: inline-block; padding: 0.5rem 0.75rem; border-radius: 8px; background: #000 !important; color: #fff !important; text-decoration: none; }
+        .discount-tag { background: #000; color: #fff; padding: 3px 10px; border-radius: 4px; font-size: 0.95rem; font-weight: 600; }
+        .old-price { font-size: 1rem; color: #86868b; text-decoration: line-through; }
+        .btn { display: inline-block; padding: 0.65rem 1rem; border-radius: 8px; background: #000 !important; color: #fff !important; text-decoration: none; font-size: 0.95rem; }
         .btn.secondary { background: #e5e5ea !important; color: #1a1a1a !important; }
-        .btn.add-to-cart-btn { background: #000 !important; color: #e5e5ea !important; }
-        .variant-selector { margin: 4px 0; }
-        .variant-selector select { width: 100%; padding: 4px; border: 1px solid #e5e5ea; border-radius: 6px; font-size: 0.85rem; }
+        .btn.add-to-cart-btn {
+            width: 100%;
+            text-align: center;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            font-weight: 600;
+            background: #000 !important;
+            color: #fff !important;
+        }
+        .variant-selector { margin: 0.5rem 0; }
+        .variant-selector select {
+            width: 100%;
+            padding: 0.55rem 0.65rem;
+            border: 1px solid #e5e5ea;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+        .card-stock { color: #888; font-size: 0.95rem; }
         .wishlist-btn {
             position: absolute;
             top: 12px;
@@ -91,7 +277,25 @@
             opacity: 1;
             transform: translateY(0);
         }
-        @media (max-width: 768px) { .container { padding: 0 12px; } }
+        @media (max-width: 1100px) {
+            .shop-main .grid { grid-template-columns: repeat(2, 1fr); }
+            .card img { height: 200px; }
+        }
+        @media (max-width: 992px) {
+            .shop-layout { flex-direction: column; }
+            .filter-sidebar { width: 100%; position: static; }
+            .category-list { max-height: 160px; }
+        }
+        @media (max-width: 768px) {
+            .container { padding: 0 12px; }
+            .shop-main .grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+            .card { padding: 1rem; }
+            .card img { height: 160px; }
+            .card .name { font-size: 0.95rem; }
+        }
+        @media (max-width: 480px) {
+            .shop-main .grid { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
@@ -124,58 +328,137 @@
     </div>
 </header>
 
-<main class="container">
+<main class="container shop-container">
     <div class="page-title"><h1>Danh sách sản phẩm</h1></div>
 
-    <div style="margin-bottom: 2rem; padding: 1.5rem; background: #f8f9fa; border-radius: 12px;">
-        <form method="GET" action="${pageContext.request.contextPath}/products" style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
-            <div style="flex: 1; min-width: 200px;">
-                <input type="text" name="search" value="${searchKeyword}"
-                       placeholder="Tìm kiếm sản phẩm..."
-                       style="width: 100%; padding: 0.75rem; border: 1px solid #e5e5ea; border-radius: 8px; font-size: 0.95rem;">
-            </div>
-            <div style="min-width: 150px;">
-                <select name="category" style="width: 100%; padding: 0.75rem; border: 1px solid #e5e5ea; border-radius: 8px; font-size: 0.95rem;">
-                    <option value="">Tất cả danh mục</option>
-                    <c:forEach var="category" items="${categories}">
-                        <option value="${category.categoryId}" ${selectedCategory == category.categoryId ? 'selected' : ''}>
-                                ${category.categoryName}
-                        </option>
-                    </c:forEach>
-                </select>
-            </div>
-            <div style="display:flex; align-items:center; gap:10px; min-width: 180px; padding: 0.5rem 0.75rem; border: 1px solid #e5e5ea; border-radius: 8px; background: #fff;">
-                <input id="favoritesOnly" type="checkbox" name="favorites" value="1" ${favoritesOnly ? 'checked' : ''} style="width: 18px; height: 18px;">
-                <label for="favoritesOnly" style="font-size: 0.95rem; color:#1a1a1a; cursor:pointer; user-select:none;">Chỉ xem yêu thích</label>
-            </div>
-            <div style="display: flex; gap: 0.5rem;">
-                <button type="submit" class="btn" style="padding: 0.75rem 1.5rem;">Tìm kiếm</button>
-                <a href="${pageContext.request.contextPath}/products" class="btn secondary" style="padding: 0.75rem 1.5rem; text-decoration: none;">Xóa bộ lọc</a>
-            </div>
-        </form>
-    </div>
+    <div class="shop-layout">
+        <aside class="filter-sidebar">
+            <form method="GET" action="${pageContext.request.contextPath}/products" class="filter-panel">
+                <div class="filter-panel-title">
+                    <span>Bộ lọc</span>
+                </div>
 
-    <c:if test="${favoritesOnly and favoritesRequiresLogin}">
-        <div style="margin-bottom: 1rem; color: #666; font-size: 0.9rem;">
-            Vui lòng <a href="${pageContext.request.contextPath}/login" style="color:#000; font-weight:600;">đăng nhập</a> để xem sản phẩm yêu thích.
-        </div>
-    </c:if>
+                <div class="filter-section">
+                    <label class="filter-label" for="search">Tìm kiếm</label>
+                    <input type="text" id="search" name="search" class="filter-input"
+                           value="${searchKeyword}" placeholder="Tên sản phẩm, hãng...">
+                </div>
 
-    <c:if test="${favoritesOnly or not empty searchKeyword or not empty selectedCategory}">
-        <div style="margin-bottom: 1rem; color: #666; font-size: 0.9rem;">
-            <c:if test="${favoritesOnly}">Bộ lọc: <strong>Yêu thích</strong> | </c:if>
-            <c:if test="${not empty searchKeyword}">Kết quả tìm kiếm cho: "<strong>${searchKeyword}</strong>"</c:if>
-            <c:if test="${not empty selectedCategory and not empty searchKeyword}"> | </c:if>
-            <c:if test="${not empty selectedCategory}">
-                Danh mục: <strong>
-                <c:forEach var="category" items="${categories}">
-                    <c:if test="${category.categoryId == selectedCategory}">${category.categoryName}</c:if>
-                </c:forEach>
-            </strong>
+                <div class="filter-section">
+                    <span class="filter-label">Danh mục</span>
+                    <ul class="category-list">
+                        <li>
+                            <label class="category-item">
+                                <input type="radio" name="category" value=""
+                                       ${empty selectedCategory ? 'checked' : ''}>
+                                <span>Tất cả danh mục</span>
+                            </label>
+                        </li>
+                        <c:forEach var="category" items="${categories}">
+                            <li>
+                                <label class="category-item">
+                                    <input type="radio" name="category" value="${category.categoryId}"
+                                           ${selectedCategory == category.categoryId ? 'checked' : ''}>
+                                    <span>${category.categoryName}</span>
+                                </label>
+                            </li>
+                        </c:forEach>
+                    </ul>
+                </div>
+
+                <div class="filter-section">
+                    <span class="filter-label">Khoảng giá</span>
+                    <ul class="category-list price-range-list">
+                        <li>
+                            <label class="category-item">
+                                <input type="radio" name="priceRange" value=""
+                                       ${empty selectedPriceRange ? 'checked' : ''}>
+                                <span>Tất cả mức giá</span>
+                            </label>
+                        </li>
+                        <li>
+                            <label class="category-item">
+                                <input type="radio" name="priceRange" value="under_5m"
+                                       ${selectedPriceRange == 'under_5m' ? 'checked' : ''}>
+                                <span>Dưới 5 triệu</span>
+                            </label>
+                        </li>
+                        <li>
+                            <label class="category-item">
+                                <input type="radio" name="priceRange" value="5_10m"
+                                       ${selectedPriceRange == '5_10m' ? 'checked' : ''}>
+                                <span>5 - 10 triệu</span>
+                            </label>
+                        </li>
+                    </ul>
+                    <div class="price-custom-row">
+                        <input type="number" name="minPrice" min="0" step="1000"
+                               value="${minPriceInput}" placeholder="Từ">
+                        <input type="number" name="maxPrice" min="0" step="1000"
+                               value="${maxPriceInput}" placeholder="Đến">
+                    </div>
+                    <p class="price-hint">Nhập giá (VNĐ) nếu cần lọc chi tiết hơn.</p>
+                </div>
+
+                <div class="filter-section">
+                    <label class="filter-label" for="sort">Sắp xếp theo giá</label>
+                    <select id="sort" name="sort" class="filter-select">
+                        <option value="" ${empty selectedSort ? 'selected' : ''}>Mặc định (mới nhất)</option>
+                        <option value="price_asc" ${selectedSort == 'price_asc' ? 'selected' : ''}>Giá: Thấp đến cao</option>
+                        <option value="price_desc" ${selectedSort == 'price_desc' ? 'selected' : ''}>Giá: Cao đến thấp</option>
+                    </select>
+                </div>
+
+                <div class="filter-section">
+                    <label class="filter-checkbox" for="favoritesOnly">
+                        <input id="favoritesOnly" type="checkbox" name="favorites" value="1"
+                               ${favoritesOnly ? 'checked' : ''}>
+                        <span>Chỉ xem yêu thích</span>
+                    </label>
+                </div>
+
+                <div class="filter-actions">
+                    <button type="submit" class="btn">Áp dụng bộ lọc</button>
+                    <a href="${pageContext.request.contextPath}/products" class="btn btn-clear">Xóa bộ lọc</a>
+                </div>
+            </form>
+        </aside>
+
+        <div class="shop-main">
+            <p class="results-count">Hiển thị <strong>${totalItems}</strong> sản phẩm</p>
+
+            <c:if test="${favoritesOnly and favoritesRequiresLogin}">
+                <div class="results-bar">
+                    Vui lòng <a href="${pageContext.request.contextPath}/login" style="color:#000; font-weight:600;">đăng nhập</a> để xem sản phẩm yêu thích.
+                </div>
             </c:if>
-            - Tìm thấy <strong>${totalItems}</strong> sản phẩm
-        </div>
-    </c:if>
+
+            <c:if test="${favoritesOnly or not empty searchKeyword or not empty selectedCategory or not empty priceRangeLabel or not empty sortLabel}">
+                <div class="results-bar">
+                    <span>Đang lọc:</span>
+                    <div class="active-tags">
+                        <c:if test="${favoritesOnly}">
+                            <span class="active-tag">Yêu thích</span>
+                        </c:if>
+                        <c:if test="${not empty searchKeyword}">
+                            <span class="active-tag">"${searchKeyword}"</span>
+                        </c:if>
+                        <c:if test="${not empty selectedCategory}">
+                            <c:forEach var="category" items="${categories}">
+                                <c:if test="${category.categoryId == selectedCategory}">
+                                    <span class="active-tag">${category.categoryName}</span>
+                                </c:if>
+                            </c:forEach>
+                        </c:if>
+                        <c:if test="${not empty priceRangeLabel}">
+                            <span class="active-tag">${priceRangeLabel}</span>
+                        </c:if>
+                        <c:if test="${not empty sortLabel}">
+                            <span class="active-tag">${sortLabel}</span>
+                        </c:if>
+                    </div>
+                </div>
+            </c:if>
 
     <div class="grid">
         <c:forEach var="product" items="${products}">
@@ -194,14 +477,14 @@
                             <img src="${pageContext.request.contextPath}/${product.displayImage}" alt="${product.productName}">
                         </c:when>
                         <c:otherwise>
-                            <div style="height:160px; display:flex; align-items:center; justify-content:center; color:#888;">📱</div>
+                            <div style="height:220px; display:flex; align-items:center; justify-content:center; color:#888; font-size:3rem;">📱</div>
                         </c:otherwise>
                     </c:choose>
                     <div class="name">${product.productName}</div>
                     <div class="manufacturer">${product.manufacturer}</div>
                     <div class="product-info-price">
                         <c:choose>
-                            <c:when test="${product.discount > 0}">
+                            <c:when test="${not empty product.discount and product.discount > 0}">
                                 <div class="current-price">
                                     <fmt:formatNumber value="${product.displayOriginalPrice * (100 - product.discount) / 100}"
                                                       type="number"/>₫
@@ -221,7 +504,7 @@
                             </c:otherwise>
                         </c:choose>
                     </div>
-                    <div style="color:#888; font-size:0.9rem;">
+                    <div class="card-stock">
                         <c:choose>
                             <c:when test="${product.totalStock == 0}">Hết hàng</c:when>
                             <c:otherwise>Tồn kho: ${product.totalStock}</c:otherwise>
@@ -263,7 +546,7 @@
     <c:if test="${totalPages > 1}">
         <div class="pagination">
             <c:if test="${currentPage > 1}">
-                <a class="btn" href="${pageContext.request.contextPath}/products?page=${currentPage - 1}${not empty searchKeyword ? '&search=' : ''}${searchKeyword}${not empty selectedCategory ? '&category=' : ''}${selectedCategory}${favoritesOnly ? '&favorites=1' : ''}">« Trước</a>
+                <a class="btn" href="${pageContext.request.contextPath}/products?page=${currentPage - 1}${filterQuery}">« Trước</a>
             </c:if>
             <c:forEach var="p" begin="1" end="${totalPages}">
                 <c:choose>
@@ -271,15 +554,18 @@
                         <span class="btn secondary">${p}</span>
                     </c:when>
                     <c:otherwise>
-                        <a class="btn" href="${pageContext.request.contextPath}/products?page=${p}${not empty searchKeyword ? '&search=' : ''}${searchKeyword}${not empty selectedCategory ? '&category=' : ''}${selectedCategory}${favoritesOnly ? '&favorites=1' : ''}">${p}</a>
+                        <a class="btn" href="${pageContext.request.contextPath}/products?page=${p}${filterQuery}">${p}</a>
                     </c:otherwise>
                 </c:choose>
             </c:forEach>
             <c:if test="${currentPage < totalPages}">
-                <a class="btn" href="${pageContext.request.contextPath}/products?page=${currentPage + 1}${not empty searchKeyword ? '&search=' : ''}${searchKeyword}${not empty selectedCategory ? '&category=' : ''}${selectedCategory}${favoritesOnly ? '&favorites=1' : ''}">Tiếp »</a>
+                <a class="btn" href="${pageContext.request.contextPath}/products?page=${currentPage + 1}${filterQuery}">Tiếp »</a>
             </c:if>
         </div>
     </c:if>
+
+        </div>
+    </div>
 </main>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
