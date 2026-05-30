@@ -566,8 +566,8 @@
 
                             <c:set var="total" value="0"/>
                             <c:forEach var="item" items="${cartItems}">
-                                <c:set var="itemPrice" value="${item.variant != null ? item.variant.price : item.product.displayPrice}"/>
                                 <c:set var="itemDiscount" value="${item.product != null ? item.product.discount : 0}"/>
+                                <c:set var="itemPrice" value="${item.variant != null ? item.variant.price : item.product.displayPrice}"/>
                                 <c:set var="itemImg" value="${item.variant != null ? item.variant.variantImage : item.product.displayImage}"/>
                                 <div class="order-item">
                                     <img src="${pageContext.request.contextPath}/${itemImg}"
@@ -583,12 +583,12 @@
                                     </div>
                                     <div class="order-item-price">
                                         <fmt:formatNumber
-                                                value="${(itemPrice * (100 - itemDiscount) / 100) * item.quantity}"
+                                                value="${itemPrice * item.quantity}"
                                                 type="number" groupingUsed="true"/>₫
                                     </div>
                                 </div>
                                 <c:set var="total"
-                                       value="${total + ((itemPrice * (100 - itemDiscount) / 100) * item.quantity)}"/>
+                                       value="${total + (itemPrice * item.quantity)}"/>
                             </c:forEach>
 
                             <div class="order-totals">

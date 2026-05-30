@@ -107,9 +107,9 @@
             <tbody>
             <c:set var="total" value="0"/>
             <c:forEach var="item" items="${cartItems}" varStatus="st">
-                <c:set var="itemPrice" value="${item.variant != null ? item.variant.price : item.product.displayPrice}"/>
                 <c:set var="itemDiscount" value="${item.product != null ? item.product.discount : 0}"/>
-                <c:set var="itemTotal" value="${(itemPrice * (100 - itemDiscount) / 100) * item.quantity}"/>
+                <c:set var="itemPrice" value="${item.variant != null ? item.variant.price : (item.product.displayPrice)}"/>
+                <c:set var="itemTotal" value="${itemPrice * item.quantity}"/>
                 <tr data-index="${st.index}">
                     <td>
                         <img src="${pageContext.request.contextPath}/${item.variant != null ? item.variant.variantImage : item.product.displayImage}"
