@@ -6,57 +6,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản Lý Kho - Mobile Store</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/admin-layout.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #1a1a1a; background-color: #f5f5f7; }
-        .admin-container { display: flex; min-height: 100vh; }
-        .sidebar { width: 260px; background: #1a1a1a; color: #ffffff; padding: 2rem 0; position: fixed; height: 100vh; overflow-y: auto; }
-        .sidebar-header { padding: 0 1.5rem 2rem; border-bottom: 1px solid #333; margin-bottom: 1rem; }
-        .sidebar-header h2 { font-size: 1.25rem; font-weight: 600; }
-        .sidebar-header span { font-size: 0.875rem; color: #888; }
-        .sidebar-nav { list-style: none; }
-        .sidebar-nav li { margin: 0.25rem 0; }
-        .sidebar-nav a { display: flex; align-items: center; padding: 0.875rem 1.5rem; color: #ccc; text-decoration: none; transition: all 0.2s; font-size: 0.95rem; }
-        .sidebar-nav a:hover, .sidebar-nav a.active { background: #333; color: #fff; }
-        .sidebar-nav a.active { border-left: 3px solid #0071e3; }
-        .main-content { flex: 1; margin-left: 260px; padding: 2rem; }
-        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem; }
-        .page-header h1 { font-size: 1.75rem; font-weight: 600; }
-        .header-actions { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
-        .btn { display: inline-flex; align-items: center; padding: 0.75rem 1.5rem; border-radius: 8px; font-size: 0.95rem; font-weight: 500; text-decoration: none; cursor: pointer; transition: all 0.2s; border: none; font-family: inherit; }
-        .btn-primary { background: #0071e3 !important; color: #fff !important; }
-        .btn-primary:hover { background: #0077ed !important; }
-        .btn-success { background: #34c759 !important; color: #fff !important; }
-        .btn-success:hover { background: #30b854 !important; }
-        .btn-secondary { background: #e5e5ea !important; color: #1a1a1a !important; }
-        .btn-secondary:hover { background: #d1d1d6 !important; }
-        .btn-warning { background: #ff9500 !important; color: #fff !important; }
-        .btn-warning:hover { background: #e68a00 !important; }
-        .btn-sm { padding: 0.5rem 1rem; font-size: 0.875rem; }
-        .search-box { position: relative; }
-        .search-box input { padding: 0.75rem 1rem 0.75rem 2.5rem; border: 1px solid #d1d1d6; border-radius: 8px; font-size: 0.95rem; width: 280px; }
-        .search-box input:focus { outline: none; border-color: #0071e3; }
-        .search-box::before { content: ''; position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23888'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z'/%3E%3C/svg%3E") no-repeat center; background-size: contain; }
-        .alert { padding: 1rem 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; font-size: 0.95rem; }
-        .alert-success { background: #d1f2eb; color: #0d6848; border: 1px solid #a3e4d7; }
-        .alert-error { background: #fdecea; color: #c62828; border: 1px solid #f5c6cb; }
-        .alert-warning { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
-        .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 2rem; }
-        .stat-card { background: #fff; border-radius: 12px; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        .stat-card .label { font-size: 0.85rem; color: #888; margin-bottom: 0.5rem; }
-        .stat-card .value { font-size: 1.75rem; font-weight: 600; }
-        .stat-card.primary .value { color: #0071e3; }
-        .stat-card.success .value { color: #34c759; }
-        .stat-card.warning .value { color: #ff9500; }
-        .table-container { background: #fff; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); overflow: hidden; }
-        .table-header { padding: 1rem 1.5rem; border-bottom: 1px solid #e5e5ea; display: flex; justify-content: space-between; align-items: center; }
-        .table-header h3 { font-size: 1rem; font-weight: 600; }
-        .table-info { font-size: 0.9rem; color: #888; }
-        .data-table { width: 100%; border-collapse: collapse; }
-        .data-table th, .data-table td { padding: 1rem 1.25rem; text-align: left; border-bottom: 1px solid #e5e5ea; }
-        .data-table th { background: #f5f5f7; font-weight: 600; color: #666; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; }
-        .data-table tbody tr:hover { background: #fafafa; }
-        .data-table tbody tr:last-child td { border-bottom: none; }
         .product-name { font-weight: 600; color: #1a1a1a; }
         .product-manufacturer { font-size: 0.8rem; color: #888; }
         .variant-color { display: inline-block; width: 14px; height: 14px; border-radius: 50%; border: 1px solid #d1d1d6; vertical-align: middle; margin-right: 4px; }
@@ -70,38 +21,25 @@
         .stock-badge.low { background: #fff3cd; color: #856404; }
         .stock-badge.out { background: #fdecea; color: #c62828; }
         .actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-        .empty-state { text-align: center; padding: 4rem 2rem; color: #888; }
-        .empty-state .icon { font-size: 4rem; margin-bottom: 1rem; }
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 1000; }
-        .modal-overlay.active { display: flex; }
-        .modal { background: #fff; border-radius: 16px; padding: 2rem; max-width: 440px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.3); animation: modalIn 0.3s ease; }
-        .modal h3 { margin-bottom: 0.5rem; font-size: 1.25rem; }
-        .modal p { color: #666; margin-bottom: 0.5rem; font-size: 0.9rem; }
-        .modal .product-info { background: #f5f5f7; border-radius: 8px; padding: 0.75rem 1rem; margin-bottom: 1.5rem; font-size: 0.9rem; }
-        .modal .product-info strong { color: #1a1a1a; }
-        .modal-form { text-align: left; }
+
+        .row-hidden { display: none !important; }
+
+        .modal .product-info { background: #f5f5f5; border-radius: 8px; padding: 0.75rem 1rem; margin-bottom: 1.5rem; font-size: 0.9rem; }
         .form-group { margin-bottom: 1rem; }
         .form-label { display: block; margin-bottom: 0.5rem; font-weight: 500; font-size: 0.9rem; color: #1a1a1a; }
         .form-label .required { color: #ff3b30; }
         .form-control { width: 100%; padding: 0.75rem 1rem; border: 1px solid #d1d1d6; border-radius: 8px; font-size: 1rem; font-family: inherit; box-sizing: border-box; }
         .form-control:focus { outline: none; border-color: #0071e3; box-shadow: 0 0 0 3px rgba(0,113,227,0.1); }
-        .form-control:read-only { background: #f5f5f7; }
+        .form-control:read-only { background: #f5f5f5; }
         .help-text { font-size: 0.8rem; color: #888; margin-top: 0.3rem; }
         .modal-actions { display: flex; gap: 0.75rem; margin-top: 1.5rem; justify-content: flex-end; }
-        .row-hidden { display: none !important; }
-        @keyframes modalIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
-        @media (max-width: 1200px) { .stats-row { grid-template-columns: repeat(2, 1fr); } }
+
         @media (max-width: 900px) { .data-table th:nth-child(4), .data-table td:nth-child(4) { display: none; } }
-        @media (max-width: 768px) {
-            .sidebar { display: none; }
-            .main-content { margin-left: 0; }
-            .stats-row { grid-template-columns: 1fr; }
-            .search-box input { width: 100%; }
-        }
     </style>
 </head>
 <body>
 <div class="admin-container">
+    <c:set var="activeMenu" value="inventory" scope="request"/>
     <jsp:include page="/views/common/admin-header.jsp"/>
 
     <main class="main-content">
@@ -124,7 +62,7 @@
                     <c:when test="${param.error == 'invalid_variant'}">Sản phẩm không hợp lệ.</c:when>
                     <c:when test="${param.error == 'missing_quantity'}">Vui lòng nhập số lượng.</c:when>
                     <c:when test="${param.error == 'invalid_quantity'}">Số lượng không hợp lệ.</c:when>
-                    <c:when test="${param.error == 'invalid_price'}">Gía không hợp lệ.</c:when>
+                    <c:when test="${param.error == 'invalid_price'}">Giá không hợp lệ.</c:when>
                     <c:otherwise>Đã xảy ra lỗi. Vui lòng thử lại.</c:otherwise>
                 </c:choose>
             </div>
@@ -330,7 +268,6 @@
             document.getElementById('importVariantId').value = btn.dataset.id;
             document.getElementById('importProductInfo').innerHTML = '<strong>' + btn.dataset.name + '</strong> — Tồn kho hiện tại: ' + btn.dataset.qty;
             document.getElementById('importQuantity').value = '';
-            document.getElementById('importQuantity').max = '';
             importModal.classList.add('active');
         });
     });
@@ -349,21 +286,10 @@
         });
     });
 
-    document.getElementById('cancelImport').addEventListener('click', function () {
-        importModal.classList.remove('active');
-    });
-
-    document.getElementById('cancelExport').addEventListener('click', function () {
-        exportModal.classList.remove('active');
-    });
-
-    importModal.addEventListener('click', function (e) {
-        if (e.target === importModal) importModal.classList.remove('active');
-    });
-
-    exportModal.addEventListener('click', function (e) {
-        if (e.target === exportModal) exportModal.classList.remove('active');
-    });
+    document.getElementById('cancelImport').addEventListener('click', function () { importModal.classList.remove('active'); });
+    document.getElementById('cancelExport').addEventListener('click', function () { exportModal.classList.remove('active'); });
+    importModal.addEventListener('click', function (e) { if (e.target === importModal) importModal.classList.remove('active'); });
+    exportModal.addEventListener('click', function (e) { if (e.target === exportModal) exportModal.classList.remove('active'); });
 
     document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape') {
