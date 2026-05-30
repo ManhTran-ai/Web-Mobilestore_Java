@@ -32,7 +32,7 @@
         }
 
         .container {
-            max-width: 960px;
+            max-width: 1343px;
             margin: 0 auto;
             padding: 0 24px;
         }
@@ -86,6 +86,11 @@
             align-items: center;
             justify-content: center;
             font-size: 13px;
+        }
+        .user-name{
+            font-weight: 600;
+            margin-left: 10px;
+
         }
 
         .page {
@@ -440,7 +445,10 @@
                             <c:if test="${sessionScope.user.roleName == 'ADMIN'}">
                                 <a href="${pageContext.request.contextPath}/admin/products">Trang Quản Lý</a>
                             </c:if>
-                            <a href="${pageContext.request.contextPath}/profile" class="user-avatar" title="${sessionScope.user.username}">U</a>
+                            <a class="user-pill" href="${pageContext.request.contextPath}/profile">
+                                <span class="user-avatar">👤</span>
+                                <span class="user-name">${sessionScope.user.username}</span>
+                            </a>
                             <a href="${pageContext.request.contextPath}/logout">Đăng Xuất</a>
                         </c:when>
                         <c:otherwise>
