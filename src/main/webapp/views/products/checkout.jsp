@@ -95,6 +95,11 @@
             min-height: 80px;
         }
 
+        textarea.form-control.error {
+            border-color: #dc3545;
+            box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+        }
+
         .order-summary {
             background: #ffffff;
             border: 1px solid #e5e5ea;
@@ -385,7 +390,7 @@
 
                                 <div class="form-group" id="addressGroup">
                                     <label class="form-label" for="shippingAddress">
-                                        Địa chỉ nhận hàng <span class="required">*</span>
+                                        <span id="addressLabel">Địa chỉ nhận hàng <span class="required">*</span></span>
                                     </label>
                                     <div class="address-dropdowns" style="display:grid; gap:12px; margin-bottom:12px;">
                                         <div>
@@ -407,9 +412,8 @@
                                     <input type="hidden" id="districtIdField" name="districtId" value="${sessionScope.user.districtId}"/>
                                     <input type="hidden" id="wardCodeField" name="wardCode" value="${sessionScope.user.wardCode}"/>
                                     <textarea id="shippingAddress" name="shippingAddress" class="form-control"
-                                              required minlength="10" maxlength="500"
-                                              placeholder="Số nhà, tên đường (không bắt buộc)">${sessionScope.user.shippingAddress != null ? sessionScope.user.shippingAddress : ''}</textarea>
-                                    <div class="error-message" id="addressError">Vui lòng nhập địa chỉ giao hàng</div>
+                                              placeholder="Số nhà, tên đường"></textarea>
+                                    <div class="error-message" id="addressError">Vui lòng nhập số nhà, tên đường (tối thiểu 5 ký tự)</div>
                                 </div>
 
                                 <div class="form-group">
@@ -488,47 +492,100 @@
 <jsp:include page="/views/common/footer.jsp"/>
 
 <script>
-    function refreshCartCount() {
-        fetch('${pageContext.request.contextPath}/cart/count')
-            .then(r => r.json())
-            .then(data => {
-                const el = document.getElementById('cartCount');
-                if (el) el.textContent = data.count;
-            }).catch(() => {
-        });
-    }
-
     const ctx = '${pageContext.request.contextPath}';
     const provinceSel = document.getElementById('provinceSelect');
     const districtSel = document.getElementById('districtSelect');
-    const wardSel     = document.getElementById('wardSelect');
+    const wardSel = document.getElementById('wardSelect');
     const hiddenDistrict = document.getElementById('districtIdField');
-    const hiddenWard    = document.getElementById('wardCodeField');
+    const hiddenWard = document.getElementById('wardCodeField');
+    const addressTextarea = document.getElementById('shippingAddress');
+    const addressGroup = document.getElementById('addressGroup');
 
     const savedDistrictId = '${sessionScope.user.districtId}';
-    const savedWardCode   = '${sessionScope.user.wardCode}';
+    const savedWardCode = '${sessionScope.user.wardCode}';
+    const hasFullSavedAddress = savedDistrictId && savedDistrictId.trim() !== ''
+        && savedWardCode && savedWardCode.trim() !== '';
 
+    const districtsCache = {};
+    const wardsCache = {};
     let cartTotal = ${total};
 
     async function loadProvinces() {
         const res = await fetch(ctx + '/api/ghn/provinces');
         const json = await res.json();
         if (json.success) {
-            json.data.forEach(p => {
-                const opt = document.createElement('option');
-                opt.value = p.ProvinceID;
-                opt.textContent = p.NameExtension
-                    ? p.NameExtension.find(n => n && n.trim()) || p.NameExtension[0] || p.ProvinceName
-                    : p.ProvinceName;
-                provinceSel.appendChild(opt);
-            });
-            if (savedDistrictId) {
+            json.data.forEach(p => provinceSel.appendChild(createProvinceOption(p)));
+            const batches = chunk(json.data, 5);
+            for (const batch of batches) {
+                await Promise.all(batch.map(p => prefetchDistricts(p.ProvinceID)));
+            }
+            if (hasFullSavedAddress) {
                 await resolveAndPrefill(savedDistrictId, savedWardCode);
             }
         }
     }
 
+    function prefillAddressFromProfile() {
+        const savedAddress = '${sessionScope.user.shippingAddress != null ? sessionScope.user.shippingAddress : ""}';
+        if (savedAddress && savedAddress.trim() !== '') {
+            addressTextarea.value = savedAddress.trim();
+        }
+    }
+
+    function chunk(arr, size) {
+        const result = [];
+        for (let i = 0; i < arr.length; i += size) {
+            result.push(arr.slice(i, i + size));
+        }
+        return result;
+    }
+
+    function createProvinceOption(p) {
+        const opt = document.createElement('option');
+        opt.value = p.ProvinceID;
+        opt.textContent = p.NameExtension
+            ? p.NameExtension.find(n => n && n.trim()) || p.ProvinceName
+            : p.ProvinceName;
+        return opt;
+    }
+
+    function createDistrictOption(d) {
+        const opt = document.createElement('option');
+        opt.value = d.DistrictID;
+        opt.textContent = d.NameExtension
+            ? d.NameExtension.find(n => n && n.trim()) || d.DistrictName
+            : d.DistrictName;
+        return opt;
+    }
+
+    function createWardOption(w) {
+        const opt = document.createElement('option');
+        opt.value = w.WardCode;
+        opt.textContent = w.NameExtension
+            ? w.NameExtension.find(n => n && n.trim()) || w.WardName
+            : w.WardName;
+        return opt;
+    }
+
+    async function prefetchDistricts(provinceId) {
+        try {
+            const res = await fetch(ctx + '/api/ghn/districts?province_id=' + provinceId);
+            const j = await res.json();
+            if (j.success) {
+                districtsCache[provinceId] = j.data;
+            }
+        } catch (_) {}
+    }
+
     async function resolveAndPrefill(districtId, wardCode) {
+        for (const [provinceId, districts] of Object.entries(districtsCache)) {
+            if (districts.find(d => String(d.DistrictID) === String(districtId))) {
+                provinceSel.value = provinceId;
+                await loadDistricts(provinceId, parseInt(districtId), wardCode);
+                prefillAddressFromProfile();
+                return;
+            }
+        }
         for (const opt of provinceSel.options) {
             if (!opt.value) continue;
             const dRes = await fetch(ctx + '/api/ghn/districts?province_id=' + opt.value);
@@ -537,7 +594,8 @@
                 const found = dJson.data.find(d => String(d.DistrictID) === String(districtId));
                 if (found) {
                     provinceSel.value = opt.value;
-                    await loadDistricts(opt.value, districtId, wardCode);
+                    await loadDistricts(opt.value, parseInt(districtId), wardCode);
+                    prefillAddressFromProfile();
                     return;
                 }
             }
@@ -549,27 +607,26 @@
         districtSel.disabled = true;
         wardSel.innerHTML = '<option value="">-- Chọn Phường / Xã --</option>';
         wardSel.disabled = true;
-
         if (!provinceId) {
             districtSel.innerHTML = '<option value="">-- Chọn Tỉnh trước --</option>';
             return;
         }
-
+        if (districtsCache[provinceId]) {
+            districtSel.innerHTML = '<option value="">-- Chọn Quận / Huyện --</option>';
+            districtsCache[provinceId].forEach(d => districtSel.appendChild(createDistrictOption(d)));
+            districtSel.disabled = false;
+            if (preselectId) {
+                districtSel.value = preselectId;
+                await loadWards(preselectId, preselectWard);
+            }
+            return;
+        }
         const res = await fetch(ctx + '/api/ghn/districts?province_id=' + provinceId);
         const json = await res.json();
         districtSel.innerHTML = '<option value="">-- Chọn Quận / Huyện --</option>';
-
         if (json.success) {
-            json.data.forEach(d => {
-                const opt = document.createElement('option');
-                opt.value = d.DistrictID;
-                opt.textContent = d.NameExtension
-                    ? d.NameExtension.find(n => n && n.trim()) || d.DistrictName
-                    : d.DistrictName;
-                districtSel.appendChild(opt);
-            });
+            json.data.forEach(d => districtSel.appendChild(createDistrictOption(d)));
             districtSel.disabled = false;
-
             if (preselectId) {
                 districtSel.value = preselectId;
                 await loadWards(preselectId, preselectWard);
@@ -580,34 +637,38 @@
     async function loadWards(districtId, preselectCode) {
         wardSel.innerHTML = '<option value="">-- Đang tải... --</option>';
         wardSel.disabled = true;
-
         if (!districtId) {
             wardSel.innerHTML = '<option value="">-- Chọn Quận trước --</option>';
             return;
         }
-
-        const res = await fetch(ctx + '/api/ghn/wards?district_id=' + districtId);
-        const json = await res.json();
-        wardSel.innerHTML = '<option value="">-- Chọn Phường / Xã --</option>';
-
-        if (json.success) {
-            json.data.forEach(w => {
-                const opt = document.createElement('option');
-                opt.value = w.WardCode;
-                opt.textContent = w.NameExtension
-                    ? w.NameExtension.find(n => n && n.trim()) || w.WardName
-                    : w.WardName;
-                wardSel.appendChild(opt);
-            });
+        if (wardsCache[districtId]) {
+            wardSel.innerHTML = '<option value="">-- Chọn Phường / Xã --</option>';
+            wardsCache[districtId].forEach(w => wardSel.appendChild(createWardOption(w)));
             wardSel.disabled = false;
-
             if (preselectCode) {
                 wardSel.value = preselectCode;
                 hiddenDistrict.value = districtId;
                 hiddenWard.value = preselectCode;
                 await calculateShippingFee();
             } else {
-                updateShippingDisplay(0, districtId, preselectCode || wardSel.value);
+                updateShippingDisplay(0, parseInt(districtId), wardSel.value);
+            }
+            return;
+        }
+        const res = await fetch(ctx + '/api/ghn/wards?district_id=' + districtId);
+        const json = await res.json();
+        wardSel.innerHTML = '<option value="">-- Chọn Phường / Xã --</option>';
+        if (json.success) {
+            json.data.forEach(w => wardSel.appendChild(createWardOption(w)));
+            wardSel.disabled = false;
+            wardsCache[districtId] = json.data;
+            if (preselectCode) {
+                wardSel.value = preselectCode;
+                hiddenDistrict.value = districtId;
+                hiddenWard.value = preselectCode;
+                await calculateShippingFee();
+            } else {
+                updateShippingDisplay(0, parseInt(districtId), wardSel.value);
             }
         }
     }
@@ -615,24 +676,20 @@
     async function calculateShippingFee() {
         const districtId = districtSel.value;
         const wardCode = wardSel.value;
-
         if (!districtId || !wardCode) {
             updateShippingDisplay(0, parseInt(districtId) || null, wardCode || null);
             return;
         }
-
         const body = {
             to_district_id: parseInt(districtId),
             to_ward_code: wardCode
         };
-
         const res = await fetch(ctx + '/api/ghn/calculate-fee', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(body)
         });
         const json = await res.json();
-
         const fee = json.success && json.fee ? json.fee : 0;
         updateShippingDisplay(fee, body.to_district_id, body.to_ward_code);
     }
@@ -640,29 +697,15 @@
     function updateShippingDisplay(fee, districtId, wardCode) {
         if (districtId) hiddenDistrict.value = districtId;
         if (wardCode) hiddenWard.value = wardCode;
-
         const shippingEl = document.getElementById('shippingFeeDisplay');
         const totalEl = document.getElementById('totalAmountDisplay');
-
-        if (shippingEl) {
-            shippingEl.textContent = 'Miễn phí';
-        }
-        if (totalEl) {
-            totalEl.textContent = new Intl.NumberFormat('vi-VN').format(cartTotal) + '₫';
-        }
+        if (shippingEl) shippingEl.textContent = 'Miễn phí';
+        if (totalEl) totalEl.textContent = new Intl.NumberFormat('vi-VN').format(cartTotal) + '₫';
     }
 
-    provinceSel.addEventListener('change', () => {
-        loadDistricts(provinceSel.value, null, null);
-    });
-
-    districtSel.addEventListener('change', () => {
-        loadWards(districtSel.value, null);
-    });
-
-    wardSel.addEventListener('change', () => {
-        calculateShippingFee();
-    });
+    provinceSel.addEventListener('change', () => loadDistricts(provinceSel.value, null, null));
+    districtSel.addEventListener('change', () => loadWards(districtSel.value, null));
+    wardSel.addEventListener('change', () => calculateShippingFee());
 
     loadProvinces();
 
@@ -718,16 +761,22 @@
             wardSel.style.borderColor = '';
         }
 
+        if (!addressTextarea.value.trim() || addressTextarea.value.trim().length < 5) {
+            addressTextarea.classList.add('error');
+            addressGroup.classList.add('error');
+            isValid = false;
+        } else {
+            addressTextarea.classList.remove('error');
+            addressGroup.classList.remove('error');
+        }
+
         return isValid;
     }
 
     function payWithVNPay() {
         if (!validateForm()) {
-            const firstError = document.querySelector('.form-group.error') ||
-                document.querySelector('select[style*="borderColor: rgb(220, 53, 69)"]');
-            if (firstError) {
-                firstError.scrollIntoView({behavior: 'smooth', block: 'center'});
-            }
+            const firstError = document.querySelector('.form-group.error, select[style*="borderColor"], textarea.form-control.error');
+            if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
             return;
         }
         const form = document.getElementById('checkoutForm');
@@ -745,10 +794,8 @@
     document.getElementById('checkoutForm').addEventListener('submit', function (e) {
         if (!validateForm()) {
             e.preventDefault();
-            const firstError = document.querySelector('.form-group.error, select[style*="borderColor"]');
-            if (firstError) {
-                firstError.scrollIntoView({behavior: 'smooth', block: 'center'});
-            }
+            const firstError = document.querySelector('.form-group.error, select[style*="borderColor"], textarea.form-control.error');
+            if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
     });
 
@@ -757,12 +804,18 @@
             this.classList.remove('error');
             const group = this.closest('.form-group');
             if (group) group.classList.remove('error');
-            if (this.tagName === 'SELECT') {
-                this.style.borderColor = '';
-            }
+            if (this.tagName === 'SELECT') this.style.borderColor = '';
         });
     });
 
+    function refreshCartCount() {
+        fetch(ctx + '/cart/count')
+            .then(r => r.json())
+            .then(data => {
+                const el = document.getElementById('cartCount');
+                if (el) el.textContent = data.count;
+            }).catch(() => {});
+    }
     refreshCartCount();
 </script>
 </body>
