@@ -7,104 +7,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Trang quản lý</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/admin-layout.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
-            line-height: 1.6;
-            color: #1a1a1a;
-            background-color: #f5f5f7;
-        }
-
-        .admin-container {
-            display: flex;
-            min-height: 100vh;
-        }
-
-        .sidebar {
-            width: 260px;
-            background: #1a1a1a;
-            color: #ffffff;
-            padding: 2rem 0;
-            position: fixed;
-            height: 100vh;
-            overflow-y: auto;
-        }
-
-        .sidebar-header {
-            padding: 0 1.5rem 2rem;
-            border-bottom: 1px solid #333;
-            margin-bottom: 1rem;
-        }
-
-        .sidebar-header h2 {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: #ffffff;
-        }
-
-        .sidebar-header span {
-            font-size: 0.875rem;
-            color: #888;
-        }
-
-        .sidebar-nav {
-            list-style: none;
-        }
-
-        .sidebar-nav li {
-            margin: 0.25rem 0;
-        }
-
-        .sidebar-nav a {
-            display: flex;
-            align-items: center;
-            padding: 0.875rem 1.5rem;
-            color: #ccc;
-            text-decoration: none;
-            transition: all 0.2s;
-            font-size: 0.95rem;
-        }
-
-        .sidebar-nav a:hover,
-        .sidebar-nav a.active {
-            background: #333;
-            color: #ffffff;
-        }
-
-        .sidebar-nav a.active {
-            border-left: 3px solid #0071e3;
-        }
-
-        .main-content {
-            flex: 1;
-            margin-left: 260px;
-            padding: 2rem;
-        }
-
-        .page-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .page-header h1 {
-            font-size: 1.75rem;
-            font-weight: 600;
-            color: #1a1a1a;
-        }
-
-        .page-header p {
-            color: #666;
-            font-size: 0.95rem;
-        }
-
         .quick-metrics {
             display: grid;
             grid-template-columns: repeat(3, minmax(220px, 1fr));
@@ -499,15 +403,6 @@
         }
 
         @media (max-width: 768px) {
-            .sidebar {
-                display: none;
-            }
-
-            .main-content {
-                margin-left: 0;
-                padding: 1.25rem;
-            }
-
             .revenue-grid {
                 grid-template-columns: 1fr;
             }
@@ -540,51 +435,8 @@
 </head>
 <body>
 <div class="admin-container">
-    <aside class="sidebar">
-        <div class="sidebar-header">
-            <h2>Mobile Store</h2>
-            <span>Trang quản lý</span>
-        </div>
-        <nav>
-            <ul class="sidebar-nav">
-                <li>
-                    <a href="${pageContext.request.contextPath}/">
-                        Trang chủ
-                    </a>
-                </li>
-                <li>
-                    <a href="${pageContext.request.contextPath}/admin/dashboard" class="active">
-                        Dashboard
-                    </a>
-                </li>
-                <li>
-                    <a href="${pageContext.request.contextPath}/admin/products">
-                        Sản phẩm
-                    </a>
-                </li>
-                <li>
-                    <a href="${pageContext.request.contextPath}/admin/orders">
-                        Đơn hàng
-                    </a>
-                </li>
-                <li>
-                    <a href="${pageContext.request.contextPath}/admin/sliders">
-                        Slider Images
-                    </a>
-                </li>
-                <li>
-                    <a href="${pageContext.request.contextPath}/admin/reviews">
-                        Đánh giá
-                    </a>
-                </li>
-                <li>
-                    <a href="${pageContext.request.contextPath}/admin/users">
-                        Người dùng
-                    </a>
-                </li>
-            </ul>
-        </nav>
-    </aside>
+    <c:set var="activeMenu" value="dashboard" scope="request"/>
+    <jsp:include page="/views/common/admin-header.jsp"/>
 
     <main class="main-content">
         <div class="page-header">
@@ -601,7 +453,7 @@
                 <div class="metric-subtext">Ước tính trong tháng hiện tại</div>
             </article>
             <article class="metric-card metric-orders">
-                <div class="metric-label">Đơn hàng mới</div>
+                <div class="metric-label">�ơn hàng mới</div>
                 <div class="metric-value">${newOrdersToday}</div>
                 <div class="metric-subtext">Đơn phát sinh hôm nay</div>
             </article>
