@@ -9,20 +9,8 @@
     <title>Giỏ hàng - Mobile Store</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/user-layout.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; background: #fff; color: #1a1a1a; }
-
-        .header { background: #1a1a1a; height: 72px; padding: 0; position: sticky; top: 0; z-index: 100; }
-        .header-content { display: flex; justify-content: space-between; align-items: center; height: 100%; }
-        .logo { font-size: 1.5rem; font-weight: 600; color: #fff; letter-spacing: -0.5px; display: flex; align-items: center; height: 72px; }
-        .nav { display: flex; gap: 2rem; align-items: center; }
-        .nav a { color: #fff; text-decoration: none; font-size: 0.95rem; font-weight: 400; transition: opacity 0.2s; display: inline-flex; align-items: center; height: 72px; line-height: normal; }
-        .nav a:hover { opacity: 0.7; }
-        .user-pill { display: inline-flex; align-items: center; gap: 8px; padding: 8px 10px; }
-        .user-pill:hover { background: rgba(255,255,255,0.15); }
-        .user-avatar { width: 26px; height: 26px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.35); display: inline-flex; align-items: center; justify-content: center; font-size: 13px; }
-        .user-name { font-weight: 600; }
         table { width: 100%; border-collapse: collapse; margin-bottom: 20px }
         th, td { padding: 12px; border: 1px solid #ddd; text-align: left }
         th { font-weight: 600 }
@@ -50,37 +38,11 @@
         }
     </style>
 </head>
+<c:set var="activePage" value="cart" scope="request"/>
 <body>
-<header class="header">
-    <div class="container">
-        <div class="header-content">
-            <div class="logo">Mobile Store</div>
-            <nav class="nav">
-                <a href="${pageContext.request.contextPath}/">Trang Chủ</a>
-                <a href="${pageContext.request.contextPath}/products">Sản Phẩm</a>
-                <a href="${pageContext.request.contextPath}/cart" style="color:#fff; font-weight:600;">Giỏ Hàng(<span id="cartCount">0</span>)</a>
-                <c:choose>
-                    <c:when test="${not empty sessionScope.user}">
-                        <c:if test="${sessionScope.user.roleName == 'ADMIN'}">
-                            <a href="${pageContext.request.contextPath}/admin/products" style="color:#0071e3;">Trang Quản Lý</a>
-                        </c:if>
-                        <a class="user-pill" href="${pageContext.request.contextPath}/profile">
-                            <span class="user-avatar">&#128100;</span>
-                            <span class="user-name">${sessionScope.user.username}</span>
-                        </a>
-                        <a href="${pageContext.request.contextPath}/logout">Đăng Xuất</a>
-                    </c:when>
-                    <c:otherwise>
-                        <a href="${pageContext.request.contextPath}/register">Đăng Ký</a>
-                        <a href="${pageContext.request.contextPath}/login">Đăng Nhập</a>
-                    </c:otherwise>
-                </c:choose>
-            </nav>
-        </div>
-    </div>
-</header>
+<jsp:include page="/views/common/header.jsp"/>
 
-<main class="container" style="padding-top: 100px;">
+<main class="container" style="padding-top: 2rem;">
     <div style="padding: 2rem 0;">
         <h1>Giỏ Hàng Của Bạn</h1>
         <c:choose>
@@ -162,24 +124,7 @@
         </c:choose>
 </main>
 
-<footer class="text-light pt-5 pb-3 mt-5" style="background-color: #000000;">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-3 col-md-6 mb-4">
-                <h5 class="text-uppercase fw-bold mb-4">Mobile Store</h5>
-                <p><i class="fas fa-map-marker-alt me-2"></i> 123 Đường ABC, Quận 1, TP.HCM</p>
-                <p><i class="fas fa-phone-alt me-2"></i> Hotline: 1800.1234</p>
-                <p><i class="fas fa-envelope me-2"></i> support@mobilestore.com</p>
-            </div>
-        </div>
-        <hr class="my-4 border-secondary">
-        <div class="row align-items-center">
-            <div class="col-md-12 text-center">
-                <p class="mb-0 text-secondary">&copy; 2026 Mobile Store. Thiết kế bởi Sinh viên IT.</p>
-            </div>
-        </div>
-    </div>
-</footer>
+<jsp:include page="/views/common/footer.jsp"/>
 
 <script>
     function refreshCartCount() {

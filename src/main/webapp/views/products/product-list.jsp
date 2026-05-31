@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+﻿<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <!DOCTYPE html>
@@ -7,11 +7,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Danh sách sản phẩm - Mobile Store</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/user-layout.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; background: #fff; color: #1a1a1a; }
-        .container { max-width: 976px; margin: 0 auto; padding: 0 24px; }
-        .shop-container { max-width: 1280px; }
         .shop-layout { display: flex; gap: 1.25rem; align-items: flex-start; }
         .filter-sidebar { width: 248px; flex-shrink: 0; position: sticky; top: 88px; }
         .filter-panel {
@@ -160,16 +159,6 @@
             grid-template-columns: repeat(3, 1fr);
             gap: 1.5rem;
         }
-        .header { background: #1a1a1a; height: 72px; padding: 0; position: sticky; top: 0; z-index: 100; }
-        .header-content { display: flex; justify-content: space-between; align-items: center; height: 100%; }
-        .logo { font-size: 1.5rem; font-weight: 600; color: #fff; letter-spacing: -0.5px; display: flex; align-items: center; height: 72px; }
-        .nav { display: flex; gap: 2rem; align-items: center; }
-        .nav a { color: #fff; text-decoration: none; font-size: 0.95rem; font-weight: 400; transition: opacity 0.2s; display: inline-flex; align-items: center; height: 72px; line-height: normal; }
-        .nav a:hover { opacity: 0.7; }
-        .user-pill { display: inline-flex; align-items: center; gap: 8px; padding: 8px 10px; }
-        .user-pill:hover { background: rgba(255,255,255,0.15); }
-        .user-avatar { width: 26px; height: 26px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.35); display: inline-flex; align-items: center; justify-content: center; font-size: 13px; }
-        .user-name { font-weight: 600; }
         .page-title { padding: 2rem 0; }
         .grid { display: grid; gap: 1.5rem; }
         .card {
@@ -223,60 +212,6 @@
             font-size: 0.9rem;
         }
         .card-stock { color: #888; font-size: 0.95rem; }
-        .wishlist-btn {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            background: rgba(255, 255, 255, 0.9);
-            border: 1px solid #eee;
-            border-radius: 50%;
-            width: 36px;
-            height: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 20px;
-            color: #ccc;
-            transition: all 0.3s ease;
-            z-index: 10;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .wishlist-btn:hover {
-            transform: scale(1.1);
-            color: #ff3b30;
-        }
-        .wishlist-btn.active {
-            color: #ff3b30;
-        }
-        #toast-container {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .toast {
-            background: #000 !important;
-            background-color: #000 !important;
-            color: #fff !important;
-            --bs-toast-bg: #000;
-            --bs-toast-color: #fff;
-            --bs-toast-border-color: transparent;
-            padding: 12px 24px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            font-size: 14px;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.3s ease;
-        }
-        .toast.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
         @media (max-width: 1100px) {
             .shop-main .grid { grid-template-columns: repeat(2, 1fr); }
             .card img { height: 200px; }
@@ -298,35 +233,9 @@
         }
     </style>
 </head>
+<c:set var="activePage" value="products" scope="request"/>
 <body>
-<header class="header">
-    <div class="container">
-        <div class="header-content">
-            <div class="logo">Mobile Store</div>
-            <nav class="nav">
-                <a href="${pageContext.request.contextPath}/">Trang Chủ</a>
-                <a href="${pageContext.request.contextPath}/products" style="color:#fff; font-weight:600;">Sản Phẩm</a>
-                <a href="${pageContext.request.contextPath}/cart">Giỏ Hàng(<span id="cartCount">0</span>)</a>
-                <c:choose>
-                    <c:when test="${not empty sessionScope.user}">
-                        <c:if test="${sessionScope.user.roleName == 'ADMIN'}">
-                            <a href="${pageContext.request.contextPath}/admin/products" style="color:#0071e3;">Trang Quản Lý</a>
-                        </c:if>
-                        <a class="user-pill" href="${pageContext.request.contextPath}/profile">
-                            <span class="user-avatar">👤</span>
-                            <span class="user-name">${sessionScope.user.username}</span>
-                        </a>
-                        <a href="${pageContext.request.contextPath}/logout">Đăng Xuất</a>
-                    </c:when>
-                    <c:otherwise>
-                        <a href="${pageContext.request.contextPath}/register">Đăng Ký</a>
-                        <a href="${pageContext.request.contextPath}/login">Đăng Nhập</a>
-                    </c:otherwise>
-                </c:choose>
-            </nav>
-        </div>
-    </div>
-</header>
+<jsp:include page="/views/common/header.jsp"/>
 
 <main class="container shop-container">
     <div class="page-title"><h1>Danh sách sản phẩm</h1></div>
@@ -568,36 +477,7 @@
     </div>
 </main>
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-<footer class="text-light pt-5 pb-3 mt-5" style="background-color: #000000;">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-3 col-md-6 mb-4">
-                <h5 class="text-uppercase fw-bold mb-4">Mobile Store</h5>
-                <p><i class="fas fa-map-marker-alt me-2"></i> 123 Đường ABC, Quận 1, TP.HCM</p>
-                <p><i class="fas fa-phone-alt me-2"></i> Hotline: 1800.1234</p>
-                <p><i class="fas fa-envelope me-2"></i> support@mobilestore.com</p>
-            </div>
-            <div class="col-lg-3 col-md-6 mb-4">
-                <h5 class="text-uppercase fw-bold mb-4">Chính sách hỗ trợ</h5>
-                <ul class="list-unstyled">
-                    <li class="mb-2"><a href="#" class="text-secondary text-decoration-none">Chính sách bảo hành</a></li>
-                    <li class="mb-2"><a href="#" class="text-secondary text-decoration-none">Chính sách đổi trả</a></li>
-                    <li class="mb-2"><a href="#" class="text-secondary text-decoration-none">Chính sách vận chuyển</a></li>
-                    <li class="mb-2"><a href="#" class="text-secondary text-decoration-none">Bảo mật thông tin</a></li>
-                </ul>
-            </div>
-        </div>
-        <hr class="my-4 border-secondary">
-        <div class="row align-items-center">
-            <div class="col-md-12 text-center">
-                <p class="mb-0 text-secondary">&copy; 2026 Mobile Store. Thiết kế bởi Sinh viên IT.</p>
-            </div>
-        </div>
-    </div>
-</footer>
+<jsp:include page="/views/common/footer.jsp"/>
 
 <div id="toast-container"></div>
 <script>
