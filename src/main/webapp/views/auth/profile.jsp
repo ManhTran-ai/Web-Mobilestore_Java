@@ -8,6 +8,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hồ sơ cá nhân</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/user-layout.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body {
             background: #f4f5f7;
@@ -638,12 +640,14 @@
 
                     <nav class="tab-nav">
                         <button type="button" class="tab-btn active" data-tab="info">Thông tin chung</button>
-                        <button type="button" class="tab-btn" data-tab="orders">Đơn hàng</button>
+                        <button type="button" class="tab-btn" data-tab="orders">
+                            Đơn hàng
                             <c:if test="${not empty userOrders}">
                                 <span class="badge-count">${userOrders.size()}</span>
                             </c:if>
                         </button>
-                        <button type="button" class="tab-btn" data-tab="favorites">Yêu thích</button>
+                        <button type="button" class="tab-btn" data-tab="favorites">
+                            Yêu thích
                             <c:if test="${not empty favoriteProducts}">
                                 <span class="badge-count">${favoriteProducts.size()}</span>
                             </c:if>
