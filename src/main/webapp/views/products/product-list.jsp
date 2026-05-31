@@ -14,18 +14,25 @@
         .shop-layout { display: flex; gap: 1.25rem; align-items: flex-start; }
         .filter-sidebar { width: 248px; flex-shrink: 0; position: sticky; top: 88px; }
         .filter-panel {
-            background: #fff;
-            border: 1px solid #e5e5ea;
+            background: #f8f9fa;
+            border: 1px solid #d1d1d6;
             border-radius: 10px;
             padding: 0.9rem 1rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
         }
         .filter-panel-title {
-            font-size: 0.95rem;
-            font-weight: 700;
-            margin-bottom: 0.65rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid #e5e5ea;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            font-weight: 600;
+            background: #000 !important;
+            color: #fff !important;
+            border-radius: 10px;
+            margin-bottom: 1rem;
         }
         .filter-section { margin-bottom: 0.75rem; }
         .filter-section:last-of-type { margin-bottom: 0; }
@@ -125,9 +132,13 @@
             font-size: 0.88rem;
         }
         .filter-actions .btn-clear {
-            background: transparent !important;
-            color: #666 !important;
-            border: 1px solid #e5e5ea;
+            width: 100%;
+            text-align: center;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            font-weight: 600;
+            background: #000 !important;
+            color: #fff !important;
         }
         .filter-actions .btn-clear:hover { background: #f5f5f7 !important; color: #1a1a1a !important; }
         .shop-main { flex: 1; min-width: 0; }
@@ -242,7 +253,7 @@
 
     <div class="shop-layout">
         <aside class="filter-sidebar">
-            <form method="GET" action="${pageContext.request.contextPath}/products" class="filter-panel">
+            <div class="filter-panel">
                 <div class="filter-panel-title">
                     <span>Bộ lọc</span>
                 </div>
@@ -301,9 +312,9 @@
                         </li>
                     </ul>
                     <div class="price-custom-row">
-                        <input type="number" name="minPrice" min="0" step="1000"
+                        <input id="minPrice" type="number" name="minPrice" min="0" step="1000"
                                value="${minPriceInput}" placeholder="Từ">
-                        <input type="number" name="maxPrice" min="0" step="1000"
+                        <input id="maxPrice" type="number" name="maxPrice" min="0" step="1000"
                                value="${maxPriceInput}" placeholder="Đến">
                     </div>
                     <p class="price-hint">Nhập giá (VNĐ) nếu cần lọc chi tiết hơn.</p>
@@ -327,152 +338,13 @@
                 </div>
 
                 <div class="filter-actions">
-                    <button type="submit" class="btn">Áp dụng bộ lọc</button>
                     <a href="${pageContext.request.contextPath}/products" class="btn btn-clear">Xóa bộ lọc</a>
                 </div>
-            </form>
+            </div>
         </aside>
 
-        <div class="shop-main">
-            <p class="results-count">Hiển thị <strong>${totalItems}</strong> sản phẩm</p>
-
-            <c:if test="${favoritesOnly and favoritesRequiresLogin}">
-                <div class="results-bar">
-                    Vui lòng <a href="${pageContext.request.contextPath}/login" style="color:#000; font-weight:600;">đăng nhập</a> để xem sản phẩm yêu thích.
-                </div>
-            </c:if>
-
-            <c:if test="${favoritesOnly or not empty searchKeyword or not empty selectedCategory or not empty priceRangeLabel or not empty sortLabel}">
-                <div class="results-bar">
-                    <span>Đang lọc:</span>
-                    <div class="active-tags">
-                        <c:if test="${favoritesOnly}">
-                            <span class="active-tag">Yêu thích</span>
-                        </c:if>
-                        <c:if test="${not empty searchKeyword}">
-                            <span class="active-tag">"${searchKeyword}"</span>
-                        </c:if>
-                        <c:if test="${not empty selectedCategory}">
-                            <c:forEach var="category" items="${categories}">
-                                <c:if test="${category.categoryId == selectedCategory}">
-                                    <span class="active-tag">${category.categoryName}</span>
-                                </c:if>
-                            </c:forEach>
-                        </c:if>
-                        <c:if test="${not empty priceRangeLabel}">
-                            <span class="active-tag">${priceRangeLabel}</span>
-                        </c:if>
-                        <c:if test="${not empty sortLabel}">
-                            <span class="active-tag">${sortLabel}</span>
-                        </c:if>
-                    </div>
-                </div>
-            </c:if>
-
-    <div class="grid">
-        <c:forEach var="product" items="${products}">
-            <div class="card" data-product-id="${product.productId}" style="position: relative;">
-                <c:set var="isLiked" value="false" />
-                <c:if test="${not empty likedProductIds and likedProductIds.contains(product.productId)}">
-                    <c:set var="isLiked" value="true" />
-                </c:if>
-                <div class="wishlist-btn ${isLiked ? 'active' : ''}" data-id="${product.productId}" title="Thêm vào yêu thích">
-                    &hearts;
-                </div>
-                <a href="${pageContext.request.contextPath}/products/view?id=${product.productId}"
-                   style="text-decoration:none; color:inherit; display:block;">
-                    <c:choose>
-                        <c:when test="${not empty product.displayImage}">
-                            <img src="${pageContext.request.contextPath}/${product.displayImage}" alt="${product.productName}">
-                        </c:when>
-                        <c:otherwise>
-                            <div style="height:220px; display:flex; align-items:center; justify-content:center; color:#888; font-size:3rem;">📱</div>
-                        </c:otherwise>
-                    </c:choose>
-                    <div class="name">${product.productName}</div>
-                    <div class="manufacturer">${product.manufacturer}</div>
-                    <div class="product-info-price">
-                        <c:choose>
-                            <c:when test="${not empty product.discount and product.discount > 0}">
-                                <div class="current-price">
-                                    <fmt:formatNumber value="${product.displayOriginalPrice * (100 - product.discount) / 100}"
-                                                      type="number"/>₫
-                                </div>
-                                <div style="display: flex; align-items: center; gap: 8px; margin-top: 2px;">
-                <span class="old-price">
-                    <fmt:formatNumber value="${product.displayOriginalPrice}" type="number"/>₫
-                </span>
-                                    <span class="discount-tag">-${product.discount}%</span>
-                                </div>
-                            </c:when>
-                            <c:otherwise>
-                                <div class="current-price">
-                                    <fmt:formatNumber value="${product.displayPrice}" type="number"/>₫
-                                </div>
-                                <div style="height: 21px;"></div>
-                            </c:otherwise>
-                        </c:choose>
-                    </div>
-                    <div class="card-stock">
-                        <c:choose>
-                            <c:when test="${product.totalStock == 0}">Hết hàng</c:when>
-                            <c:otherwise>Tồn kho: ${product.totalStock}</c:otherwise>
-                        </c:choose>
-                    </div>
-                </a>
-                <div class="variant-selector" style="margin-top:8px;">
-                    <select class="variant-select" data-product-id="${product.productId}">
-                        <c:forEach var="v" items="${product.variants}">
-                            <option value="${v.variantId}"
-                                    data-price="${v.price}"
-                                    data-stock="${v.quantityInStock}"
-                                    data-image="${v.variantImage}">
-                                    ${v.color} / ${v.storage} - <fmt:formatNumber value="${v.price}" type="number"/>₫
-                            </option>
-                        </c:forEach>
-                    </select>
-                </div>
-                <div style="margin-top:8px;">
-                    <button class="btn add-to-cart-btn add-btn"
-                            data-product-id="${product.productId}"
-                        ${product.totalStock == 0 ? 'disabled' : ''}>
-                            ${product.totalStock == 0 ? 'Hết hàng' : 'Chọn mua'}
-                    </button>
-                </div>
-            </div>
-        </c:forEach>
-    </div>
-
-    <c:if test="${empty products}">
-        <div style="padding: 2rem 0; text-align: center; color: #666;">
-            <c:choose>
-                <c:when test="${favoritesOnly}">Bạn chưa có sản phẩm yêu thích nào.</c:when>
-                <c:otherwise>Không có sản phẩm phù hợp.</c:otherwise>
-            </c:choose>
-        </div>
-    </c:if>
-
-    <c:if test="${totalPages > 1}">
-        <div class="pagination">
-            <c:if test="${currentPage > 1}">
-                <a class="btn" href="${pageContext.request.contextPath}/products?page=${currentPage - 1}${filterQuery}">« Trước</a>
-            </c:if>
-            <c:forEach var="p" begin="1" end="${totalPages}">
-                <c:choose>
-                    <c:when test="${p == currentPage}">
-                        <span class="btn secondary">${p}</span>
-                    </c:when>
-                    <c:otherwise>
-                        <a class="btn" href="${pageContext.request.contextPath}/products?page=${p}${filterQuery}">${p}</a>
-                    </c:otherwise>
-                </c:choose>
-            </c:forEach>
-            <c:if test="${currentPage < totalPages}">
-                <a class="btn" href="${pageContext.request.contextPath}/products?page=${currentPage + 1}${filterQuery}">Tiếp »</a>
-            </c:if>
-        </div>
-    </c:if>
-
+        <div class="shop-main" id="shop-main-content">
+            <jsp:include page="/views/products/shop-main-content.jsp"/>
         </div>
     </div>
 </main>
@@ -482,6 +354,7 @@
 <div id="toast-container"></div>
 <script>
     const isFavoritesFilter = ${favoritesOnly};
+    const contextPath = '${pageContext.request.contextPath}';
 
     function showToast(message) {
         const container = document.getElementById('toast-container');
@@ -489,30 +362,124 @@
         toast.className = 'toast';
         toast.textContent = message;
         container.appendChild(toast);
-        
+
         setTimeout(() => toast.classList.add('show'), 10);
-        
+
         setTimeout(() => {
             toast.classList.remove('show');
             setTimeout(() => toast.remove(), 300);
         }, 3000);
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-        const wishlistBtns = document.querySelectorAll('.wishlist-btn');
-        wishlistBtns.forEach(btn => {
+    function showLoading(el) {
+        el.style.opacity = '0.5';
+        el.style.pointerEvents = 'none';
+    }
+
+    function hideLoading(el) {
+        el.style.opacity = '1';
+        el.style.pointerEvents = 'auto';
+    }
+
+    function debounce(fn, delay) {
+        let timeout;
+        return function(...args) {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => fn.apply(this, args), delay);
+        };
+    }
+
+    function getFilterParams() {
+        const params = new URLSearchParams();
+        const search = document.getElementById('search').value.trim();
+        if (search) params.append('search', search);
+
+        const category = document.querySelector('input[name="category"]:checked');
+        if (category && category.value) params.append('category', category.value);
+
+        const priceRange = document.querySelector('input[name="priceRange"]:checked');
+        if (priceRange && priceRange.value) params.append('priceRange', priceRange.value);
+
+        const minPrice = document.getElementById('minPrice')?.value.trim();
+        if (minPrice) params.append('minPrice', minPrice);
+
+        const maxPrice = document.getElementById('maxPrice')?.value.trim();
+        if (maxPrice) params.append('maxPrice', maxPrice);
+
+        const sort = document.getElementById('sort')?.value;
+        if (sort) params.append('sort', sort);
+
+        const favorites = document.getElementById('favoritesOnly');
+        if (favorites?.checked) params.append('favorites', '1');
+
+        return params.toString();
+    }
+
+    function applyFilters() {
+        const shopMain = document.getElementById('shop-main-content');
+        if (!shopMain) return;
+
+        showLoading(shopMain);
+
+        const params = getFilterParams();
+        const url = contextPath + '/products' + (params ? '?' + params : '');
+
+        fetch(url, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(r => r.text())
+        .then(html => {
+            shopMain.innerHTML = html;
+            hideLoading(shopMain);
+            rebindCardEvents();
+        })
+        .catch(err => {
+            hideLoading(shopMain);
+            showToast('Không thể tải dữ liệu. Vui lòng thử lại.');
+        });
+    }
+
+    function clearFilters() {
+        document.getElementById('search').value = '';
+        const allRadios = document.querySelectorAll('.filter-panel input[type="radio"]');
+        allRadios.forEach(r => {
+            if (r.value === '' || r.name === 'category' || r.name === 'priceRange') {
+                if (r.value === '') r.checked = true;
+            } else {
+                r.checked = false;
+            }
+        });
+        const minPriceInput = document.getElementById('minPrice');
+        if (minPriceInput) minPriceInput.value = '';
+        const maxPriceInput = document.getElementById('maxPrice');
+        if (maxPriceInput) maxPriceInput.value = '';
+        const sortSelect = document.getElementById('sort');
+        if (sortSelect) sortSelect.value = '';
+        const favoritesCheck = document.getElementById('favoritesOnly');
+        if (favoritesCheck) favoritesCheck.checked = false;
+
+        applyFilters();
+    }
+
+    function rebindCardEvents() {
+        document.querySelectorAll('.wishlist-btn').forEach(btn => {
+            btn.replaceWith(btn.cloneNode(true));
+        });
+        document.querySelectorAll('.add-btn').forEach(btn => {
+            btn.replaceWith(btn.cloneNode(true));
+        });
+
+        document.querySelectorAll('.wishlist-btn').forEach(btn => {
             btn.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
-                
+
                 const productId = this.getAttribute('data-id');
                 const currentBtn = this;
-                
-                fetch('${pageContext.request.contextPath}/api/toggle-like', {
+
+                fetch(contextPath + '/api/toggle-like', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     body: 'productId=' + productId
                 })
                 .then(response => response.json())
@@ -531,9 +498,7 @@
                     } else {
                         showToast(data.message || 'Có lỗi xảy ra!');
                         if (data.message && data.message.includes('đăng nhập')) {
-                            setTimeout(() => {
-                                window.location.href = '${pageContext.request.contextPath}/login';
-                            }, 1500);
+                            setTimeout(() => { window.location.href = contextPath + '/login'; }, 1500);
                         }
                     }
                 })
@@ -543,73 +508,105 @@
                 });
             });
         });
+
+        document.querySelectorAll('.add-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const card = this.closest('.card');
+                const select = card.querySelector('.variant-select');
+                if (!select) {
+                    showToast('Không có phiên bản nào cho sản phẩm này');
+                    return;
+                }
+                const variantId = select.value;
+                const selectedOption = select.options[select.selectedIndex];
+                const stock = parseInt(selectedOption.getAttribute('data-stock') || '0', 10);
+
+                if (stock <= 0) {
+                    showToast('Phiên bản đã hết hàng');
+                    return;
+                }
+
+                fetch(contextPath + '/cart?action=add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    credentials: 'same-origin',
+                    body: 'variantId=' + encodeURIComponent(variantId) + '&quantity=1'
+                }).then(async res => {
+                    if (res.status === 401) {
+                        const json = await res.json().catch(() => null);
+                        if (json && json.redirect) {
+                            window.location.href = json.redirect;
+                            return;
+                        }
+                        throw new Error('Vui lòng đăng nhập để tiếp tục');
+                    }
+                    if (!res.ok) {
+                        const txt = await res.text().catch(() => null);
+                        let msg = 'Lỗi khi thêm vào giỏ';
+                        try { msg = JSON.parse(txt).message || txt || msg; } catch (e) { msg = txt || msg; }
+                        throw new Error(msg);
+                    }
+                    return res.json().catch(() => null);
+                }).then(json => {
+                    if (json && json.count !== undefined) {
+                        const el = document.getElementById('cartCount');
+                        if (el) el.textContent = json.count;
+                        showToast('Đã thêm vào giỏ hàng');
+                    } else {
+                        refreshCartCount();
+                        showToast('Đã thêm vào giỏ hàng');
+                    }
+                }).catch(err => {
+                    console.error('Add to cart failed', err);
+                    alert(err.message || 'Lỗi khi thêm vào giỏ');
+                });
+            });
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('search')?.addEventListener('input', debounce(applyFilters, 400));
+
+        ['minPrice', 'maxPrice'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.addEventListener('blur', applyFilters);
+                el.addEventListener('keydown', e => {
+                    if (e.key === 'Enter') { e.preventDefault(); el.blur(); }
+                });
+            }
+        });
+
+        document.querySelectorAll('.filter-panel input[type="radio"]').forEach(radio => {
+            radio.addEventListener('change', applyFilters);
+        });
+
+        document.getElementById('sort')?.addEventListener('change', applyFilters);
+
+        document.getElementById('favoritesOnly')?.addEventListener('change', applyFilters);
+
+        const clearBtn = document.querySelector('.btn-clear');
+        if (clearBtn) {
+            clearBtn.addEventListener('click', e => {
+                e.preventDefault();
+                clearFilters();
+            });
+        }
+
+        rebindCardEvents();
     });
 
     function refreshCartCount() {
-        fetch('${pageContext.request.contextPath}/cart/count')
+        fetch(contextPath + '/cart/count')
             .then(r => r.json())
             .then(data => {
                 const el = document.getElementById('cartCount');
                 if (el) el.textContent = data.count;
             }).catch(() => {});
     }
-
-    document.querySelectorAll('.add-btn').forEach(btn => {
-        btn.addEventListener('click', function () {
-            const card = this.closest('.card');
-            const select = card.querySelector('.variant-select');
-            if (!select) {
-                showToast('Không có phiên bản nào cho sản phẩm này');
-                return;
-            }
-            const variantId = select.value;
-            const selectedOption = select.options[select.selectedIndex];
-            const stock = parseInt(selectedOption.getAttribute('data-stock') || '0', 10);
-
-            if (stock <= 0) {
-                showToast('Phiên bản đã hết hàng');
-                return;
-            }
-
-            fetch('${pageContext.request.contextPath}/cart?action=add', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                credentials: 'same-origin',
-                body: 'variantId=' + encodeURIComponent(variantId) + '&quantity=1'
-            }).then(async res => {
-                if (res.status === 401) {
-                    const json = await res.json().catch(() => null);
-                    if (json && json.redirect) {
-                        window.location.href = json.redirect;
-                        return;
-                    }
-                    throw new Error('Vui lòng đăng nhập để tiếp tục');
-                }
-                if (!res.ok) {
-                    const txt = await res.text().catch(() => null);
-                    let msg = 'Lỗi khi thêm vào giỏ';
-                    try { msg = JSON.parse(txt).message || txt || msg; } catch (e) { msg = txt || msg; }
-                    throw new Error(msg);
-                }
-                return res.json().catch(() => null);
-            }).then(json => {
-                if (json && json.count !== undefined) {
-                    const el = document.getElementById('cartCount');
-                    if (el) el.textContent = json.count;
-                    showToast('Đã thêm vào giỏ hàng');
-                } else {
-                    refreshCartCount();
-                    showToast('Đã thêm vào giỏ hàng');
-                }
-            }).catch(err => {
-                console.error('Add to cart failed', err);
-                alert(err.message || 'Lỗi khi thêm vào giỏ');
-            });
-        });
-    });
     refreshCartCount();
 </script>
 </body>
