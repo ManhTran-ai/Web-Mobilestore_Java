@@ -65,34 +65,35 @@ public class AdminCategoryServlet extends HttpServlet {
 
 	private void showForm(HttpServletRequest request, HttpServletResponse response, boolean isEdit)
 			throws ServletException, IOException {
-		if (!isEdit) {
-			response.sendRedirect(request.getContextPath() + "/admin/categories");
-			return;
-		}
+		request.setAttribute("isEdit", isEdit);
 
-		request.setAttribute("isEdit", true);
-		String idParam = request.getParameter("id");
-		if (idParam == null) {
-			response.sendRedirect(request.getContextPath() + "/admin/categories?error=missing_id");
-			return;
-		}
-		try {
-			Integer id = Integer.parseInt(idParam);
-			Category category = categoryService.findById(id);
-			if (category == null) {
-				response.sendRedirect(request.getContextPath() + "/admin/categories?error=not_found");
+		if (isEdit) {
+			String idParam = request.getParameter("id");
+			if (idParam == null) {
+				response.sendRedirect(request.getContextPath() + "/admin/categories?error=missing_id");
 				return;
 			}
-			request.setAttribute("category", category);
-			request.getRequestDispatcher("/views/admin/categories/category-list.jsp").forward(request, response);
-		} catch (NumberFormatException e) {
-			response.sendRedirect(request.getContextPath() + "/admin/categories?error=invalid_id");
-			return;
+			try {
+				Integer id = Integer.parseInt(idParam);
+				Category category = categoryService.findById(id);
+				if (category == null) {
+					response.sendRedirect(request.getContextPath() + "/admin/categories?error=not_found");
+					return;
+				}
+				request.setAttribute("category", category);
+			} catch (NumberFormatException e) {
+				response.sendRedirect(request.getContextPath() + "/admin/categories?error=invalid_id");
+				return;
+			}
 		}
+
+		request.getRequestDispatcher("/views/admin/categories/category-form.jsp").forward(request, response);
 	}
 
 	private void processAdd(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		String name = request.getParameter("name");
+		String content = request.getParameter("content");
+		String imageUrl = request.getParameter("imageUrl");
 		if (name == null || name.trim().isEmpty()) {
 			request.setAttribute("error", "Tên danh mục không được để trống");
 			request.setAttribute("isEdit", false);
@@ -115,6 +116,8 @@ public class AdminCategoryServlet extends HttpServlet {
 
 		Category category = new Category();
 		category.setCategoryName(name.trim());
+		category.setContent(content != null ? content.trim() : null);
+		category.setImageUrl(imageUrl != null ? imageUrl.trim() : null);
 		Category created = categoryService.save(category);
 		if (created != null) {
 			response.sendRedirect(request.getContextPath() + "/admin/categories?success=created");
@@ -128,6 +131,8 @@ public class AdminCategoryServlet extends HttpServlet {
 	private void processEdit(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		String idParam = request.getParameter("id");
 		String name = request.getParameter("name");
+		String content = request.getParameter("content");
+		String imageUrl = request.getParameter("imageUrl");
 		if (idParam == null) {
 			response.sendRedirect(request.getContextPath() + "/admin/categories?error=missing_id");
 			return;
@@ -165,6 +170,8 @@ public class AdminCategoryServlet extends HttpServlet {
 			}
 
 			existing.setCategoryName(name.trim());
+			existing.setContent(content != null ? content.trim() : null);
+			existing.setImageUrl(imageUrl != null ? imageUrl.trim() : null);
 			boolean updated = categoryService.update(existing);
 			if (updated) {
 				response.sendRedirect(request.getContextPath() + "/admin/categories?success=updated");

@@ -1,13 +1,13 @@
--- MySQL dump 10.13  Distrib 8.0.13, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.38, for Win64 (x86_64)
 --
--- Host: localhost    Database: mobilestore
+-- Host: 127.0.0.1    Database: mobilestoreTest
 -- ------------------------------------------------------
--- Server version	8.0.13
+-- Server version	8.0.42
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
- SET NAMES utf8 ;
+/*!50503 SET NAMES utf8 */;
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
 /*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
@@ -21,19 +21,19 @@
 
 DROP TABLE IF EXISTS `cart`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `cart` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `quantity` int(11) DEFAULT NULL,
-  `variant_id` int(11) DEFAULT NULL,
-  `user_id` int(11) DEFAULT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `quantity` int DEFAULT NULL,
+  `variant_id` int DEFAULT NULL,
+  `user_id` int DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `FKpu4bcbluhsxagirmbdn7dilm5` (`variant_id`),
   KEY `FKg5uhi8vpsuy0lgloxk2h4w5o6` (`user_id`),
   KEY `idx_cart_user` (`user_id`),
   CONSTRAINT `FK_cart_variant` FOREIGN KEY (`variant_id`) REFERENCES `product_variants` (`variant_id`),
   CONSTRAINT `FKg5uhi8vpsuy0lgloxk2h4w5o6` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=52 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=54 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -42,7 +42,7 @@ CREATE TABLE `cart` (
 
 LOCK TABLES `cart` WRITE;
 /*!40000 ALTER TABLE `cart` DISABLE KEYS */;
-INSERT INTO `cart` VALUES (22,1,68,14),(51,1,126,5);
+INSERT INTO `cart` VALUES (22,1,68,14);
 /*!40000 ALTER TABLE `cart` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -52,13 +52,13 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `cart_item`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `cart_item` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `quantity` int(11) DEFAULT NULL,
-  `product_id` int(11) DEFAULT NULL,
-  `user_id` int(11) DEFAULT NULL,
-  `variant_id` int(11) DEFAULT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `quantity` int DEFAULT NULL,
+  `product_id` int DEFAULT NULL,
+  `user_id` int DEFAULT NULL,
+  `variant_id` int DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `FKjcyd5wv4igqnw413rgxbfu4nv` (`product_id`),
   KEY `FKjnaj4sjyqjkr4ivemf9gb25w` (`user_id`),
@@ -84,12 +84,14 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `categories`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `categories` (
-  `category_id` int(11) NOT NULL AUTO_INCREMENT,
+  `category_id` int NOT NULL AUTO_INCREMENT,
   `category_name` varchar(255) NOT NULL,
+  `content` varchar(500) DEFAULT NULL,
+  `image_url` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`category_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -98,103 +100,8 @@ CREATE TABLE `categories` (
 
 LOCK TABLES `categories` WRITE;
 /*!40000 ALTER TABLE `categories` DISABLE KEYS */;
-INSERT INTO `categories` VALUES (1,'Mobile'),(2,'Tablet'),(3,'MacBook');
+INSERT INTO `categories` VALUES (1,'Mobile','Tuyệt tác công nghệ và nhiếp ảnh','images/categories/5771efb3-e342-4af8-b63d-17f88caecbe3.png'),(2,'Ipad','Đa năng, mỏng nhẹ và mạnh mẽ','images/categories/iPad.png'),(3,'MacBook','Đỉnh cao hiệu năng và sáng tạo','images/categories/macbook.png');
 /*!40000 ALTER TABLE `categories` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `category`
---
-
-DROP TABLE IF EXISTS `category`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
-CREATE TABLE `category` (
-  `category_id` int(11) NOT NULL AUTO_INCREMENT,
-  `category_name` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`category_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `category`
---
-
-LOCK TABLES `category` WRITE;
-/*!40000 ALTER TABLE `category` DISABLE KEYS */;
-/*!40000 ALTER TABLE `category` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `order`
---
-
-DROP TABLE IF EXISTS `order`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
-CREATE TABLE `order` (
-  `order_id` int(11) NOT NULL AUTO_INCREMENT,
-  `customer_phone` varchar(255) DEFAULT NULL,
-  `district_id` int(11) DEFAULT NULL,
-  `note` varchar(255) DEFAULT NULL,
-  `order_date` date DEFAULT NULL,
-  `order_status` varchar(255) DEFAULT NULL,
-  `payment_method` varchar(255) DEFAULT NULL,
-  `payment_status` varchar(255) DEFAULT NULL,
-  `shipping_address` varchar(255) DEFAULT NULL,
-  `shipping_cost` double DEFAULT NULL,
-  `total_amount` double DEFAULT NULL,
-  `tracking_number` varchar(255) DEFAULT NULL,
-  `vnp_order_id` varchar(255) DEFAULT NULL,
-  `vnp_transaction_id` varchar(255) DEFAULT NULL,
-  `ward_code` varchar(255) DEFAULT NULL,
-  `user_id` int(11) DEFAULT NULL,
-  PRIMARY KEY (`order_id`),
-  KEY `FKcpl0mjoeqhxvgeeeq5piwpd3i` (`user_id`),
-  CONSTRAINT `FKcpl0mjoeqhxvgeeeq5piwpd3i` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `order`
---
-
-LOCK TABLES `order` WRITE;
-/*!40000 ALTER TABLE `order` DISABLE KEYS */;
-/*!40000 ALTER TABLE `order` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `order_detail`
---
-
-DROP TABLE IF EXISTS `order_detail`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
-CREATE TABLE `order_detail` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `price` double DEFAULT NULL,
-  `quantity` int(11) DEFAULT NULL,
-  `order_id` int(11) DEFAULT NULL,
-  `product_id` int(11) DEFAULT NULL,
-  `variant_id` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `FKlb8mofup9mi791hraxt9wlj5u` (`order_id`),
-  KEY `FKb8bg2bkty0oksa3wiq5mp5qnc` (`product_id`),
-  KEY `FKbefv6bj4521cnkru5r9iwdvml` (`variant_id`),
-  CONSTRAINT `FKb8bg2bkty0oksa3wiq5mp5qnc` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`),
-  CONSTRAINT `FKbefv6bj4521cnkru5r9iwdvml` FOREIGN KEY (`variant_id`) REFERENCES `product_variant` (`variant_id`),
-  CONSTRAINT `FKlb8mofup9mi791hraxt9wlj5u` FOREIGN KEY (`order_id`) REFERENCES `order` (`order_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `order_detail`
---
-
-LOCK TABLES `order_detail` WRITE;
-/*!40000 ALTER TABLE `order_detail` DISABLE KEYS */;
-/*!40000 ALTER TABLE `order_detail` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -203,20 +110,20 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `order_details`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `order_details` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int NOT NULL AUTO_INCREMENT,
   `price` double DEFAULT NULL,
-  `quantity` int(11) DEFAULT NULL,
-  `order_id` int(11) NOT NULL,
-  `variant_id` int(11) NOT NULL,
+  `quantity` int DEFAULT NULL,
+  `order_id` int NOT NULL,
+  `variant_id` int NOT NULL,
   PRIMARY KEY (`id`),
   KEY `FKjyu2qbqt8gnvno9oe9j2s2ldk` (`order_id`),
   KEY `idx_order_details_order` (`order_id`),
   KEY `FK_order_variant` (`variant_id`),
   CONSTRAINT `FK_order_variant` FOREIGN KEY (`variant_id`) REFERENCES `product_variants` (`variant_id`),
   CONSTRAINT `FKjyu2qbqt8gnvno9oe9j2s2ldk` FOREIGN KEY (`order_id`) REFERENCES `orders` (`order_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -225,7 +132,7 @@ CREATE TABLE `order_details` (
 
 LOCK TABLES `order_details` WRITE;
 /*!40000 ALTER TABLE `order_details` DISABLE KEYS */;
-INSERT INTO `order_details` VALUES (1,12000000,1,24,78),(2,12000000,1,25,78),(3,20000000,1,26,76),(4,15000000,1,27,71),(5,15000000,1,28,71),(6,15000000,1,29,71),(7,15000000,1,30,71),(8,12500000,1,31,68),(9,12500000,1,32,68),(10,12500000,1,33,68),(11,9000000,1,34,16),(12,9000000,1,35,16),(13,12500000,1,36,68),(14,12500000,1,37,68),(15,12500000,1,38,68),(16,12500000,1,39,68),(17,50000000,1,40,74),(18,15000000,1,40,71),(19,20000000,2,40,76),(20,50000000,1,41,74),(21,9000000,2,42,16),(22,50000000,1,43,74),(23,50000000,1,44,74),(24,50000000,2,45,74),(25,50000000,1,46,74),(26,50000000,1,47,74),(27,15000000,1,48,71),(28,50000000,1,49,74),(29,50000000,1,50,74),(30,50000000,1,51,74),(31,50000000,1,52,74),(32,50000000,1,53,74),(33,50000000,1,54,74),(34,50000000,1,55,74),(35,50000000,1,56,74),(36,50000000,1,57,74),(37,50000000,1,58,74),(38,14500000,2,59,56),(39,20000000,1,60,133),(40,8999000,1,61,126);
+INSERT INTO `order_details` VALUES (1,12000000,1,24,78),(2,12000000,1,25,78),(3,20000000,1,26,76),(4,15000000,1,27,71),(5,15000000,1,28,71),(6,15000000,1,29,71),(7,15000000,1,30,71),(8,12500000,1,31,68),(9,12500000,1,32,68),(10,12500000,1,33,68),(11,9000000,1,34,16),(12,9000000,1,35,16),(13,12500000,1,36,68),(14,12500000,1,37,68),(15,12500000,1,38,68),(16,12500000,1,39,68),(17,50000000,1,40,74),(18,15000000,1,40,71),(19,20000000,2,40,76),(20,50000000,1,41,74),(21,9000000,2,42,16),(22,50000000,1,43,74),(23,50000000,1,44,74),(24,50000000,2,45,74),(25,50000000,1,46,74),(26,50000000,1,47,74),(27,15000000,1,48,71),(28,50000000,1,49,74),(29,50000000,1,50,74),(30,50000000,1,51,74),(31,50000000,1,52,74),(32,50000000,1,53,74),(33,50000000,1,54,74),(34,50000000,1,55,74),(35,50000000,1,56,74),(36,50000000,1,57,74),(37,50000000,1,58,74),(38,14500000,2,59,56),(39,20000000,1,60,133),(40,8999000,1,61,126),(41,8999000,1,62,126),(42,25000000,1,63,187);
 /*!40000 ALTER TABLE `order_details` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -235,13 +142,13 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `orders`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `orders` (
-  `order_id` int(11) NOT NULL AUTO_INCREMENT,
+  `order_id` int NOT NULL AUTO_INCREMENT,
   `order_status` varchar(255) DEFAULT NULL,
   `order_date` datetime(6) DEFAULT NULL,
   `total_amount` double DEFAULT NULL,
-  `user_id` int(11) DEFAULT NULL,
+  `user_id` int DEFAULT NULL,
   `shipping_address` text,
   `customer_phone` varchar(20) DEFAULT NULL,
   `note` text,
@@ -250,7 +157,7 @@ CREATE TABLE `orders` (
   `vnp_transaction_id` varchar(100) DEFAULT NULL,
   `vnp_order_id` varchar(100) DEFAULT NULL,
   `shipping_cost` decimal(10,2) DEFAULT '0.00',
-  `district_id` int(11) DEFAULT NULL,
+  `district_id` int DEFAULT NULL,
   `ward_code` varchar(20) DEFAULT NULL,
   `tracking_number` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`order_id`),
@@ -259,7 +166,7 @@ CREATE TABLE `orders` (
   KEY `idx_orders_status` (`order_status`),
   KEY `idx_orders_created` (`order_date`),
   CONSTRAINT `FK32ql8ubntj5uh44ph9659tiih` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=62 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=64 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -268,7 +175,7 @@ CREATE TABLE `orders` (
 
 LOCK TABLES `orders` WRITE;
 /*!40000 ALTER TABLE `orders` DISABLE KEYS */;
-INSERT INTO `orders` VALUES (10,'PENDING','2025-12-30 13:31:16.216000',99500000,6,NULL,NULL,NULL,'CASH','PENDING',NULL,NULL,0.00,NULL,NULL,NULL),(11,'PENDING','2026-01-10 18:04:13.043000',15000000,5,NULL,NULL,NULL,'CASH','PENDING',NULL,NULL,0.00,NULL,NULL,NULL),(12,'PENDING','2026-01-15 05:34:24.770000',69500000,6,NULL,NULL,NULL,'CASH','PENDING',NULL,NULL,0.00,NULL,NULL,NULL),(13,'PENDING','2026-01-15 05:40:28.878000',69000000,6,NULL,NULL,NULL,'CASH','PENDING',NULL,NULL,0.00,NULL,NULL,NULL),(14,'PENDING','2026-01-15 06:46:16.934000',61000000,6,NULL,NULL,NULL,'CASH','PENDING',NULL,NULL,0.00,NULL,NULL,NULL),(15,'COMPLETED','2026-01-16 08:25:12.955000',60000000,6,NULL,NULL,NULL,'CASH','PENDING',NULL,NULL,0.00,NULL,NULL,NULL),(16,'PENDING','2026-03-10 18:48:09.529000',12500000,9,NULL,NULL,NULL,'CASH','PENDING','15445629','ORDER_1773168450094',0.00,NULL,NULL,NULL),(17,'PENDING','2026-03-11 04:43:35.762000',20000000,8,NULL,NULL,NULL,'CASH','PENDING','15446140','ORDER_1773204156553',0.00,NULL,NULL,NULL),(18,'PENDING','2026-03-14 03:39:01.843000',20000000,9,NULL,NULL,NULL,'CASH','PENDING','15450276','ORDER_1773459490787',0.00,NULL,NULL,NULL),(19,'PENDING','2026-03-16 04:16:34.581000',15000000,9,NULL,NULL,NULL,'CASH','PENDING',NULL,NULL,0.00,NULL,NULL,NULL),(24,'PENDING','2026-04-18 16:05:17.533000',9600000,14,NULL,NULL,NULL,'CASH','PENDING','15502712','ORDER_1776528133138',0.00,NULL,NULL,NULL),(25,'PENDING','2026-04-18 16:40:54.483000',9600000,14,'','','','CASH','PENDING','15502744','ORDER_1776530403186',0.00,NULL,NULL,NULL),(26,'PENDING','2026-04-18 16:44:12.680000',20000000,14,'','','','CASH','PENDING','15502747','ORDER_1776530599040',0.00,NULL,NULL,NULL),(27,'PENDING','2026-04-18 16:52:01.528000',15000000,14,'','','','CASH','PENDING','15502750','ORDER_1776531085667',0.00,NULL,NULL,NULL),(28,'PENDING','2026-04-18 17:04:16.035000',15000000,14,'','','','CASH','PENDING','15502763','ORDER_1776531815666',0.00,1454,'20813',NULL),(29,'PENDING','2026-04-18 17:13:40.354000',15000000,14,'','','','CASH','PENDING','15502769','ORDER_1776532385082',0.00,1454,'20813',NULL),(30,'PENDING','2026-04-18 17:23:53.820000',15000000,14,'','','','CASH','PENDING','15502778','ORDER_1776532937588',0.00,1454,'20813',NULL),(31,'PENDING','2026-04-18 17:26:58.702000',12500000,14,'','','','CASH','PENDING','15502780','ORDER_1776533186022',0.00,1454,'20813',NULL),(32,'PENDING','2026-04-18 17:32:12.924000',12500000,14,'','','','CASH','PENDING','15502785','ORDER_1776533485213',0.00,1454,'20813',NULL),(33,'PENDING','2026-04-18 17:34:06.535000',12500000,14,'','','','CASH','PENDING','15502788','ORDER_1776533610835',0.00,1454,'20813',NULL),(34,'PENDING','2026-04-18 17:38:22.020000',3600000,14,'','','','CASH','PENDING','15502793','ORDER_1776533841035',0.00,1454,'20813',NULL),(35,'PENDING','2026-04-18 17:46:11.250000',3600000,14,'','','','CASH','PENDING','15502796','ORDER_1776534340911',0.00,1454,'20813',NULL),(36,'PENDING','2026-04-18 17:53:43.178000',12500000,14,'','','','CASH','PENDING','15502801','ORDER_1776534765378',0.00,1454,'20813',NULL),(37,'PENDING','2026-04-18 18:13:45.818000',12500000,14,'','','','CASH','PENDING','15502812','ORDER_1776535990995',0.00,1454,'20813',NULL),(38,'PENDING','2026-04-18 18:24:07.940000',12500000,14,'','','','CASH','PENDING','15502815','ORDER_1776536604682',60500.00,1454,'20813',NULL),(39,'DELIVERED','2026-04-20 17:29:45.950000',12500000,15,'','0978120646','','CASH','PENDING',NULL,NULL,0.00,2028,'560801',NULL),(40,'DELIVERED','2026-05-25 19:47:21.798000',105000000,5,'HAM THUAN NAM, LAM DONG','0394921920','','CASH','PENDING',NULL,NULL,60500.00,2163,'230317',NULL),(41,'PENDING','2026-05-29 22:17:30.860000',50000000,5,'HAM THUAN NAM, LAM DONG','0394921920','','CASH','PENDING',NULL,NULL,82500.00,1778,'471003',NULL),(42,'PENDING','2026-05-30 19:10:42.074000',7200000,16,'HAM THUAN NAM, LAM DONG','0394921920','','CASH','PENDING',NULL,NULL,82500.00,1883,'61094',NULL),(43,'PENDING','2026-05-30 19:19:30.983000',50000000,16,'HAM THUAN NAM, LAM DONG','0394921920','','CASH','PENDING',NULL,NULL,82500.00,1935,'600408',NULL),(44,'PENDING','2026-05-30 19:22:17.945000',50000000,16,'HAM THUAN NAM, LAM DONG','0394921920','','CASH','PENDING',NULL,NULL,82500.00,1935,'600408',NULL),(45,'PENDING','2026-05-30 19:22:45.430000',100000000,16,'','0394921920','','CASH','PENDING',NULL,NULL,82500.00,1935,'600408',NULL),(46,'CANCELLED','2026-05-30 19:23:33.347000',50000000,16,'HAM THUAN NAM, LAM DONG','0394921920','','CASH','PENDING',NULL,NULL,82500.00,1935,'600408',NULL),(47,'PENDING','2026-05-30 19:24:15.676000',50000000,16,'','0394921920','','CASH','PENDING',NULL,NULL,82500.00,1935,'600408',NULL),(48,'PENDING','2026-05-30 19:24:41.899000',15000000,16,'','0394921920','','CASH','PENDING',NULL,NULL,82500.00,1935,'600408',NULL),(49,'PENDING','2026-05-30 19:29:48.682000',50000000,16,'','0394921920 ','','CASH','PENDING',NULL,NULL,82500.00,1935,'600408',NULL),(50,'PENDING','2026-05-30 19:30:10.404000',50000000,16,'xã Hàm Thuận Nam, tỉnh Lâm Đồng','0394921920','','CASH','PENDING',NULL,NULL,82500.00,1935,'600408',NULL),(51,'PENDING','2026-05-30 19:30:29.714000',50000000,16,'HAM THUAN NAM, LAM DONG','0394921920','','CASH','PENDING',NULL,NULL,82500.00,1935,'600408',NULL),(52,'PENDING','2026-05-30 19:34:01.892000',50000000,16,'HAM THUAN NAM, LAM DONG','0394921920','','CASH','PENDING',NULL,NULL,82500.00,1935,'600408',NULL),(53,'PENDING','2026-05-30 19:51:03.354000',50000000,5,'HAM THUAN NAM, LAM DONG','0394921920','','CASH','PENDING',NULL,NULL,82500.00,1770,'370604',NULL),(54,'PENDING','2026-05-30 19:51:50.005000',50000000,5,'HAM THUAN NAM, LAM DONG','0394921920','','CASH','PENDING',NULL,NULL,82500.00,1782,'610205',NULL),(55,'PENDING','2026-05-30 21:46:57.733000',50000000,16,'','0394921920','','CASH','PENDING',NULL,NULL,82500.00,1935,'600408',NULL),(56,'PENDING','2026-05-30 21:50:09.429000',50000000,16,'','0394921920','','CASH','PENDING',NULL,NULL,82500.00,1935,'600408',NULL),(57,'PENDING','2026-05-30 21:50:35.194000',50000000,16,'HAM THUAN NAM, LAM DONG','0394921920','','CASH','PENDING',NULL,NULL,82500.00,1935,'600408',NULL),(58,'PENDING','2026-05-30 21:54:46.588000',50000000,16,'HAM THUAN NAM, LAM DONG','0394921920','','VNPAY','PAID','15562556','ORDER_1780152858097',82500.00,1935,'600408',NULL),(59,'COMPLETED','2026-05-30 21:56:40.466000',29000000,NULL,NULL,'0394921920','','OFFLINE','PAID',NULL,NULL,0.00,NULL,NULL,NULL),(60,'PENDING','2026-05-31 22:09:11.315000',20000000,16,'HAM THUAN NAM, LAM DONG','0394921920','','CASH','PENDING',NULL,NULL,82500.00,1935,'600408',NULL),(61,'PENDING','2026-05-31 22:20:55.398000',8999000,5,'HAM THUAN NAM, LAM DONG','0394921920','','CASH','PENDING',NULL,NULL,60500.00,2194,'220704',NULL);
+INSERT INTO `orders` VALUES (10,'PENDING','2025-12-30 13:31:16.216000',99500000,6,NULL,NULL,NULL,'CASH','PENDING',NULL,NULL,0.00,NULL,NULL,NULL),(11,'PENDING','2026-01-10 18:04:13.043000',15000000,5,NULL,NULL,NULL,'CASH','PENDING',NULL,NULL,0.00,NULL,NULL,NULL),(12,'PENDING','2026-01-15 05:34:24.770000',69500000,6,NULL,NULL,NULL,'CASH','PENDING',NULL,NULL,0.00,NULL,NULL,NULL),(13,'PENDING','2026-01-15 05:40:28.878000',69000000,6,NULL,NULL,NULL,'CASH','PENDING',NULL,NULL,0.00,NULL,NULL,NULL),(14,'PENDING','2026-01-15 06:46:16.934000',61000000,6,NULL,NULL,NULL,'CASH','PENDING',NULL,NULL,0.00,NULL,NULL,NULL),(15,'COMPLETED','2026-01-16 08:25:12.955000',60000000,6,NULL,NULL,NULL,'CASH','PENDING',NULL,NULL,0.00,NULL,NULL,NULL),(16,'PENDING','2026-03-10 18:48:09.529000',12500000,9,NULL,NULL,NULL,'CASH','PENDING','15445629','ORDER_1773168450094',0.00,NULL,NULL,NULL),(17,'PENDING','2026-03-11 04:43:35.762000',20000000,8,NULL,NULL,NULL,'CASH','PENDING','15446140','ORDER_1773204156553',0.00,NULL,NULL,NULL),(18,'PENDING','2026-03-14 03:39:01.843000',20000000,9,NULL,NULL,NULL,'CASH','PENDING','15450276','ORDER_1773459490787',0.00,NULL,NULL,NULL),(19,'PENDING','2026-03-16 04:16:34.581000',15000000,9,NULL,NULL,NULL,'CASH','PENDING',NULL,NULL,0.00,NULL,NULL,NULL),(24,'PENDING','2026-04-18 16:05:17.533000',9600000,14,NULL,NULL,NULL,'CASH','PENDING','15502712','ORDER_1776528133138',0.00,NULL,NULL,NULL),(25,'PENDING','2026-04-18 16:40:54.483000',9600000,14,'','','','CASH','PENDING','15502744','ORDER_1776530403186',0.00,NULL,NULL,NULL),(26,'PENDING','2026-04-18 16:44:12.680000',20000000,14,'','','','CASH','PENDING','15502747','ORDER_1776530599040',0.00,NULL,NULL,NULL),(27,'PENDING','2026-04-18 16:52:01.528000',15000000,14,'','','','CASH','PENDING','15502750','ORDER_1776531085667',0.00,NULL,NULL,NULL),(28,'PENDING','2026-04-18 17:04:16.035000',15000000,14,'','','','CASH','PENDING','15502763','ORDER_1776531815666',0.00,1454,'20813',NULL),(29,'PENDING','2026-04-18 17:13:40.354000',15000000,14,'','','','CASH','PENDING','15502769','ORDER_1776532385082',0.00,1454,'20813',NULL),(30,'PENDING','2026-04-18 17:23:53.820000',15000000,14,'','','','CASH','PENDING','15502778','ORDER_1776532937588',0.00,1454,'20813',NULL),(31,'PENDING','2026-04-18 17:26:58.702000',12500000,14,'','','','CASH','PENDING','15502780','ORDER_1776533186022',0.00,1454,'20813',NULL),(32,'PENDING','2026-04-18 17:32:12.924000',12500000,14,'','','','CASH','PENDING','15502785','ORDER_1776533485213',0.00,1454,'20813',NULL),(33,'PENDING','2026-04-18 17:34:06.535000',12500000,14,'','','','CASH','PENDING','15502788','ORDER_1776533610835',0.00,1454,'20813',NULL),(34,'PENDING','2026-04-18 17:38:22.020000',3600000,14,'','','','CASH','PENDING','15502793','ORDER_1776533841035',0.00,1454,'20813',NULL),(35,'PENDING','2026-04-18 17:46:11.250000',3600000,14,'','','','CASH','PENDING','15502796','ORDER_1776534340911',0.00,1454,'20813',NULL),(36,'PENDING','2026-04-18 17:53:43.178000',12500000,14,'','','','CASH','PENDING','15502801','ORDER_1776534765378',0.00,1454,'20813',NULL),(37,'PENDING','2026-04-18 18:13:45.818000',12500000,14,'','','','CASH','PENDING','15502812','ORDER_1776535990995',0.00,1454,'20813',NULL),(38,'PENDING','2026-04-18 18:24:07.940000',12500000,14,'','','','CASH','PENDING','15502815','ORDER_1776536604682',60500.00,1454,'20813',NULL),(39,'DELIVERED','2026-04-20 17:29:45.950000',12500000,15,'','0978120646','','CASH','PENDING',NULL,NULL,0.00,2028,'560801',NULL),(40,'DELIVERED','2026-05-25 19:47:21.798000',105000000,5,'HAM THUAN NAM, LAM DONG','0394921920','','CASH','PENDING',NULL,NULL,60500.00,2163,'230317',NULL),(41,'PENDING','2026-05-29 22:17:30.860000',50000000,5,'HAM THUAN NAM, LAM DONG','0394921920','','CASH','PENDING',NULL,NULL,82500.00,1778,'471003',NULL),(42,'PENDING','2026-05-30 19:10:42.074000',7200000,16,'HAM THUAN NAM, LAM DONG','0394921920','','CASH','PENDING',NULL,NULL,82500.00,1883,'61094',NULL),(43,'PENDING','2026-05-30 19:19:30.983000',50000000,16,'HAM THUAN NAM, LAM DONG','0394921920','','CASH','PENDING',NULL,NULL,82500.00,1935,'600408',NULL),(44,'PENDING','2026-05-30 19:22:17.945000',50000000,16,'HAM THUAN NAM, LAM DONG','0394921920','','CASH','PENDING',NULL,NULL,82500.00,1935,'600408',NULL),(45,'PENDING','2026-05-30 19:22:45.430000',100000000,16,'','0394921920','','CASH','PENDING',NULL,NULL,82500.00,1935,'600408',NULL),(46,'CANCELLED','2026-05-30 19:23:33.347000',50000000,16,'HAM THUAN NAM, LAM DONG','0394921920','','CASH','PENDING',NULL,NULL,82500.00,1935,'600408',NULL),(47,'PENDING','2026-05-30 19:24:15.676000',50000000,16,'','0394921920','','CASH','PENDING',NULL,NULL,82500.00,1935,'600408',NULL),(48,'PENDING','2026-05-30 19:24:41.899000',15000000,16,'','0394921920','','CASH','PENDING',NULL,NULL,82500.00,1935,'600408',NULL),(49,'PENDING','2026-05-30 19:29:48.682000',50000000,16,'','0394921920 ','','CASH','PENDING',NULL,NULL,82500.00,1935,'600408',NULL),(50,'PENDING','2026-05-30 19:30:10.404000',50000000,16,'xã Hàm Thuận Nam, tỉnh Lâm Đồng','0394921920','','CASH','PENDING',NULL,NULL,82500.00,1935,'600408',NULL),(51,'PENDING','2026-05-30 19:30:29.714000',50000000,16,'HAM THUAN NAM, LAM DONG','0394921920','','CASH','PENDING',NULL,NULL,82500.00,1935,'600408',NULL),(52,'PENDING','2026-05-30 19:34:01.892000',50000000,16,'HAM THUAN NAM, LAM DONG','0394921920','','CASH','PENDING',NULL,NULL,82500.00,1935,'600408',NULL),(53,'PENDING','2026-05-30 19:51:03.354000',50000000,5,'HAM THUAN NAM, LAM DONG','0394921920','','CASH','PENDING',NULL,NULL,82500.00,1770,'370604',NULL),(54,'PENDING','2026-05-30 19:51:50.005000',50000000,5,'HAM THUAN NAM, LAM DONG','0394921920','','CASH','PENDING',NULL,NULL,82500.00,1782,'610205',NULL),(55,'PENDING','2026-05-30 21:46:57.733000',50000000,16,'','0394921920','','CASH','PENDING',NULL,NULL,82500.00,1935,'600408',NULL),(56,'PENDING','2026-05-30 21:50:09.429000',50000000,16,'','0394921920','','CASH','PENDING',NULL,NULL,82500.00,1935,'600408',NULL),(57,'PENDING','2026-05-30 21:50:35.194000',50000000,16,'HAM THUAN NAM, LAM DONG','0394921920','','CASH','PENDING',NULL,NULL,82500.00,1935,'600408',NULL),(58,'PENDING','2026-05-30 21:54:46.588000',50000000,16,'HAM THUAN NAM, LAM DONG','0394921920','','VNPAY','PAID','15562556','ORDER_1780152858097',82500.00,1935,'600408',NULL),(59,'COMPLETED','2026-05-30 21:56:40.466000',29000000,NULL,NULL,'0394921920','','OFFLINE','PAID',NULL,NULL,0.00,NULL,NULL,NULL),(60,'PENDING','2026-05-31 22:09:11.315000',20000000,16,'HAM THUAN NAM, LAM DONG','0394921920','','CASH','PENDING',NULL,NULL,82500.00,1935,'600408',NULL),(61,'PENDING','2026-05-31 22:20:55.398000',8999000,5,'HAM THUAN NAM, LAM DONG','0394921920','','CASH','PENDING',NULL,NULL,60500.00,2194,'220704',NULL),(62,'PROCESSING','2026-06-01 23:03:55.501000',8999000,15,'90/2 aaaaaa','0978120646','','CASH','PENDING',NULL,NULL,82500.00,2028,'560801',NULL),(63,'DELIVERED','2026-06-01 23:08:52.232000',25000000,15,'90/2 11111111','0978120646','','CASH','PENDING',NULL,NULL,82500.00,2028,'560801',NULL);
 /*!40000 ALTER TABLE `orders` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -278,15 +185,15 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `otp_tokens`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `otp_tokens` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int NOT NULL AUTO_INCREMENT,
   `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `otp_code` varchar(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `expired_at` datetime NOT NULL,
   `is_used` tinyint(1) NOT NULL DEFAULT '0',
-  `attempt_count` int(11) NOT NULL DEFAULT '0',
+  `attempt_count` int NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `idx_email_otp` (`email`,`otp_code`),
   KEY `idx_expired` (`expired_at`),
@@ -305,44 +212,16 @@ INSERT INTO `otp_tokens` VALUES (1,'hothanhhai879@gmail.com','131019','2026-05-2
 UNLOCK TABLES;
 
 --
--- Table structure for table `password_reset_token`
---
-
-DROP TABLE IF EXISTS `password_reset_token`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
-CREATE TABLE `password_reset_token` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `created_at` datetime(6) DEFAULT NULL,
-  `email` varchar(255) DEFAULT NULL,
-  `expires_at` datetime(6) DEFAULT NULL,
-  `token` varchar(255) DEFAULT NULL,
-  `used` bit(1) NOT NULL,
-  `user_id` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `password_reset_token`
---
-
-LOCK TABLES `password_reset_token` WRITE;
-/*!40000 ALTER TABLE `password_reset_token` DISABLE KEYS */;
-/*!40000 ALTER TABLE `password_reset_token` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `password_reset_tokens`
 --
 
 DROP TABLE IF EXISTS `password_reset_tokens`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `password_reset_tokens` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int NOT NULL AUTO_INCREMENT,
   `token` varchar(255) NOT NULL,
-  `user_id` int(11) NOT NULL,
+  `user_id` int NOT NULL,
   `email` varchar(255) NOT NULL,
   `expires_at` datetime NOT NULL,
   `used` tinyint(1) DEFAULT '0',
@@ -365,79 +244,19 @@ INSERT INTO `password_reset_tokens` VALUES (1,'7011a61cd08847b2a5f5de5274470af2'
 UNLOCK TABLES;
 
 --
--- Table structure for table `product`
---
-
-DROP TABLE IF EXISTS `product`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
-CREATE TABLE `product` (
-  `product_id` int(11) NOT NULL AUTO_INCREMENT,
-  `discount` bigint(20) DEFAULT '0',
-  `manufacturer` varchar(255) DEFAULT NULL,
-  `product_condition` varchar(255) DEFAULT NULL,
-  `product_info` text,
-  `product_name` varchar(255) DEFAULT NULL,
-  `category_id` int(11) DEFAULT NULL,
-  PRIMARY KEY (`product_id`),
-  KEY `FK1mtsbur82frn64de7balymq9s` (`category_id`),
-  CONSTRAINT `FK1mtsbur82frn64de7balymq9s` FOREIGN KEY (`category_id`) REFERENCES `category` (`category_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `product`
---
-
-LOCK TABLES `product` WRITE;
-/*!40000 ALTER TABLE `product` DISABLE KEYS */;
-/*!40000 ALTER TABLE `product` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `product_variant`
---
-
-DROP TABLE IF EXISTS `product_variant`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
-CREATE TABLE `product_variant` (
-  `variant_id` int(11) NOT NULL AUTO_INCREMENT,
-  `color` varchar(255) DEFAULT NULL,
-  `price` bigint(20) DEFAULT NULL,
-  `quantity_in_stock` int(11) DEFAULT NULL,
-  `storage` varchar(255) DEFAULT NULL,
-  `variant_image` text,
-  `product_id` int(11) DEFAULT NULL,
-  PRIMARY KEY (`variant_id`),
-  KEY `FKgrbbs9t374m9gg43l6tq1xwdj` (`product_id`),
-  CONSTRAINT `FKgrbbs9t374m9gg43l6tq1xwdj` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `product_variant`
---
-
-LOCK TABLES `product_variant` WRITE;
-/*!40000 ALTER TABLE `product_variant` DISABLE KEYS */;
-/*!40000 ALTER TABLE `product_variant` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `product_variants`
 --
 
 DROP TABLE IF EXISTS `product_variants`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `product_variants` (
-  `variant_id` int(11) NOT NULL AUTO_INCREMENT,
-  `product_id` int(11) NOT NULL,
+  `variant_id` int NOT NULL AUTO_INCREMENT,
+  `product_id` int NOT NULL,
   `color` varchar(50) DEFAULT NULL,
   `storage` varchar(50) DEFAULT NULL,
-  `price` bigint(20) NOT NULL,
-  `quantity_in_stock` int(11) NOT NULL,
+  `price` bigint NOT NULL,
+  `quantity_in_stock` int NOT NULL,
   `variant_image` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`variant_id`),
   KEY `FK_variant_product` (`product_id`),
@@ -451,7 +270,7 @@ CREATE TABLE `product_variants` (
 
 LOCK TABLES `product_variants` WRITE;
 /*!40000 ALTER TABLE `product_variants` DISABLE KEYS */;
-INSERT INTO `product_variants` VALUES (1,10,'Natural Titanium','128GB',12000000,5,'images/products/e0dd45b7-58e3-4382-8612-ff268fe06921.png'),(9,11,'Natural Titanium','128GB',25000000,3,'images/products/a773815c-3857-4466-86d5-84209c7f2b37.png'),(10,11,'Blue Titanium','128GB',25000000,3,'images/products/a773815c-3857-4466-86d5-84209c7f2b37.png'),(11,11,'White Titanium','128GB',25000000,2,'images/products/a773815c-3857-4466-86d5-84209c7f2b37.png'),(12,11,'Black Titanium','128GB',25000000,2,'images/products/a773815c-3857-4466-86d5-84209c7f2b37.png'),(13,12,'Black','64GB',7000000,20,'images/products/01d57027-ac66-4333-9098-38ee7861c181.png'),(14,12,'White','64GB',7000000,15,'images/products/01d57027-ac66-4333-9098-38ee7861c181.png'),(15,12,'Blue','64GB',7000000,15,'images/products/01d57027-ac66-4333-9098-38ee7861c181.png'),(16,13,'Black','64GB',9000000,18,'images/products/2ff2f283-7386-4e96-a91c-6d89ef259bbe.png'),(17,13,'White','64GB',9000000,15,'images/products/2ff2f283-7386-4e96-a91c-6d89ef259bbe.png'),(18,13,'Green','64GB',9000000,15,'images/products/2ff2f283-7386-4e96-a91c-6d89ef259bbe.png'),(19,14,'Midnight','128GB',13000000,15,'images/products/2d5c3d94-c977-4dc8-b2fa-2192fe1eb282.png'),(20,14,'Starlight','128GB',13000000,10,'images/products/2d5c3d94-c977-4dc8-b2fa-2192fe1eb282.png'),(21,14,'Blue','128GB',13000000,8,'images/products/2d5c3d94-c977-4dc8-b2fa-2192fe1eb282.png'),(22,14,'Pink','128GB',13000000,7,'images/products/2d5c3d94-c977-4dc8-b2fa-2192fe1eb282.png'),(23,14,'Midnight','256GB',15500000,5,'images/products/2d5c3d94-c977-4dc8-b2fa-2192fe1eb282.png'),(24,15,'Midnight','128GB',15000000,8,'images/products/1693a3e0-f704-43e2-b735-d1b45b8bc5b9.png'),(25,15,'Purple','128GB',15000000,8,'images/products/1693a3e0-f704-43e2-b735-d1b45b8bc5b9.png'),(26,15,'Blue','128GB',15000000,7,'images/products/1693a3e0-f704-43e2-b735-d1b45b8bc5b9.png'),(27,15,'Starlight','128GB',15000000,7,'images/products/1693a3e0-f704-43e2-b735-d1b45b8bc5b9.png'),(28,15,'Midnight','256GB',18000000,5,'images/products/1693a3e0-f704-43e2-b735-d1b45b8bc5b9.png'),(29,15,'Purple','256GB',18000000,5,'images/products/1693a3e0-f704-43e2-b735-d1b45b8bc5b9.png'),(30,15,'Blue','256GB',18000000,4,'images/products/1693a3e0-f704-43e2-b735-d1b45b8bc5b9.png'),(31,15,'Yellow','256GB',18000000,3,'images/products/1693a3e0-f704-43e2-b735-d1b45b8bc5b9.png'),(32,16,'Deep Purple','128GB',19000000,10,'images/products/51319fad-853d-4cd3-9f65-2da560db816a.png'),(33,16,'Gold','128GB',19000000,8,'images/products/51319fad-853d-4cd3-9f65-2da560db816a.png'),(34,16,'Silver','128GB',19000000,7,'images/products/51319fad-853d-4cd3-9f65-2da560db816a.png'),(35,17,'Black','128GB',18000000,10,'images/products/0b7a70ec-43ce-48d4-b1f4-acf7a28b2ab3.png'),(36,17,'Pink','128GB',18000000,10,'images/products/0b7a70ec-43ce-48d4-b1f4-acf7a28b2ab3.png'),(37,17,'Green','128GB',18000000,10,'images/products/0b7a70ec-43ce-48d4-b1f4-acf7a28b2ab3.png'),(38,18,'Natural Titanium','256GB',28000000,8,'images/products/33aca89a-fbc1-4921-829c-4e5b9137d9eb.png'),(39,18,'Blue Titanium','256GB',28000000,7,'images/products/33aca89a-fbc1-4921-829c-4e5b9137d9eb.png'),(40,18,'White Titanium','256GB',28000000,5,'images/products/33aca89a-fbc1-4921-829c-4e5b9137d9eb.png'),(41,19,'Black','128GB',22000000,15,'images/products/0f11c558-01e9-4d63-a30c-77f597d98238.png'),(42,19,'White','128GB',22000000,15,'images/products/0f11c558-01e9-4d63-a30c-77f597d98238.png'),(43,19,'Blue','128GB',22000000,10,'images/products/0f11c558-01e9-4d63-a30c-77f597d98238.png'),(44,19,'Teal','128GB',22000000,10,'images/products/0f11c558-01e9-4d63-a30c-77f597d98238.png'),(45,20,'Black','128GB',24000000,10,'images/products/5a37c593-51bf-4b7b-adbc-d0bfcd620f8e.png'),(46,20,'White','128GB',24000000,10,'images/products/5a37c593-51bf-4b7b-adbc-d0bfcd620f8e.png'),(47,20,'Blue','128GB',24000000,10,'images/products/5a37c593-51bf-4b7b-adbc-d0bfcd620f8e.png'),(48,21,'Black','128GB',27000000,30,'images/products/564c168a-cae1-4b16-9f79-a3078bc89fb2.jpeg'),(49,21,'White','128GB',27000000,25,'images/products/1ecdc28a-6a10-4bec-a7d6-6ad8a89af80a.png'),(50,21,'Blue','128GB',26000000,25,'images/products/09dea404-f0c6-444e-b1f0-9578f30c96f6.png'),(51,21,'Teal','128GB',26999000,20,'images/products/1ecdc28a-6a10-4bec-a7d6-6ad8a89af80a.png'),(52,23,'Silver','64GB',10500000,20,'images/products/b6dc74a6-da46-467d-aaa5-533b18c859fa.png'),(53,23,'Blue','64GB',10500000,20,'images/products/b6dc74a6-da46-467d-aaa5-533b18c859fa.png'),(54,24,'Space Gray','64GB',14500000,10,'images/products/0af0a633-b612-4218-b042-ef822e99264f.png'),(55,24,'Starlight','64GB',14500000,7,'images/products/0af0a633-b612-4218-b042-ef822e99264f.png'),(56,24,'Blue','64GB',14500000,8,'images/products/0af0a633-b612-4218-b042-ef822e99264f.png'),(57,25,'Space Gray','64GB',7500000,25,'images/products/de33773e-bc38-46c8-a7f0-cd1e7e71d655.png'),(58,25,'Silver','64GB',7500000,25,'images/products/de33773e-bc38-46c8-a7f0-cd1e7e71d655.png'),(59,26,'Silver','256GB',29000000,7,'images/products/prom4.png'),(60,26,'Space Black','256GB',29000000,7,'images/products/prom4.png'),(61,27,'Space Gray','128GB',17000000,8,'images/products/0c334961-a3e2-4b40-93f1-b45bce5ce52a.png'),(62,27,'Starlight','128GB',17000000,5,'images/products/0c334961-a3e2-4b40-93f1-b45bce5ce52a.png'),(63,27,'Blue','128GB',17000000,5,'images/products/0c334961-a3e2-4b40-93f1-b45bce5ce52a.png'),(64,28,'Space Gray','128GB',15000000,10,'images/products/mini7.png'),(65,28,'Starlight','128GB',15000000,9,'images/products/mini7.png'),(66,29,'Space Gray','64GB',25000000,15,'images/products/mini_6.png'),(67,29,'Purple','64GB',25000000,13,'images/products/mini_6.png'),(68,30,'Blue','64GB',12500000,10,'images/products/12.png'),(69,30,'Black','64GB',12500000,8,'images/products/12.png'),(70,30,'White','64GB',12500000,8,'images/products/12.png'),(71,31,'Black','128GB',15000000,2,'images/products/16e.png'),(72,31,'White','128GB',15000000,4,'images/products/16e.png'),(73,31,'Red','128GB',15000000,4,'images/products/16e.png'),(74,32,'Silver','256GB',50000000,33,'images/products/4eef0b69-5658-4014-b9ff-d65881d378b3.png'),(75,32,'Space Black','256GB',50000000,50,'images/products/4eef0b69-5658-4014-b9ff-d65881d378b3.png'),(76,33,'Silver','128GB',20000000,4,'images/products/07fb6758-a24f-4993-8141-92dcbe635838.png'),(77,33,'Space Black','128GB',20000000,25,'images/products/07fb6758-a24f-4993-8141-92dcbe635838.png'),(78,10,'Blue Titanium','128GB',12000000,10,'images/products/96aee917-a333-496d-94e3-4a30eb4c2930.png'),(79,34,'Cam Vũ Trụ','256GB',37000000,10,'images/products/50882775-c3f9-4b0e-b683-aa9ac4ac82f1.webp'),(80,34,'Cam Vũ Trụ','512GB',43000000,19,'images/products/e1f0ead4-f39f-45d9-9dfb-907ec9982a73.webp'),(81,34,'Cam Vũ Trụ','1T',50000000,14,'images/products/cc85d954-1f54-444f-b091-d42ea882f0b4.webp'),(82,34,'Cam Vũ Trụ','2T',63000000,13,'images/products/78079d5d-1a26-47e9-b253-8073353399bb.webp'),(83,34,'Xanh Đậm','256GB',37000000,22,'images/products/8c101758-3c55-4cb2-950b-09ce07959c22.webp'),(84,34,'Xanh Đậm','512GB',44000000,11,'images/products/a2d0a4b5-6c46-4cc3-b433-beb469026f31.webp'),(85,34,'Xanh Đậm','1T',50000000,33,'images/products/cd452a20-6b2a-4827-be1a-20645e26f19f.webp'),(86,34,'Xanh Đậm','2T',66000000,44,'images/products/a81f0394-457b-47d9-92d7-338b1c827dee.webp'),(87,35,'Vàng','256GB',20000000,11,'images/products/26fc40e0-4374-4245-a624-d3920eb23571.jpg'),(88,35,'Vàng','256GB',27000000,12,'images/products/e2456ce8-9def-4522-99ab-df9b64db80ce.jpg'),(89,35,'Tím','512GB',21000000,21,'images/products/5f0fd9af-575d-4cd6-a89e-6a128c0c1aa0.jpg'),(90,35,'Tím','128GB',17000000,12,'images/products/58369796-e625-4166-b08f-9e0f84ad9896.jpg'),(91,35,'Trắng','256GB',18000000,11,'images/products/db69b545-50d6-4b11-864a-c924381667c1.jpg'),(92,35,'Đen','512GB',26000000,12,'images/products/e7163630-42a7-4bdb-9e4b-63ce38fa78ea.jpg'),(93,35,'Trắng','512GB',25000000,21,'images/products/41898f3b-35d5-4be8-b4ae-e7461f7d6c8a.jpg'),(94,35,'Đen','128GB',20000000,32,'images/products/16b919aa-fa26-4f60-8a94-5a44bcf20343.jpg'),(95,36,'Black','128GB',20000000,12,'images/products/e9d673d7-be50-4d71-becb-3ec12b8c09df.jpg'),(96,36,'Black','256GB',25000000,22,'images/products/dcd225c3-a8e8-4cae-86ca-12ed94f83479.jpg'),(97,36,'Vàng','128GB',20000000,21,'images/products/34dc3c7a-8fb3-41fd-af4f-2105a928826f.jpg'),(98,36,'Vàng','512GB',25000000,21,'images/products/5281acc0-2ec1-44e9-8c65-a9d9d1d60687.jpg'),(99,36,'Xanh Rêu','128GB',23000000,12,'images/products/b00ea314-2547-4047-81db-dae50da83d33.jpg'),(100,36,'Xanh Rêu','256GB',20000000,32,'images/products/4fae6390-c4b0-43c0-830d-327e4f39af72.jpg'),(101,36,'Trắng','512GB',20000000,12,'images/products/09e65f0c-e532-4e7a-9428-eb429902010d.png'),(102,36,'Trắng','128GB',15000000,22,'images/products/f7e99ca4-fdee-48a6-b69c-5c800d6f464e.png'),(103,37,'Titan Sa Mạc','256GB',37000000,33,'images/products/b32040bb-ead5-4d1c-801c-83f3433c37c3.webp'),(104,37,'Trắng','256GB',35000000,23,'images/products/15f451cc-a0c6-4eec-b7ed-fbe937b0b7ed.webp'),(105,37,'Đen','512GB',43000000,33,'images/products/0d2c5577-0f5c-4a42-84ad-35a0b1a0132d.webp'),(106,37,'Titan tự nhiên','512GB',45000000,32,'images/products/abc25170-a53e-41a1-8a9c-86ece5735176.webp'),(107,38,'Vàng','128GB',30000000,23,'images/products/86d6231c-87b5-4c48-901d-85371c55c3a2.webp'),(108,38,'Vàng','256GB',35000000,45,'images/products/44b29899-8541-47f6-bfbc-aa477498f042.webp'),(109,38,'Vàng','512GB',37000000,34,'images/products/9ea41993-bfb8-4b68-8205-0fd90897d57b.webp'),(110,38,'Xanh lá','128GB',20000000,46,'images/products/4dfa4c42-1750-4f36-aee9-a818a588f0ac.webp'),(111,38,'Xanh lá','256GB',25000000,12,'images/products/dffdd5e9-4356-4f6f-b14c-a812a970fdd7.webp'),(112,38,'Xanh dương','512GB',25999000,34,'images/products/d14d2f11-3028-461d-b7f8-c97ef22e738a.webp'),(113,38,'Xanh dương','128GB',29000000,34,'images/products/49aa6b8a-d2a1-407e-9b15-46f42881ad0b.webp'),(114,39,'Xám','128GB',14000000,22,'images/products/d9931e19-8727-47a6-b83f-a5da57e0b0c7.webp'),(115,39,'Xám','256GB',19000000,22,'images/products/05cf2309-3116-4680-9029-3b8439610fd5.webp'),(116,39,'Vàng','128GB',14000000,22,'images/products/f628984a-8594-46a9-a326-26a9a6d3d10c.webp'),(117,39,'Vàng','512GB',20000000,12,'images/products/bc0ff856-8e68-4fb9-9de2-99263a8a0370.webp'),(118,39,'Xanh dương','256GB',23000000,23,'images/products/2df3753c-79d9-4a79-98b4-8742093df436.webp'),(119,39,'Xanh dương','512GB',26000000,34,'images/products/b9fe3ee3-ff62-4ac1-9d4d-e374d948cffe.webp'),(120,39,'Tím','128GB',23000000,344,'images/products/b400c421-c650-40c1-9456-a2b9a96572d1.webp'),(121,39,'Tím','1T',34000000,43,'images/products/cbe80c24-d96d-4515-8781-089e33b31ea4.webp'),(122,40,'Vàng','128GB',9000000,12,'images/products/b154bc9b-5db0-4eff-83e6-53ec62f7067b.webp'),(123,40,'Vàng','256GB',14000000,12,'images/products/986f1273-6174-4d5d-ada5-bb0f78e5ddea.webp'),(124,40,'Xanh','128GB',9000000,10,'images/products/262bbb66-ad46-4cfc-8b75-011b92d18cee.webp'),(125,40,'Xanh','256GB',14000000,12,'images/products/a7761e07-f9eb-4113-9e67-01d4a2ea96c4.webp'),(126,40,'Hồng','256GB',8999000,11,'images/products/aa0a096c-eb4a-44dc-b06a-4680bb1c5ca0.webp'),(127,40,'Hồng','512GB',14000000,12,'images/products/b9572d34-4a3f-470f-9c4b-6036fa14ca2e.webp'),(128,40,'Xám','128GB',9000000,15,'images/products/9c3e992d-356f-48ba-a7dc-617602518c3d.webp'),(129,40,'Xám','256GB',14000000,12,'images/products/9e9367fc-3b46-4280-b1cb-3409ceb002ac.webp'),(130,41,'Xanh','128GB',25000000,31,'images/products/f02ce8c6-f482-4864-978c-6c75dc4e713c.webp'),(131,41,'Xanh','256GB',26998000,31,'images/products/474ee6fc-627e-49d7-96e2-428b27b05e2d.webp'),(132,41,'Xanh','512GB',27000000,31,'images/products/84319501-740f-46be-9e14-cdeb0e7b8b04.webp'),(133,41,'Xanh','1T',20000000,30,'images/products/c06fa7d7-4d8c-4136-adba-c379577bdb3a.webp'),(134,41,'Vàng','1T',22999000,31,'images/products/549f2bac-a0d4-4755-b830-0462b31c5d1d.webp'),(135,41,'Vàng','256GB',21000000,31,'images/products/485ba759-4be7-4af6-b793-ce8e6d75ee70.webp'),(136,41,'Vàng','512GB',26997000,31,'images/products/1d66c29d-6198-4115-acee-30c82dd7eb58.webp'),(137,41,'Vàng','128GB',24998000,37,'images/products/02002b9d-0bd1-45ee-b8a7-c5c8968bf3e3.webp'),(138,42,'MidNight','8GB RAM 256GB SSD',17000000,12,'images/products/63c81b8d-58dc-42c0-bdc9-687e6a5d960e.jpeg'),(139,42,'Sliver','8GB RAM 256GB SSD',18000000,12,'images/products/475350b7-3f27-4b29-9a5b-1e73c2b44246.jpeg'),(140,42,'Starlight','8GB RAM 256GB SSD',16000000,12,'images/products/1a9c86f3-18ad-411f-9cf4-4da6b2988950.jpeg'),(141,42,'Gray','8GB RAM 256GB SSD',15000000,12,'images/products/c4301a8c-9918-447f-a1bb-09a380838d61.jpeg'),(142,42,'MidNight','8GB RAM 512GB SSD',25000000,23,'images/products/73fc20e3-cc9a-4540-a7be-1cb9b6fb0391.jpeg'),(143,42,'Sliver','8GB RAM 512GB SSD',24998000,33,'images/products/f092c729-2263-4287-9233-3f9b9cae6ea9.jpeg'),(144,42,'Starlight','8GB RAM 512GB SSD',26000000,10,'images/products/8971df73-c25d-4f06-82c8-6ad75bb9a5d1.jpeg'),(145,42,'Gray','8GB RAM 512GB SSD',24001000,32,'images/products/d1440203-428a-4003-b73d-e721a23f98c2.jpeg'),(146,43,'MidNight','16GB RAM 256GB SSD',23000000,38,'images/products/600abbaf-c305-4b2b-b5ce-92312bafd4d3.jpeg'),(147,43,'MidNight','16GB RAM 512GB SSD',27000000,12,'images/products/66e35de8-75a1-4fc2-9978-da2bdb016431.jpeg'),(148,43,'Sliver','16GB RAM 256GB SSD',23000000,24,'images/products/56a657cc-b907-4823-98ca-9a6e5901360e.jpeg'),(149,43,'Sliver','16GB RAM 512GB SSD',26998000,45,'images/products/0d4fc8d1-1b0b-4602-9bc0-ad89bf42cc65.jpeg'),(150,43,'Gray','16GB RAM 256GB SSD',23000000,14,'images/products/22214ca7-43fa-47bb-9b32-a79c389c319a.jpeg'),(151,43,'Gray','16GB RAM 512GB SSD',27000000,23,'images/products/d4332309-a6c7-4071-8ce5-bcbfd45353f9.jpeg'),(152,43,'Starlight','16GB RAM 256GB SSD',22999000,34,'images/products/67b46b0b-bb75-4c9e-8736-2b48ac1ecaf3.jpeg'),(153,43,'Starlight','16GB RAM 512GB SSD',27000000,23,'images/products/0a4790da-040d-4739-bdfb-5c8a496da3f9.jpeg'),(154,44,'MidNight','24GB RAM 256GB SSD',30000000,11,'images/products/9768f8e2-5cad-4f1e-aae6-69ebf9a9163f.jpeg'),(155,44,'Sliver','24GB RAM 256GB SSD',29980000,45,'images/products/cad2d397-70a0-43cf-a8f8-4391f0ca1890.jpeg'),(156,44,'Gray','24GB RAM 256GB SSD',30000000,21,'images/products/9fc9b927-d22d-487a-aa91-c79ffd2d2f3c.jpeg'),(157,44,'Starlight','24GB RAM 256GB SSD',30000000,21,'images/products/f4edc0d6-3589-4d25-a81d-dddfb0fc7b10.jpeg'),(158,44,'MidNight','24GB RAM 512GB SSD',35000000,46,'images/products/b1ee902a-04d5-4db5-a2eb-107703f4f626.jpeg'),(159,44,'Sliver','24GB RAM 512GB SSD',35000000,21,'images/products/e878405b-d327-4aa5-bd44-f6c5527e07ce.jpeg'),(160,44,'Gray','24GB RAM 512GB SSD',35000000,13,'images/products/ce4035ca-7cc9-47a1-900c-a5309c2eba2f.jpeg'),(161,44,'Starlight','24GB RAM 512GB SSD',35000000,34,'images/products/dbd1358a-8f70-4fe5-95cd-f59a72e875f8.jpeg'),(162,45,'MidNight','16GB RAM 512GB SSD',30000000,14,'images/products/6ff32713-0c94-4210-b5bf-79f0f9b79813.jpeg'),(163,45,'Sliver','16GB RAM 512GB SSD',30000000,11,NULL),(164,45,'Sky blue','16GB RAM 512GB SSD',30000000,16,'images/products/34ccd9af-de73-440c-ad69-8c8cfabee28e.jpeg'),(165,45,'Starlight','16GB RAM 512GB SSD',30000000,14,'images/products/4754c07c-992d-40c0-b927-df8f19c87f64.jpeg'),(166,45,'Starlight','16GB RAM 1T SSD',35000000,14,'images/products/08da6284-1d95-4697-867f-b907664f34f8.jpeg'),(167,45,'Sky blue','16GB RAM 1T SSD',35000000,14,'images/products/ed0c070a-ad75-4611-bd25-249693244d86.jpeg'),(168,45,'Sliver','16GB RAM 1T SSD',35000000,12,'images/products/f85e9e0b-018e-4ced-830d-ef973d52632a.jpeg'),(169,45,'MidNight','16GB RAM 1T SSD',35000000,12,'images/products/cf16bdaf-eaaa-4dc3-9d43-5b9a38a75c28.jpeg'),(170,46,'Sliver','8GB RAM 256GB SSD',18000000,33,'images/products/281e0133-8384-4520-b6b9-ed78ea78e3cb.jpeg'),(171,46,'Indigo','8GB RAM 256GB SSD',17998000,221,'images/products/58c71a1e-3bf4-4f2b-bf83-f1e3bb4fbbae.jpeg'),(172,46,'Citrus','8GB RAM 256GB SSD',18000000,23,'images/products/b4ad1ca8-0781-476d-b892-4bf1da0a1a22.jpeg'),(173,46,'Blush','8GB RAM 256GB SSD',18000000,21,'images/products/0344c299-f57c-4a0d-a8b2-dfe8d59dc091.jpeg'),(174,46,'Sliver','8GB RAM 512GB SSD',24000000,32,'images/products/538f7b00-75f8-45e1-94f0-dc8015d0735d.jpeg'),(175,46,'Indigo','8GB RAM 512GB SSD',24000000,11,'images/products/4d0145fa-534f-4ee0-bc80-f6cf2f6d872c.jpeg'),(176,46,'Citrus','8GB RAM 512GB SSD',24000000,14,'images/products/a0a99d76-f934-4a61-afbd-d9380d83ae48.jpeg'),(177,46,'Blush','8GB RAM 512GB SSD',24000000,51,'images/products/78c4eea5-a037-42e6-883e-4186579b30ab.jpeg'),(178,47,'Gray','8GB RAM 256GB SSD',14000000,11,'images/products/eae0ac73-fc9f-42cf-ad34-42ff79f4fad3.jpeg'),(179,47,'Sliver','8GB RAM 256GB SSD',14000000,23,'images/products/b34d9b1a-c506-480a-b360-6ee72890674a.jpeg'),(180,47,'Gray','8GB RAM 512GB SSD',19000000,43,'images/products/0b63ff44-66f8-41df-a6f5-1da01dcca6ad.jpeg'),(181,47,'Sliver','8GB RAM 512GB SSD',18000000,34,'images/products/1ad6c1e3-fd40-4508-a7a1-540fced7d997.jpeg'),(182,48,'Sliver','16GB RAM 512GB SSD',40000000,53,'images/products/d049254a-4131-4166-9191-c07f3c2cf1d9.png'),(183,48,'Black','16GB RAM 512GB SSD',40000000,21,'images/products/e569185e-0960-4e0d-9ece-86fc7d38a634.png'),(184,48,'Sliver','16GB RAM 1T SSD',47000000,12,'images/products/b5365eed-91c0-42d3-9b20-eaeaf8d32572.png'),(185,48,'Black','16GB RAM 1T SSD',47000000,22,'images/products/2303766a-e529-4427-80fc-6406cf125213.png'),(186,49,'Sliver','8GB RAM 512GB SSD',30000000,21,'images/products/95616172-9b51-4ed7-ae5d-f094603aceaf.png'),(187,49,'Sliver','8GB RAM 256GB SSD',25000000,32,'images/products/aab23a66-60b6-47d4-b675-12d5f24019d4.png'),(188,49,'Black','8GB RAM 512GB SSD',30000000,34,'images/products/0e6943d6-3fca-40f4-b2d8-2fb24d201a55.png'),(189,49,'Black','8GB RAM 256GB SSD',25003000,51,'images/products/ad94b10e-8e24-4f33-a0a9-a9694d87eb01.png'),(190,50,'Sliver','8GB RAM 256GB SSD',34000000,44,'images/products/7aa48c8d-37e6-4615-8074-455be7f943fd.png'),(191,50,'Black','8GB RAM 256GB SSD',34000000,13,'images/products/9836fdb3-ed1e-4836-b633-a01d0dbe1404.png'),(192,50,'Sliver','8GB RAM 512GB SSD',43000000,11,'images/products/7bde677c-cd06-45c6-91ec-920eb41a4345.png'),(193,50,'Black','8GB RAM 512GB SSD',43000000,32,'images/products/c7649c44-87c5-4cbb-aba2-7d2500513db0.png'),(194,51,'Vàng','128GB',8000000,31,'images/products/40ab1d62-ed11-48d2-95ee-4f2af5f5d54b.webp'),(195,51,'Trắng','128GB',8000000,31,'images/products/30f734f2-6727-4218-866a-b3129a92397d.webp'),(196,51,'Đen','128GB',8000000,12,'images/products/efcb4b3b-772a-4beb-bd7c-d995f0e1ad14.webp'),(197,51,'Vàng','64GB',12000000,21,'images/products/694afa61-2231-45a7-93c1-35e9dfaf77ef.webp'),(198,51,'Trắng','64GB',12000000,12,'images/products/1a62ede6-dd2d-4266-ad51-763903c62319.webp'),(199,51,'Đen','64GB',12000000,323,'images/products/87aa979a-1ee5-4fa2-9312-5e65f190afe5.webp'),(200,52,'Vàng','128GB',11000000,31,'images/products/2c9d5152-ce86-4383-affa-8d58c2ef0cd7.webp'),(201,52,'Vàng','256GB',14000000,43,'images/products/3eb2320d-da74-4597-8775-948dcb4e08ab.webp'),(202,52,'Xanh Đậm','128GB',11000000,34,'images/products/ed679305-e13e-4f94-98c7-acc51fea1b1d.webp'),(203,52,'Xanh Đậm','256GB',14000000,3,'images/products/cd0149e2-46bd-4979-a357-5f0f5b89b8e0.webp'),(204,52,'Trắng','256GB',13000000,23,'images/products/a16e3f52-7965-4a92-92ff-a9cbeec0a31e.webp'),(205,52,'Trắng','128GB',10000000,11,'images/products/ea20272d-3d13-4bb0-b72e-90248bd39384.webp'),(206,52,'Xám','256GB',13000000,32,'images/products/3bd33b43-1d19-4ed1-9dd3-61ad7c796d12.webp'),(207,52,'Xám','128GB',10000000,31,'images/products/8526d378-1d80-415f-9a4a-476f8d86f8e5.webp');
+INSERT INTO `product_variants` VALUES (1,10,'Natural Titanium','128GB',12000000,5,'images/products/e0dd45b7-58e3-4382-8612-ff268fe06921.png'),(9,11,'Natural Titanium','128GB',25000000,3,'images/products/a773815c-3857-4466-86d5-84209c7f2b37.png'),(10,11,'Blue Titanium','128GB',25000000,3,'images/products/a773815c-3857-4466-86d5-84209c7f2b37.png'),(11,11,'White Titanium','128GB',25000000,2,'images/products/a773815c-3857-4466-86d5-84209c7f2b37.png'),(12,11,'Black Titanium','128GB',25000000,2,'images/products/a773815c-3857-4466-86d5-84209c7f2b37.png'),(13,12,'Black','64GB',7000000,20,'images/products/01d57027-ac66-4333-9098-38ee7861c181.png'),(14,12,'White','64GB',7000000,15,'images/products/01d57027-ac66-4333-9098-38ee7861c181.png'),(15,12,'Blue','64GB',7000000,15,'images/products/01d57027-ac66-4333-9098-38ee7861c181.png'),(16,13,'Black','64GB',9000000,18,'images/products/2ff2f283-7386-4e96-a91c-6d89ef259bbe.png'),(17,13,'White','64GB',9000000,15,'images/products/2ff2f283-7386-4e96-a91c-6d89ef259bbe.png'),(18,13,'Green','64GB',9000000,15,'images/products/2ff2f283-7386-4e96-a91c-6d89ef259bbe.png'),(19,14,'Midnight','128GB',13000000,15,'images/products/2d5c3d94-c977-4dc8-b2fa-2192fe1eb282.png'),(20,14,'Starlight','128GB',13000000,10,'images/products/2d5c3d94-c977-4dc8-b2fa-2192fe1eb282.png'),(21,14,'Blue','128GB',13000000,8,'images/products/2d5c3d94-c977-4dc8-b2fa-2192fe1eb282.png'),(22,14,'Pink','128GB',13000000,7,'images/products/2d5c3d94-c977-4dc8-b2fa-2192fe1eb282.png'),(23,14,'Midnight','256GB',15500000,5,'images/products/2d5c3d94-c977-4dc8-b2fa-2192fe1eb282.png'),(24,15,'Midnight','128GB',15000000,8,'images/products/1693a3e0-f704-43e2-b735-d1b45b8bc5b9.png'),(25,15,'Purple','128GB',15000000,8,'images/products/1693a3e0-f704-43e2-b735-d1b45b8bc5b9.png'),(26,15,'Blue','128GB',15000000,7,'images/products/1693a3e0-f704-43e2-b735-d1b45b8bc5b9.png'),(27,15,'Starlight','128GB',15000000,7,'images/products/1693a3e0-f704-43e2-b735-d1b45b8bc5b9.png'),(28,15,'Midnight','256GB',18000000,5,'images/products/1693a3e0-f704-43e2-b735-d1b45b8bc5b9.png'),(29,15,'Purple','256GB',18000000,5,'images/products/1693a3e0-f704-43e2-b735-d1b45b8bc5b9.png'),(30,15,'Blue','256GB',18000000,4,'images/products/1693a3e0-f704-43e2-b735-d1b45b8bc5b9.png'),(31,15,'Yellow','256GB',18000000,3,'images/products/1693a3e0-f704-43e2-b735-d1b45b8bc5b9.png'),(32,16,'Deep Purple','128GB',19000000,10,'images/products/51319fad-853d-4cd3-9f65-2da560db816a.png'),(33,16,'Gold','128GB',19000000,8,'images/products/51319fad-853d-4cd3-9f65-2da560db816a.png'),(34,16,'Silver','128GB',19000000,7,'images/products/51319fad-853d-4cd3-9f65-2da560db816a.png'),(35,17,'Black','128GB',18000000,10,'images/products/0b7a70ec-43ce-48d4-b1f4-acf7a28b2ab3.png'),(36,17,'Pink','128GB',18000000,10,'images/products/0b7a70ec-43ce-48d4-b1f4-acf7a28b2ab3.png'),(37,17,'Green','128GB',18000000,10,'images/products/0b7a70ec-43ce-48d4-b1f4-acf7a28b2ab3.png'),(38,18,'Natural Titanium','256GB',28000000,8,'images/products/33aca89a-fbc1-4921-829c-4e5b9137d9eb.png'),(39,18,'Blue Titanium','256GB',28000000,7,'images/products/33aca89a-fbc1-4921-829c-4e5b9137d9eb.png'),(40,18,'White Titanium','256GB',28000000,5,'images/products/33aca89a-fbc1-4921-829c-4e5b9137d9eb.png'),(41,19,'Black','128GB',22000000,15,'images/products/0f11c558-01e9-4d63-a30c-77f597d98238.png'),(42,19,'White','128GB',22000000,15,'images/products/0f11c558-01e9-4d63-a30c-77f597d98238.png'),(43,19,'Blue','128GB',22000000,10,'images/products/0f11c558-01e9-4d63-a30c-77f597d98238.png'),(44,19,'Teal','128GB',22000000,10,'images/products/0f11c558-01e9-4d63-a30c-77f597d98238.png'),(45,20,'Black','128GB',24000000,10,'images/products/5a37c593-51bf-4b7b-adbc-d0bfcd620f8e.png'),(46,20,'White','128GB',24000000,10,'images/products/5a37c593-51bf-4b7b-adbc-d0bfcd620f8e.png'),(47,20,'Blue','128GB',24000000,10,'images/products/5a37c593-51bf-4b7b-adbc-d0bfcd620f8e.png'),(48,21,'Black','128GB',27000000,30,'images/products/564c168a-cae1-4b16-9f79-a3078bc89fb2.jpeg'),(49,21,'White','128GB',27000000,25,'images/products/1ecdc28a-6a10-4bec-a7d6-6ad8a89af80a.png'),(50,21,'Blue','128GB',26000000,25,'images/products/09dea404-f0c6-444e-b1f0-9578f30c96f6.png'),(51,21,'Teal','128GB',26999000,20,'images/products/1ecdc28a-6a10-4bec-a7d6-6ad8a89af80a.png'),(52,23,'Silver','64GB',10500000,20,'images/products/b6dc74a6-da46-467d-aaa5-533b18c859fa.png'),(53,23,'Blue','64GB',10500000,20,'images/products/b6dc74a6-da46-467d-aaa5-533b18c859fa.png'),(54,24,'Space Gray','64GB',14500000,10,'images/products/0af0a633-b612-4218-b042-ef822e99264f.png'),(55,24,'Starlight','64GB',14500000,7,'images/products/0af0a633-b612-4218-b042-ef822e99264f.png'),(56,24,'Blue','64GB',14500000,8,'images/products/0af0a633-b612-4218-b042-ef822e99264f.png'),(57,25,'Space Gray','64GB',7500000,25,'images/products/de33773e-bc38-46c8-a7f0-cd1e7e71d655.png'),(58,25,'Silver','64GB',7500000,25,'images/products/de33773e-bc38-46c8-a7f0-cd1e7e71d655.png'),(59,26,'Silver','256GB',29000000,7,'images/products/prom4.png'),(60,26,'Space Black','256GB',29000000,7,'images/products/prom4.png'),(61,27,'Space Gray','128GB',17000000,8,'images/products/0c334961-a3e2-4b40-93f1-b45bce5ce52a.png'),(62,27,'Starlight','128GB',17000000,5,'images/products/0c334961-a3e2-4b40-93f1-b45bce5ce52a.png'),(63,27,'Blue','128GB',17000000,5,'images/products/0c334961-a3e2-4b40-93f1-b45bce5ce52a.png'),(64,28,'Space Gray','128GB',15000000,10,'images/products/mini7.png'),(65,28,'Starlight','128GB',15000000,9,'images/products/mini7.png'),(66,29,'Space Gray','64GB',25000000,15,'images/products/mini_6.png'),(67,29,'Purple','64GB',25000000,13,'images/products/mini_6.png'),(68,30,'Blue','64GB',12500000,10,'images/products/12.png'),(69,30,'Black','64GB',12500000,8,'images/products/12.png'),(70,30,'White','64GB',12500000,8,'images/products/12.png'),(71,31,'Black','128GB',15000000,2,'images/products/16e.png'),(72,31,'White','128GB',15000000,4,'images/products/16e.png'),(73,31,'Red','128GB',15000000,4,'images/products/16e.png'),(74,32,'Silver','256GB',50000000,33,'images/products/4eef0b69-5658-4014-b9ff-d65881d378b3.png'),(75,32,'Space Black','256GB',50000000,50,'images/products/4eef0b69-5658-4014-b9ff-d65881d378b3.png'),(76,33,'Silver','128GB',20000000,4,'images/products/07fb6758-a24f-4993-8141-92dcbe635838.png'),(77,33,'Space Black','128GB',20000000,25,'images/products/07fb6758-a24f-4993-8141-92dcbe635838.png'),(78,10,'Blue Titanium','128GB',12000000,10,'images/products/96aee917-a333-496d-94e3-4a30eb4c2930.png'),(79,34,'Cam Vũ Trụ','256GB',37000000,10,'images/products/50882775-c3f9-4b0e-b683-aa9ac4ac82f1.webp'),(80,34,'Cam Vũ Trụ','512GB',43000000,19,'images/products/e1f0ead4-f39f-45d9-9dfb-907ec9982a73.webp'),(81,34,'Cam Vũ Trụ','1T',50000000,14,'images/products/cc85d954-1f54-444f-b091-d42ea882f0b4.webp'),(82,34,'Cam Vũ Trụ','2T',63000000,13,'images/products/78079d5d-1a26-47e9-b253-8073353399bb.webp'),(83,34,'Xanh Đậm','256GB',37000000,22,'images/products/8c101758-3c55-4cb2-950b-09ce07959c22.webp'),(84,34,'Xanh Đậm','512GB',44000000,11,'images/products/a2d0a4b5-6c46-4cc3-b433-beb469026f31.webp'),(85,34,'Xanh Đậm','1T',50000000,33,'images/products/cd452a20-6b2a-4827-be1a-20645e26f19f.webp'),(86,34,'Xanh Đậm','2T',66000000,44,'images/products/a81f0394-457b-47d9-92d7-338b1c827dee.webp'),(87,35,'Vàng','256GB',20000000,11,'images/products/26fc40e0-4374-4245-a624-d3920eb23571.jpg'),(88,35,'Vàng','256GB',27000000,12,'images/products/e2456ce8-9def-4522-99ab-df9b64db80ce.jpg'),(89,35,'Tím','512GB',21000000,21,'images/products/5f0fd9af-575d-4cd6-a89e-6a128c0c1aa0.jpg'),(90,35,'Tím','128GB',17000000,12,'images/products/58369796-e625-4166-b08f-9e0f84ad9896.jpg'),(91,35,'Trắng','256GB',18000000,11,'images/products/db69b545-50d6-4b11-864a-c924381667c1.jpg'),(92,35,'Đen','512GB',26000000,12,'images/products/e7163630-42a7-4bdb-9e4b-63ce38fa78ea.jpg'),(93,35,'Trắng','512GB',25000000,21,'images/products/41898f3b-35d5-4be8-b4ae-e7461f7d6c8a.jpg'),(94,35,'Đen','128GB',20000000,32,'images/products/16b919aa-fa26-4f60-8a94-5a44bcf20343.jpg'),(95,36,'Black','128GB',20000000,12,'images/products/e9d673d7-be50-4d71-becb-3ec12b8c09df.jpg'),(96,36,'Black','256GB',25000000,22,'images/products/dcd225c3-a8e8-4cae-86ca-12ed94f83479.jpg'),(97,36,'Vàng','128GB',20000000,21,'images/products/34dc3c7a-8fb3-41fd-af4f-2105a928826f.jpg'),(98,36,'Vàng','512GB',25000000,21,'images/products/5281acc0-2ec1-44e9-8c65-a9d9d1d60687.jpg'),(99,36,'Xanh Rêu','128GB',23000000,12,'images/products/b00ea314-2547-4047-81db-dae50da83d33.jpg'),(100,36,'Xanh Rêu','256GB',20000000,32,'images/products/4fae6390-c4b0-43c0-830d-327e4f39af72.jpg'),(101,36,'Trắng','512GB',20000000,12,'images/products/09e65f0c-e532-4e7a-9428-eb429902010d.png'),(102,36,'Trắng','128GB',15000000,22,'images/products/f7e99ca4-fdee-48a6-b69c-5c800d6f464e.png'),(103,37,'Titan Sa Mạc','256GB',37000000,33,'images/products/b32040bb-ead5-4d1c-801c-83f3433c37c3.webp'),(104,37,'Trắng','256GB',35000000,23,'images/products/15f451cc-a0c6-4eec-b7ed-fbe937b0b7ed.webp'),(105,37,'Đen','512GB',43000000,33,'images/products/0d2c5577-0f5c-4a42-84ad-35a0b1a0132d.webp'),(106,37,'Titan tự nhiên','512GB',45000000,32,'images/products/abc25170-a53e-41a1-8a9c-86ece5735176.webp'),(107,38,'Vàng','128GB',30000000,23,'images/products/86d6231c-87b5-4c48-901d-85371c55c3a2.webp'),(108,38,'Vàng','256GB',35000000,45,'images/products/44b29899-8541-47f6-bfbc-aa477498f042.webp'),(109,38,'Vàng','512GB',37000000,34,'images/products/9ea41993-bfb8-4b68-8205-0fd90897d57b.webp'),(110,38,'Xanh lá','128GB',20000000,46,'images/products/4dfa4c42-1750-4f36-aee9-a818a588f0ac.webp'),(111,38,'Xanh lá','256GB',25000000,12,'images/products/dffdd5e9-4356-4f6f-b14c-a812a970fdd7.webp'),(112,38,'Xanh dương','512GB',25999000,34,'images/products/d14d2f11-3028-461d-b7f8-c97ef22e738a.webp'),(113,38,'Xanh dương','128GB',29000000,34,'images/products/49aa6b8a-d2a1-407e-9b15-46f42881ad0b.webp'),(114,39,'Xám','128GB',14000000,22,'images/products/d9931e19-8727-47a6-b83f-a5da57e0b0c7.webp'),(115,39,'Xám','256GB',19000000,22,'images/products/05cf2309-3116-4680-9029-3b8439610fd5.webp'),(116,39,'Vàng','128GB',14000000,22,'images/products/f628984a-8594-46a9-a326-26a9a6d3d10c.webp'),(117,39,'Vàng','512GB',20000000,12,'images/products/bc0ff856-8e68-4fb9-9de2-99263a8a0370.webp'),(118,39,'Xanh dương','256GB',23000000,23,'images/products/2df3753c-79d9-4a79-98b4-8742093df436.webp'),(119,39,'Xanh dương','512GB',26000000,34,'images/products/b9fe3ee3-ff62-4ac1-9d4d-e374d948cffe.webp'),(120,39,'Tím','128GB',23000000,344,'images/products/b400c421-c650-40c1-9456-a2b9a96572d1.webp'),(121,39,'Tím','1T',34000000,43,'images/products/cbe80c24-d96d-4515-8781-089e33b31ea4.webp'),(122,40,'Vàng','128GB',9000000,12,'images/products/b154bc9b-5db0-4eff-83e6-53ec62f7067b.webp'),(123,40,'Vàng','256GB',14000000,12,'images/products/986f1273-6174-4d5d-ada5-bb0f78e5ddea.webp'),(124,40,'Xanh','128GB',9000000,10,'images/products/262bbb66-ad46-4cfc-8b75-011b92d18cee.webp'),(125,40,'Xanh','256GB',14000000,12,'images/products/a7761e07-f9eb-4113-9e67-01d4a2ea96c4.webp'),(126,40,'Hồng','256GB',8999000,10,'images/products/aa0a096c-eb4a-44dc-b06a-4680bb1c5ca0.webp'),(127,40,'Hồng','512GB',14000000,12,'images/products/b9572d34-4a3f-470f-9c4b-6036fa14ca2e.webp'),(128,40,'Xám','128GB',9000000,15,'images/products/9c3e992d-356f-48ba-a7dc-617602518c3d.webp'),(129,40,'Xám','256GB',14000000,12,'images/products/9e9367fc-3b46-4280-b1cb-3409ceb002ac.webp'),(130,41,'Xanh','128GB',25000000,31,'images/products/f02ce8c6-f482-4864-978c-6c75dc4e713c.webp'),(131,41,'Xanh','256GB',26998000,31,'images/products/474ee6fc-627e-49d7-96e2-428b27b05e2d.webp'),(132,41,'Xanh','512GB',27000000,31,'images/products/84319501-740f-46be-9e14-cdeb0e7b8b04.webp'),(133,41,'Xanh','1T',20000000,30,'images/products/c06fa7d7-4d8c-4136-adba-c379577bdb3a.webp'),(134,41,'Vàng','1T',22999000,31,'images/products/549f2bac-a0d4-4755-b830-0462b31c5d1d.webp'),(135,41,'Vàng','256GB',21000000,31,'images/products/485ba759-4be7-4af6-b793-ce8e6d75ee70.webp'),(136,41,'Vàng','512GB',26997000,31,'images/products/1d66c29d-6198-4115-acee-30c82dd7eb58.webp'),(137,41,'Vàng','128GB',24998000,37,'images/products/02002b9d-0bd1-45ee-b8a7-c5c8968bf3e3.webp'),(138,42,'MidNight','8GB RAM 256GB SSD',17000000,12,'images/products/63c81b8d-58dc-42c0-bdc9-687e6a5d960e.jpeg'),(139,42,'Sliver','8GB RAM 256GB SSD',18000000,12,'images/products/475350b7-3f27-4b29-9a5b-1e73c2b44246.jpeg'),(140,42,'Starlight','8GB RAM 256GB SSD',16000000,12,'images/products/1a9c86f3-18ad-411f-9cf4-4da6b2988950.jpeg'),(141,42,'Gray','8GB RAM 256GB SSD',15000000,12,'images/products/c4301a8c-9918-447f-a1bb-09a380838d61.jpeg'),(142,42,'MidNight','8GB RAM 512GB SSD',25000000,23,'images/products/73fc20e3-cc9a-4540-a7be-1cb9b6fb0391.jpeg'),(143,42,'Sliver','8GB RAM 512GB SSD',24998000,33,'images/products/f092c729-2263-4287-9233-3f9b9cae6ea9.jpeg'),(144,42,'Starlight','8GB RAM 512GB SSD',26000000,10,'images/products/8971df73-c25d-4f06-82c8-6ad75bb9a5d1.jpeg'),(145,42,'Gray','8GB RAM 512GB SSD',24001000,32,'images/products/d1440203-428a-4003-b73d-e721a23f98c2.jpeg'),(146,43,'MidNight','16GB RAM 256GB SSD',23000000,38,'images/products/600abbaf-c305-4b2b-b5ce-92312bafd4d3.jpeg'),(147,43,'MidNight','16GB RAM 512GB SSD',27000000,12,'images/products/66e35de8-75a1-4fc2-9978-da2bdb016431.jpeg'),(148,43,'Sliver','16GB RAM 256GB SSD',23000000,24,'images/products/56a657cc-b907-4823-98ca-9a6e5901360e.jpeg'),(149,43,'Sliver','16GB RAM 512GB SSD',26998000,45,'images/products/0d4fc8d1-1b0b-4602-9bc0-ad89bf42cc65.jpeg'),(150,43,'Gray','16GB RAM 256GB SSD',23000000,14,'images/products/22214ca7-43fa-47bb-9b32-a79c389c319a.jpeg'),(151,43,'Gray','16GB RAM 512GB SSD',27000000,23,'images/products/d4332309-a6c7-4071-8ce5-bcbfd45353f9.jpeg'),(152,43,'Starlight','16GB RAM 256GB SSD',22999000,34,'images/products/67b46b0b-bb75-4c9e-8736-2b48ac1ecaf3.jpeg'),(153,43,'Starlight','16GB RAM 512GB SSD',27000000,23,'images/products/0a4790da-040d-4739-bdfb-5c8a496da3f9.jpeg'),(154,44,'MidNight','24GB RAM 256GB SSD',30000000,11,'images/products/9768f8e2-5cad-4f1e-aae6-69ebf9a9163f.jpeg'),(155,44,'Sliver','24GB RAM 256GB SSD',29980000,45,'images/products/cad2d397-70a0-43cf-a8f8-4391f0ca1890.jpeg'),(156,44,'Gray','24GB RAM 256GB SSD',30000000,21,'images/products/9fc9b927-d22d-487a-aa91-c79ffd2d2f3c.jpeg'),(157,44,'Starlight','24GB RAM 256GB SSD',30000000,21,'images/products/f4edc0d6-3589-4d25-a81d-dddfb0fc7b10.jpeg'),(158,44,'MidNight','24GB RAM 512GB SSD',35000000,46,'images/products/b1ee902a-04d5-4db5-a2eb-107703f4f626.jpeg'),(159,44,'Sliver','24GB RAM 512GB SSD',35000000,21,'images/products/e878405b-d327-4aa5-bd44-f6c5527e07ce.jpeg'),(160,44,'Gray','24GB RAM 512GB SSD',35000000,13,'images/products/ce4035ca-7cc9-47a1-900c-a5309c2eba2f.jpeg'),(161,44,'Starlight','24GB RAM 512GB SSD',35000000,34,'images/products/dbd1358a-8f70-4fe5-95cd-f59a72e875f8.jpeg'),(162,45,'MidNight','16GB RAM 512GB SSD',30000000,14,'images/products/6ff32713-0c94-4210-b5bf-79f0f9b79813.jpeg'),(163,45,'Sliver','16GB RAM 512GB SSD',30000000,11,NULL),(164,45,'Sky blue','16GB RAM 512GB SSD',30000000,16,'images/products/34ccd9af-de73-440c-ad69-8c8cfabee28e.jpeg'),(165,45,'Starlight','16GB RAM 512GB SSD',30000000,14,'images/products/4754c07c-992d-40c0-b927-df8f19c87f64.jpeg'),(166,45,'Starlight','16GB RAM 1T SSD',35000000,14,'images/products/08da6284-1d95-4697-867f-b907664f34f8.jpeg'),(167,45,'Sky blue','16GB RAM 1T SSD',35000000,14,'images/products/ed0c070a-ad75-4611-bd25-249693244d86.jpeg'),(168,45,'Sliver','16GB RAM 1T SSD',35000000,12,'images/products/f85e9e0b-018e-4ced-830d-ef973d52632a.jpeg'),(169,45,'MidNight','16GB RAM 1T SSD',35000000,12,'images/products/cf16bdaf-eaaa-4dc3-9d43-5b9a38a75c28.jpeg'),(170,46,'Sliver','8GB RAM 256GB SSD',18000000,33,'images/products/281e0133-8384-4520-b6b9-ed78ea78e3cb.jpeg'),(171,46,'Indigo','8GB RAM 256GB SSD',17998000,221,'images/products/58c71a1e-3bf4-4f2b-bf83-f1e3bb4fbbae.jpeg'),(172,46,'Citrus','8GB RAM 256GB SSD',18000000,23,'images/products/b4ad1ca8-0781-476d-b892-4bf1da0a1a22.jpeg'),(173,46,'Blush','8GB RAM 256GB SSD',18000000,21,'images/products/0344c299-f57c-4a0d-a8b2-dfe8d59dc091.jpeg'),(174,46,'Sliver','8GB RAM 512GB SSD',24000000,32,'images/products/538f7b00-75f8-45e1-94f0-dc8015d0735d.jpeg'),(175,46,'Indigo','8GB RAM 512GB SSD',24000000,11,'images/products/4d0145fa-534f-4ee0-bc80-f6cf2f6d872c.jpeg'),(176,46,'Citrus','8GB RAM 512GB SSD',24000000,14,'images/products/a0a99d76-f934-4a61-afbd-d9380d83ae48.jpeg'),(177,46,'Blush','8GB RAM 512GB SSD',24000000,51,'images/products/78c4eea5-a037-42e6-883e-4186579b30ab.jpeg'),(178,47,'Gray','8GB RAM 256GB SSD',14000000,11,'images/products/eae0ac73-fc9f-42cf-ad34-42ff79f4fad3.jpeg'),(179,47,'Sliver','8GB RAM 256GB SSD',14000000,23,'images/products/b34d9b1a-c506-480a-b360-6ee72890674a.jpeg'),(180,47,'Gray','8GB RAM 512GB SSD',19000000,43,'images/products/0b63ff44-66f8-41df-a6f5-1da01dcca6ad.jpeg'),(181,47,'Sliver','8GB RAM 512GB SSD',18000000,34,'images/products/1ad6c1e3-fd40-4508-a7a1-540fced7d997.jpeg'),(182,48,'Sliver','16GB RAM 512GB SSD',40000000,53,'images/products/d049254a-4131-4166-9191-c07f3c2cf1d9.png'),(183,48,'Black','16GB RAM 512GB SSD',40000000,21,'images/products/e569185e-0960-4e0d-9ece-86fc7d38a634.png'),(184,48,'Sliver','16GB RAM 1T SSD',47000000,12,'images/products/b5365eed-91c0-42d3-9b20-eaeaf8d32572.png'),(185,48,'Black','16GB RAM 1T SSD',47000000,22,'images/products/2303766a-e529-4427-80fc-6406cf125213.png'),(186,49,'Sliver','8GB RAM 512GB SSD',30000000,21,'images/products/95616172-9b51-4ed7-ae5d-f094603aceaf.png'),(187,49,'Sliver','8GB RAM 256GB SSD',25000000,31,'images/products/aab23a66-60b6-47d4-b675-12d5f24019d4.png'),(188,49,'Black','8GB RAM 512GB SSD',30000000,34,'images/products/0e6943d6-3fca-40f4-b2d8-2fb24d201a55.png'),(189,49,'Black','8GB RAM 256GB SSD',25003000,51,'images/products/ad94b10e-8e24-4f33-a0a9-a9694d87eb01.png'),(190,50,'Sliver','8GB RAM 256GB SSD',34000000,44,'images/products/7aa48c8d-37e6-4615-8074-455be7f943fd.png'),(191,50,'Black','8GB RAM 256GB SSD',34000000,13,'images/products/9836fdb3-ed1e-4836-b633-a01d0dbe1404.png'),(192,50,'Sliver','8GB RAM 512GB SSD',43000000,11,'images/products/7bde677c-cd06-45c6-91ec-920eb41a4345.png'),(193,50,'Black','8GB RAM 512GB SSD',43000000,32,'images/products/c7649c44-87c5-4cbb-aba2-7d2500513db0.png'),(194,51,'Vàng','128GB',8000000,31,'images/products/40ab1d62-ed11-48d2-95ee-4f2af5f5d54b.webp'),(195,51,'Trắng','128GB',8000000,31,'images/products/30f734f2-6727-4218-866a-b3129a92397d.webp'),(196,51,'Đen','128GB',8000000,12,'images/products/efcb4b3b-772a-4beb-bd7c-d995f0e1ad14.webp'),(197,51,'Vàng','64GB',12000000,21,'images/products/694afa61-2231-45a7-93c1-35e9dfaf77ef.webp'),(198,51,'Trắng','64GB',12000000,12,'images/products/1a62ede6-dd2d-4266-ad51-763903c62319.webp'),(199,51,'Đen','64GB',12000000,323,'images/products/87aa979a-1ee5-4fa2-9312-5e65f190afe5.webp'),(200,52,'Vàng','128GB',11000000,31,'images/products/2c9d5152-ce86-4383-affa-8d58c2ef0cd7.webp'),(201,52,'Vàng','256GB',14000000,43,'images/products/3eb2320d-da74-4597-8775-948dcb4e08ab.webp'),(202,52,'Xanh Đậm','128GB',11000000,34,'images/products/ed679305-e13e-4f94-98c7-acc51fea1b1d.webp'),(203,52,'Xanh Đậm','256GB',14000000,3,'images/products/cd0149e2-46bd-4979-a357-5f0f5b89b8e0.webp'),(204,52,'Trắng','256GB',13000000,23,'images/products/a16e3f52-7965-4a92-92ff-a9cbeec0a31e.webp'),(205,52,'Trắng','128GB',10000000,11,'images/products/ea20272d-3d13-4bb0-b72e-90248bd39384.webp'),(206,52,'Xám','256GB',13000000,32,'images/products/3bd33b43-1d19-4ed1-9dd3-61ad7c796d12.webp'),(207,52,'Xám','128GB',10000000,31,'images/products/8526d378-1d80-415f-9a4a-476f8d86f8e5.webp');
 /*!40000 ALTER TABLE `product_variants` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -461,15 +280,15 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `products`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `products` (
-  `product_id` int(11) NOT NULL AUTO_INCREMENT,
+  `product_id` int NOT NULL AUTO_INCREMENT,
   `manufacturer` varchar(255) NOT NULL,
   `product_name` varchar(255) NOT NULL,
   `product_condition` varchar(255) NOT NULL,
   `product_info` varchar(255) DEFAULT NULL,
-  `category_id` int(11) NOT NULL,
-  `discount` int(11) DEFAULT '0',
+  `category_id` int NOT NULL,
+  `discount` int DEFAULT '0',
   PRIMARY KEY (`product_id`),
   KEY `FKog2rp4qthbtt2lfyhfo32lsw9` (`category_id`),
   KEY `idx_products_category` (`category_id`),
@@ -489,52 +308,17 @@ INSERT INTO `products` VALUES (10,'APPLE','iPhone 17 Pro','Mới','iPhone 17 Pro
 UNLOCK TABLES;
 
 --
--- Table structure for table `review`
---
-
-DROP TABLE IF EXISTS `review`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
-CREATE TABLE `review` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `admin_reply` text,
-  `admin_reply_at` datetime(6) DEFAULT NULL,
-  `comment` varchar(255) DEFAULT NULL,
-  `created_at` datetime(6) DEFAULT NULL,
-  `is_approved` bit(1) DEFAULT NULL,
-  `rating` int(11) DEFAULT NULL,
-  `updated_at` datetime(6) DEFAULT NULL,
-  `product_id` int(11) DEFAULT NULL,
-  `user_id` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `FKiyof1sindb9qiqr9o8npj8klt` (`product_id`),
-  KEY `FKiyf57dy48lyiftdrf7y87rnxi` (`user_id`),
-  CONSTRAINT `FKiyf57dy48lyiftdrf7y87rnxi` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
-  CONSTRAINT `FKiyof1sindb9qiqr9o8npj8klt` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `review`
---
-
-LOCK TABLES `review` WRITE;
-/*!40000 ALTER TABLE `review` DISABLE KEYS */;
-/*!40000 ALTER TABLE `review` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `reviews`
 --
 
 DROP TABLE IF EXISTS `reviews`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `reviews` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) NOT NULL,
-  `product_id` int(11) NOT NULL,
-  `rating` int(11) NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `product_id` int NOT NULL,
+  `rating` int NOT NULL,
   `comment` text,
   `admin_reply` text,
   `admin_reply_at` timestamp NULL DEFAULT NULL,
@@ -565,13 +349,13 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `shipping_step`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `shipping_step` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int NOT NULL AUTO_INCREMENT,
   `status_description` text,
   `status_name` varchar(255) DEFAULT NULL,
   `updated_date` date DEFAULT NULL,
-  `order_id` int(11) DEFAULT NULL,
+  `order_id` int DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `FK3w5ot1t6rws0euaesgq46rddg` (`order_id`),
   CONSTRAINT `FK3w5ot1t6rws0euaesgq46rddg` FOREIGN KEY (`order_id`) REFERENCES `order` (`order_id`)
@@ -588,39 +372,14 @@ LOCK TABLES `shipping_step` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `slider_image`
---
-
-DROP TABLE IF EXISTS `slider_image`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
-CREATE TABLE `slider_image` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `display_order` int(11) DEFAULT NULL,
-  `image_url` text,
-  `is_active` bit(1) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `slider_image`
---
-
-LOCK TABLES `slider_image` WRITE;
-/*!40000 ALTER TABLE `slider_image` DISABLE KEYS */;
-/*!40000 ALTER TABLE `slider_image` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `slider_images`
 --
 
 DROP TABLE IF EXISTS `slider_images`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `slider_images` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int NOT NULL AUTO_INCREMENT,
   `image_url` varchar(500) NOT NULL,
   `is_active` tinyint(1) DEFAULT '1',
   PRIMARY KEY (`id`)
@@ -643,11 +402,11 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `user_likes`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `user_likes` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `customer_id` int(11) NOT NULL,
-  `product_id` int(11) NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `customer_id` int NOT NULL,
+  `product_id` int NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `unique_like` (`customer_id`,`product_id`),
   KEY `fk_user_likes_product` (`product_id`),
@@ -672,9 +431,9 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `users`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `users` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int NOT NULL AUTO_INCREMENT,
   `password` varchar(255) DEFAULT NULL,
   `username` varchar(255) NOT NULL,
   `role_name` varchar(255) DEFAULT NULL,
@@ -686,7 +445,7 @@ CREATE TABLE `users` (
   `shipping_address` text,
   `customer_phone` varchar(20) DEFAULT NULL,
   `note` text,
-  `district_id` int(11) DEFAULT NULL,
+  `district_id` int DEFAULT NULL,
   `ward_code` varchar(20) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `UKr43af9ap4edm43mmtq01oddj6` (`username`),
@@ -714,4 +473,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-06-01 22:35:11
+-- Dump completed on 2026-06-02  1:33:16

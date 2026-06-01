@@ -12,4 +12,6 @@ import lombok.AllArgsConstructor;
 public class Category {
     private Integer categoryId;
     private String categoryName;
+    private String content;
+    private String imageUrl;
 }
