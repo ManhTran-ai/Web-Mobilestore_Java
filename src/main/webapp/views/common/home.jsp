@@ -151,42 +151,17 @@
     <div class="container">
         <h2 style="text-align:center; margin-bottom:1.25rem;">Khám Phá Sản Phẩm</h2>
         <div class="categories-grid">
-            <a class="category-tile" href="${pageContext.request.contextPath}/products?category=1">
-                <div class="category-image">
-                    <img src="${pageContext.request.contextPath}/images/iPhone.png" alt="iPhone">
-                </div>
-                <div class="category-meta">
-                    <h3>iPhone</h3>
-                    <p>Tuyệt tác công nghệ và nhiếp ảnh</p>
-                </div>
-            </a>
-            <a class="category-tile" href="${pageContext.request.contextPath}/products?category=2">
-                <div class="category-image">
-                    <img src="${pageContext.request.contextPath}/images/Macbook.png" alt="Macbook">
-                </div>
-                <div class="category-meta">
-                    <h3>Macbook</h3>
-                    <p>Đỉnh cao hiệu năng và sáng tạo</p>
-                </div>
-            </a>
-            <a class="category-tile" href="${pageContext.request.contextPath}/products?category=3">
-                <div class="category-image">
-                    <img src="${pageContext.request.contextPath}/images/Apple_Watch.png" alt="Apple Watch">
-                </div>
-                <div class="category-meta">
-                    <h3>Apple Watch</h3>
-                    <p>Người đồng hành cho sức khỏe</p>
-                </div>
-            </a>
-            <a class="category-tile" href="${pageContext.request.contextPath}/products?category=4">
-                <div class="category-image">
-                    <img src="${pageContext.request.contextPath}/images/iPad.png" alt="iPad">
-                </div>
-                <div class="category-meta">
-                    <h3>iPad</h3>
-                    <p>Đa năng, mỏng nhẹ và mạnh mẽ</p>
-                </div>
-            </a>
+            <c:forEach var="cat" items="${categories}">
+                <a class="category-tile" href="${pageContext.request.contextPath}/products?category=${cat.categoryId}">
+                    <div class="category-image">
+                        <img src="${pageContext.request.contextPath}/${cat.imageUrl}" alt="${cat.categoryName}">
+                    </div>
+                    <div class="category-meta">
+                        <h3>${cat.categoryName}</h3>
+                        <p>${cat.content}</p>
+                    </div>
+                </a>
+            </c:forEach>
         </div>
     </div>
 </section>
