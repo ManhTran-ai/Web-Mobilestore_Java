@@ -7,28 +7,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chi tiết người dùng #${user.id} - Trang quản lý</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/admin-layout.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; background: #f5f5f7; color: #1a1a1a; }
-        .admin-container { display: flex; min-height: 100vh; }
-        .sidebar { width: 260px; background: #1a1a1a; color: #fff; padding: 2rem 0; position: fixed; height: 100vh; }
-        .sidebar-header { padding: 0 1.5rem 2rem; border-bottom: 1px solid #333; margin-bottom: 1rem; }
-        .sidebar-header h2 { font-size: 1.25rem; }
-        .sidebar-header span { font-size: 0.875rem; color: #888; }
-        .sidebar-nav { list-style: none; }
-        .sidebar-nav a { display: block; padding: 0.875rem 1.5rem; color: #ccc; text-decoration: none; }
-        .sidebar-nav a:hover, .sidebar-nav a.active { background: #333; color: #fff; border-left: 3px solid #0071e3; }
-        .main-content { flex: 1; margin-left: 260px; padding: 2rem; }
         .breadcrumb { display: flex; gap: 0.5rem; margin-bottom: 1rem; font-size: 0.9rem; }
         .breadcrumb a { color: #0071e3; text-decoration: none; }
         .breadcrumb span { color: #888; }
-        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
-        .page-header h1 { font-size: 1.75rem; font-weight: 600; }
-        .header-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; }
-        .btn { display: inline-flex; align-items: center; padding: 0.75rem 1.25rem; border-radius: 8px; font-size: 0.95rem; font-weight: 500; text-decoration: none; border: none; cursor: pointer; font-family: inherit; }
-        .btn-primary { background: #0071e3; color: #fff; }
-        .btn-secondary { background: #e5e5ea; color: #1a1a1a; }
-        .btn-danger { background: #ff3b30; color: #fff; }
         .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
         .detail-card { background: #fff; border-radius: 12px; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
         .detail-card h3 { font-size: 1rem; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid #e5e5ea; }
@@ -42,7 +25,7 @@
         .status-badge.active { background: #d4edda; color: #155724; }
         .status-badge.inactive { background: #fff3cd; color: #856404; }
         .status-badge.deleted { background: #f8d7da; color: #721c24; }
-        @media (max-width: 900px) { .detail-grid { grid-template-columns: 1fr; } .sidebar { display: none; } .main-content { margin-left: 0; } }
+        @media (max-width: 900px) { .detail-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>

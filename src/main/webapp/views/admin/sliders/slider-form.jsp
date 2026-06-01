@@ -6,27 +6,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${isEdit ? 'Sửa Slider' : 'Thêm Slider'} - Trang quản lý</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/admin-layout.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #1a1a1a; background-color: #f5f5f7; }
-        .admin-container { display: flex; min-height: 100vh; }
-        .sidebar { width: 260px; background: #1a1a1a; color: #ffffff; padding: 2rem 0; position: fixed; height: 100vh; overflow-y: auto; }
-        .sidebar-header { padding: 0 1.5rem 2rem; border-bottom: 1px solid #333; margin-bottom: 1rem; }
-        .sidebar-header h2 { font-size: 1.25rem; font-weight: 600; color: #ffffff; }
-        .sidebar-header span { font-size: 0.875rem; color: #888; }
-        .sidebar-nav { list-style: none; }
-        .sidebar-nav li { margin: 0.25rem 0; }
-        .sidebar-nav a { display: flex; align-items: center; padding: 0.875rem 1.5rem; color: #ccc; text-decoration: none; transition: all 0.2s; font-size: 0.95rem; }
-        .sidebar-nav a:hover, .sidebar-nav a.active { background: #333; color: #ffffff; }
-        .sidebar-nav a.active { border-left: 3px solid #0071e3; }
-        .sidebar-nav .icon { margin-right: 0.75rem; font-size: 1.1rem; }
-        .main-content { flex: 1; margin-left: 260px; padding: 2rem; }
-        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
-        .page-header h1 { font-size: 1.75rem; font-weight: 600; color: #1a1a1a; }
         .breadcrumb { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; font-size: 0.9rem; }
         .breadcrumb a { color: #0071e3; text-decoration: none; }
         .breadcrumb a:hover { text-decoration: underline; }
         .breadcrumb span { color: #888; }
+
         .form-card { background: #ffffff; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 2rem; max-width: 600px; }
         .form-group { margin-bottom: 1.5rem; }
         .form-label { display: block; margin-bottom: 0.5rem; font-weight: 500; color: #1a1a1a; font-size: 0.95rem; }
@@ -37,13 +23,7 @@
         .form-control.is-invalid { border-color: #ff3b30; }
         .help-text { font-size: 0.85rem; color: #888; margin-top: 0.375rem; }
         .form-actions { display: flex; gap: 1rem; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #e5e5ea; }
-        .btn { display: inline-flex; align-items: center; justify-content: center; padding: 0.75rem 1.5rem; border-radius: 8px; font-size: 0.95rem; font-weight: 500; text-decoration: none; cursor: pointer; transition: all 0.2s; border: none; font-family: inherit; }
-        .btn-primary { background: #0071e3 !important; color: #ffffff !important; }
-        .btn-primary:hover { background: #0077ed !important; }
-        .btn-secondary { background: #e5e5ea !important; color: #1a1a1a !important; }
-        .btn-secondary:hover { background: #d1d1d6 !important; }
-        .alert { padding: 1rem 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; font-size: 0.95rem; }
-        .alert-error { background: #fdecea; color: #c62828; border: 1px solid #f5c6cb; }
+
         .image-preview-container { margin-top: 1rem; }
         .current-image { max-width: 100%; max-height: 300px; border-radius: 12px; border: 2px dashed #e5e5ea; object-fit: contain; background: #f9f9fb; }
         .image-upload-area { border: 2px dashed #d1d1d6; border-radius: 12px; padding: 2rem; text-align: center; cursor: pointer; transition: all 0.2s; background: #f9f9fb; }
@@ -55,6 +35,7 @@
         .image-upload-hint { color: #888; font-size: 0.85rem; margin-top: 0.5rem; }
         .file-input-hidden { display: none; }
         .preview-image { max-width: 100%; max-height: 250px; border-radius: 8px; margin-top: 1rem; object-fit: contain; }
+
         .toggle-group { display: flex; align-items: center; gap: 1rem; }
         .toggle-switch { position: relative; display: inline-block; width: 48px; height: 26px; }
         .toggle-switch input { opacity: 0; width: 0; height: 0; }
@@ -64,32 +45,12 @@
         .toggle-switch input:checked + .toggle-slider:before { transform: translateX(22px); }
         .toggle-label { font-size: 0.95rem; color: #666; }
         .toggle-label.active { color: #34c759; font-weight: 500; }
-        @media (max-width: 768px) {
-            .sidebar { display: none; }
-            .main-content { margin-left: 0; }
-            .form-card { padding: 1.5rem; }
-        }
     </style>
 </head>
 <body>
 <div class="admin-container">
-    <aside class="sidebar">
-        <div class="sidebar-header">
-            <h2>Mobile Store</h2>
-            <span>Trang quản lý</span>
-        </div>
-        <nav>
-            <ul class="sidebar-nav">
-                <li><a href="${pageContext.request.contextPath}/"><span class="icon">&#127968;</span> Trang chủ</a></li>
-                <li><a href="${pageContext.request.contextPath}/admin/dashboard"><span class="icon">&#128200;</span> Dashboard</a></li>
-                <li><a href="${pageContext.request.contextPath}/admin/products"><span class="icon">&#128230;</span> Sản phẩm</a></li>
-                <li><a href="${pageContext.request.contextPath}/admin/orders"><span class="icon">&#129534;</span> Đơn hàng</a></li>
-                <li><a href="${pageContext.request.contextPath}/admin/sliders" class="active"><span class="icon">&#127909;</span> Slider Images</a></li>
-                <li><a href="${pageContext.request.contextPath}/admin/reviews"><span class="icon">&#127881;</span> Đánh giá</a></li>
-                <li><a href="${pageContext.request.contextPath}/admin/users"><span class="icon">&#128101;</span> Người dùng</a></li>
-            </ul>
-        </nav>
-    </aside>
+    <c:set var="activeMenu" value="sliders" scope="request"/>
+    <jsp:include page="/views/common/admin-header.jsp"/>
 
     <main class="main-content">
         <div class="breadcrumb">
@@ -133,7 +94,7 @@
                     </c:if>
 
                     <div class="image-upload-area" id="uploadArea">
-                        <div class="image-upload-icon">&#128247;</div>
+                        <div class="image-upload-icon">📷</div>
                         <p class="image-upload-text">
                             <strong>Click để chọn ảnh</strong> hoặc kéo thả ảnh vào đây
                         </p>
@@ -249,16 +210,16 @@
     });
 
     sliderForm.addEventListener('submit', function(e) {
+        <c:choose>
+            <c:when test="${isEdit}">
+            </c:when>
+            <c:otherwise>
         if (!imageInput.files || imageInput.files.length === 0) {
-            <c:choose>
-                <c:when test="${isEdit}">
-                </c:when>
-                <c:otherwise>
-                    e.preventDefault();
-                    alert('Vui lòng chọn hình ảnh slider');
-                </c:otherwise>
-            </c:choose>
+            e.preventDefault();
+            alert('Vui lòng chọn hình ảnh slider');
         }
+            </c:otherwise>
+        </c:choose>
     });
 </script>
 </body>
