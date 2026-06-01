@@ -207,7 +207,13 @@ public class ProductsServlet extends HttpServlet {
         request.setAttribute("filterQuery", buildFilterQuery(normalizedSearch, categoryId, favoritesOnly,
                 priceRangeCode, minPriceParam, maxPriceParam, sortCode));
 
-        request.getRequestDispatcher("/views/products/product-list.jsp").forward(request, response);
+        boolean isAjax = "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
+
+        if (isAjax) {
+            request.getRequestDispatcher("/views/products/shop-main-content.jsp").forward(request, response);
+        } else {
+            request.getRequestDispatcher("/views/products/product-list.jsp").forward(request, response);
+        }
     }
 
     private List<Product> applyPriceSort(List<Product> products, ProductSortOrder sortOrder) {

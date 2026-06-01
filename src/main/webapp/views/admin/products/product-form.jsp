@@ -1,4 +1,3 @@
-
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <!DOCTYPE html>
@@ -7,27 +6,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${isEdit ? 'Sửa sản phẩm' : 'Thêm sản phẩm'} - Trang quản lý</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/admin-layout.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #1a1a1a; background-color: #f5f5f7; }
-        .admin-container { display: flex; min-height: 100vh; }
-        .sidebar { width: 260px; background: #1a1a1a; color: #ffffff; padding: 2rem 0; position: fixed; height: 100vh; overflow-y: auto; }
-        .sidebar-header { padding: 0 1.5rem 2rem; border-bottom: 1px solid #333; margin-bottom: 1rem; }
-        .sidebar-header h2 { font-size: 1.25rem; font-weight: 600; color: #ffffff; }
-        .sidebar-header span { font-size: 0.875rem; color: #888; }
-        .sidebar-nav { list-style: none; }
-        .sidebar-nav li { margin: 0.25rem 0; }
-        .sidebar-nav a { display: flex; align-items: center; padding: 0.875rem 1.5rem; color: #ccc; text-decoration: none; transition: all 0.2s; font-size: 0.95rem; }
-        .sidebar-nav a:hover, .sidebar-nav a.active { background: #333; color: #ffffff; }
-        .sidebar-nav a.active { border-left: 3px solid #0071e3; }
-        .sidebar-nav .icon { margin-right: 0.75rem; font-size: 1.1rem; }
-        .main-content { flex: 1; margin-left: 260px; padding: 2rem; }
-        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
-        .page-header h1 { font-size: 1.75rem; font-weight: 600; color: #1a1a1a; }
         .breadcrumb { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; font-size: 0.9rem; }
         .breadcrumb a { color: #0071e3; text-decoration: none; }
         .breadcrumb a:hover { text-decoration: underline; }
         .breadcrumb span { color: #888; }
+
         .form-card { background: #ffffff; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 2rem; max-width: 950px; }
         .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 2px solid #e5e5ea; }
         .section-header h3 { font-size: 1.1rem; font-weight: 600; color: #1a1a1a; }
@@ -42,7 +27,7 @@
         .form-control.is-invalid { border-color: #ff3b30; }
         .form-control.is-valid { border-color: #34c759; }
         textarea.form-control { resize: vertical; min-height: 100px; }
-        select.form-control { cursor: pointer; background: #ffffff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 8L1 3h10z'/%3E%3C/svg%3E") no-repeat right 1rem center; -webkit-appearance: none; -moz-appearance: none; appearance: none; padding-right: 2.5rem; }
+        select.form-control { cursor: pointer; background: #fff; padding-right: 2.5rem; }
         .invalid-feedback { display: none; color: #ff3b30; font-size: 0.85rem; margin-top: 0.375rem; }
         .form-control.is-invalid + .invalid-feedback { display: block; }
         .char-counter { font-size: 0.8rem; color: #888; text-align: right; margin-top: 0.25rem; }
@@ -50,23 +35,19 @@
         .char-counter.danger { color: #ff3b30; }
         .help-text { font-size: 0.85rem; color: #888; margin-top: 0.375rem; }
         .form-actions { display: flex; gap: 1rem; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #e5e5ea; }
-        .btn { display: inline-flex; align-items: center; justify-content: center; padding: 0.75rem 1.5rem; border-radius: 8px; font-size: 0.95rem; font-weight: 500; text-decoration: none; cursor: pointer; transition: all 0.2s; border: none; font-family: inherit; }
-        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
-        .btn-primary { background: #0071e3 !important; color: #ffffff !important; }
-        .btn-primary:hover:not(:disabled) { background: #0077ed !important; }
-        .btn-secondary { background: #e5e5ea !important; color: #1a1a1a !important; }
-        .btn-secondary:hover { background: #d1d1d6 !important; }
+
         .btn-add { background: #34c759 !important; color: #fff !important; padding: 0.5rem 1rem; font-size: 0.875rem; }
         .btn-add:hover { background: #2db84d !important; }
         .btn-danger { background: #ff3b30 !important; color: #fff !important; padding: 0.5rem 1rem; font-size: 0.875rem; }
         .btn-danger:hover { background: #e0352b !important; }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
         .spinner { display: none; width: 18px; height: 18px; border: 2px solid #ffffff; border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite; margin-right: 6px; }
         @keyframes spin { to { transform: rotate(360deg); } }
         .btn-primary.loading .spinner { display: inline-block; }
-        .alert { padding: 1rem 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; font-size: 0.95rem; }
-        .alert-error { background: #fdecea; color: #c62828; border: 1px solid #f5c6cb; }
+
+        .client-error-box { margin-bottom: 1.5rem; }
         .alert-error ul { margin: 0.5rem 0 0 1.5rem; padding: 0; }
-        .alert-info { background: #e8f4fd; color: #0c5460; border: 1px solid #bee5eb; }
+
         .variant-list { margin-top: 1rem; }
         .variant-card { background: #f9f9fb; border: 1px solid #e5e5ea; border-radius: 10px; padding: 1.25rem; margin-bottom: 1rem; position: relative; transition: box-shadow 0.2s; }
         .variant-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
@@ -86,12 +67,10 @@
         .empty-variants { text-align: center; padding: 2rem; color: #888; background: #f9f9fb; border-radius: 10px; border: 2px dashed #e5e5ea; }
         .empty-variants .icon { font-size: 2rem; margin-bottom: 0.5rem; display: block; }
         .empty-variants p { margin-bottom: 1rem; }
-        .client-error-box { margin-bottom: 1.5rem; }
+
         @media (max-width: 768px) {
             .form-row { grid-template-columns: 1fr; }
             .variant-row { grid-template-columns: 1fr 1fr; }
-            .sidebar { display: none; }
-            .main-content { margin-left: 0; }
         }
         @media (max-width: 480px) {
             .variant-row { grid-template-columns: 1fr; }
@@ -100,23 +79,8 @@
 </head>
 <body>
 <div class="admin-container">
-    <aside class="sidebar">
-        <div class="sidebar-header">
-            <h2>Mobile Store</h2>
-            <span>Trang quản lý</span>
-        </div>
-        <nav>
-            <ul class="sidebar-nav">
-                <li><a href="${pageContext.request.contextPath}/">Trang chủ</a></li>
-                <li><a href="${pageContext.request.contextPath}/admin/dashboard">Dashboard</a></li>
-                <li><a href="${pageContext.request.contextPath}/admin/products" class="active">Sản phẩm</a></li>
-                <li><a href="${pageContext.request.contextPath}/admin/orders">Đơn hàng</a></li>
-                <li><a href="${pageContext.request.contextPath}/admin/sliders">Slider Images</a></li>
-                <li><a href="${pageContext.request.contextPath}/admin/reviews">Đánh giá</a></li>
-                <li><a href="${pageContext.request.contextPath}/admin/users">Người dùng</a></li>
-            </ul>
-        </nav>
-    </aside>
+    <c:set var="activeMenu" value="products" scope="request"/>
+    <jsp:include page="/views/common/admin-header.jsp"/>
 
     <main class="main-content">
         <div class="breadcrumb">
@@ -236,13 +200,13 @@
                 <div class="section-header" style="margin-top:2rem;">
                     <h3>Phiên bản sản phẩm <span class="badge" id="variantCount">0</span></h3>
                     <button type="button" class="btn btn-add" onclick="addVariant()">
-                        &#43; Thêm phiên bản
+                        + Thêm phiên bản
                     </button>
                 </div>
 
                 <div id="variantList" class="variant-list">
                     <div class="empty-variants" id="emptyVariantsMsg">
-                        <span class="icon">&#128230;</span>
+                        <span class="icon">📦</span>
                         <p>Chưa có phiên bản nào. Nhấn <strong>"Thêm phiên bản"</strong> để bắt đầu.</p>
                     </div>
                 </div>
@@ -381,7 +345,7 @@
                 '<div class="variant-card-title">' +
                 '<span class="variant-num">Phiên bản #' + (idx + 1) + '</span>' +
                 '</div>' +
-                '<button type="button" class="variant-delete-btn" onclick="removeVariant(' + idx + ')" title="Xóa phiên bản">&#215;</button>' +
+                '<button type="button" class="variant-delete-btn" onclick="removeVariant(' + idx + ')" title="Xóa phiên bản">&times;</button>' +
                 '</div>' +
                 '<div class="variant-card-body">' +
                 '<div class="variant-row">' +
@@ -414,8 +378,8 @@
                 '<input type="file" id="variantImage_' + idx + '" name="variantImage_' + idx + '" ' +
                 'class="file-input-hidden" accept=".jpg,.jpeg,.png,.gif,.webp" ' +
                 'onchange="previewVariantImage(' + idx + ', this)">' +
-                '<input type="button" class="form-control" style="cursor:pointer;background:#f5f5f7;font-size:0.875rem;" ' +
-                'value="' + (data.variantImage ? '&#8635; Thay đổi ảnh' : 'Chọn ảnh phiên bản') + '" ' +
+                '<input type="button" class="form-control" style="cursor:pointer;background:#f5f5f5;font-size:0.875rem;" ' +
+                'value="' + (data.variantImage ? '↻ Thay đổi ảnh' : 'Chọn ảnh phiên bản') + '" ' +
                 'onclick="document.getElementById(\'variantImage_' + idx + '\').click()">' +
                 '</div>' +
                 '</div>' +
@@ -605,3 +569,5 @@
 
     })();
 </script>
+</body>
+</html>

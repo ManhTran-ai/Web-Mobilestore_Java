@@ -1,48 +1,17 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
-<style>
-    .user-pill {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 8px 10px;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        border-radius: 999px;
-        background: rgba(255, 255, 255, 0.08);
-        color: #fff;
-        text-decoration: none;
-    }
-
-    .user-pill:hover {
-        background: rgba(255, 255, 255, 0.15);
-    }
-
-    .user-avatar {
-        width: 26px;
-        height: 26px;
-        border-radius: 50%;
-        border: 1px solid rgba(255, 255, 255, 0.35);
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 13px;
-    }
-
-    .user-name {
-        font-weight: 600;
-    }
-</style>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/user-layout.css">
 <header class="header">
     <div class="container">
         <div class="header-content">
-            <div class="logo">Mobile Store</div>
+            <a href="${pageContext.request.contextPath}/" class="logo">Mobile Store</a>
             <nav class="nav">
-                <a href="${pageContext.request.contextPath}/">Trang Chủ</a>
-                <a href="${pageContext.request.contextPath}/products">Sản Phẩm</a>
-                <a href="${pageContext.request.contextPath}/cart">Giỏ Hàng(<span id="cartCount">0</span>)</a>
+                <a href="${pageContext.request.contextPath}/" ${activePage == 'home' ? 'style="font-weight:600;"' : ''}>Trang Chủ</a>
+                <a href="${pageContext.request.contextPath}/products" ${activePage == 'products' ? 'style="font-weight:600;"' : ''}>Sản Phẩm</a>
+                <a href="${pageContext.request.contextPath}/cart" ${activePage == 'cart' ? 'style="font-weight:600;"' : ''}>Giỏ Hàng(<span id="cartCount">0</span>)</a>
                 <c:choose>
                     <c:when test="${not empty sessionScope.user}">
-                        <c:if test="${sessionScope.user.roleName == 'ADMIN'}">
+                        <c:if test="${sessionScope.user.roleName == 'ADMIN' || sessionScope.user.roleName == 'INVENTORY_MANAGER'}">
                             <a href="${pageContext.request.contextPath}/admin/inventory" style="color:#0071e3;">Trang Quản Lý</a>
                         </c:if>
                         <a class="user-pill" href="${pageContext.request.contextPath}/profile">

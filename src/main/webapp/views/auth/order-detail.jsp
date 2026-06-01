@@ -7,91 +7,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chi tiết đơn hàng #${userOrder.orderId}</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/user-layout.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
             background: #f4f5f7;
-            color: #1a1a1a;
-            line-height: 1.6;
-            min-height: 100vh;
-        }
-
-        .header {
-            background: #1a1a1a;
-            border-bottom: none;
-            height: 72px;
-            padding: 0;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .container {
-            max-width: 1343px;
-            margin: 0 auto;
-            padding: 0 24px;
-        }
-
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            height: 100%;
-        }
-
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #ffffff;
-            letter-spacing: -0.5px;
-            display: flex;
-            align-items: center;
-            height: 72px;
-            text-decoration: none;
-        }
-
-        .nav {
-            display: flex;
-            gap: 2rem;
-            align-items: center;
-        }
-
-        .nav a {
-            color: #ffffff;
-            text-decoration: none;
-            font-size: 0.95rem;
-            font-weight: 400;
-            transition: opacity 0.2s;
-            display: inline-flex;
-            align-items: center;
-            height: 72px;
-            line-height: normal;
-        }
-
-        .nav a:hover {
-            opacity: 0.7;
-        }
-
-        .user-avatar {
-            width: 26px;
-            height: 26px;
-            border-radius: 50%;
-            border: 1px solid rgba(255, 255, 255, 0.35);
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 13px;
-        }
-        .user-name{
-            font-weight: 600;
-            margin-left: 10px;
-
         }
 
         .page {
@@ -451,50 +372,11 @@
         }
     </style>
 </head>
+<c:set var="activePage" value="profile" scope="request"/>
 <body>
-    <c:if test="${not empty param.cancelled}">
-        <div class="toast-container">
-            <div class="toast success">
-                <span>&#10003;</span> Đơn hàng đã được hủy thành công!
-            </div>
-        </div>
-    </c:if>
-    <c:if test="${not empty param.cancelFailed}">
-        <div class="toast-container">
-            <div class="toast error">
-                <span>&#10007;</span> Không thể hủy đơn hàng này!
-            </div>
-        </div>
-    </c:if>
-    <header class="header">
-        <div class="container">
-            <div class="header-content">
-                <a href="${pageContext.request.contextPath}/" class="logo">Mobile Store</a>
-                <nav class="nav">
-                    <a href="${pageContext.request.contextPath}/">Trang Chủ</a>
-                    <a href="${pageContext.request.contextPath}/products">Sản Phẩm</a>
-                    <a href="${pageContext.request.contextPath}/cart">Giỏ Hàng(<span id="cartCount">0</span>)</a>
-                    <c:choose>
-                        <c:when test="${not empty sessionScope.user}">
-                            <c:if test="${sessionScope.user.roleName == 'ADMIN'}">
-                                <a href="${pageContext.request.contextPath}/admin/products">Trang Quản Lý</a>
-                            </c:if>
-                            <a class="user-pill" href="${pageContext.request.contextPath}/profile">
-                                <span class="user-avatar">👤</span>
-                                <span class="user-name">${sessionScope.user.username}</span>
-                            </a>
-                            <a href="${pageContext.request.contextPath}/logout">Đăng Xuất</a>
-                        </c:when>
-                        <c:otherwise>
-                            <a href="${pageContext.request.contextPath}/login">Đăng Nhập</a>
-                        </c:otherwise>
-                    </c:choose>
-                </nav>
-            </div>
-        </div>
-    </header>
+<jsp:include page="/views/common/header.jsp"/>
 
-    <section class="page">
+<section class="page">
         <h1 class="page-title">
             <a href="${pageContext.request.contextPath}/profile?tab=orders">Đơn hàng của tôi</a>
             <span>/</span>
@@ -677,7 +559,9 @@
         </div>
     </section>
 
-    <script>
+<jsp:include page="/views/common/footer.jsp"/>
+
+<script>
         function refreshCartCount() {
             fetch('${pageContext.request.contextPath}/cart/count')
                 .then(r => r.json())
