@@ -50,6 +50,7 @@ public class HomeServlet extends HttpServlet {
             com.mobilestore.service.ProductService productService = new com.mobilestore.service.impl.ProductServiceImpl();
             com.mobilestore.service.SliderImageService sliderService = new com.mobilestore.service.impl.SliderImageServiceImpl();
             com.mobilestore.dao.UserLikeDAO userLikeDAO = new com.mobilestore.dao.UserLikeDAO();
+            com.mobilestore.dao.CategoryDAO categoryDAO = new com.mobilestore.dao.CategoryDAO();
 
             java.util.List<com.mobilestore.entity.Product> products = productService.findByPage(1, 5, null, null, null).getContent();
 
@@ -60,6 +61,9 @@ public class HomeServlet extends HttpServlet {
 
             java.util.List<com.mobilestore.entity.SliderImage> activeSliders = sliderService.findActive();
             request.setAttribute("sliderImages", activeSliders);
+
+            java.util.List<com.mobilestore.entity.Category> categories = categoryDAO.findAll();
+            request.setAttribute("categories", categories);
 
             jakarta.servlet.http.HttpSession session = request.getSession(false);
             if (session != null && session.getAttribute("user") != null) {

@@ -69,6 +69,33 @@
                     <p class="help-text">Tối đa 255 ký tự. Tên danh mục phải là duy nhất.</p>
                 </div>
 
+                <div class="form-group">
+                    <label class="form-label" for="content">
+                        Mô tả
+                    </label>
+                    <textarea class="form-control"
+                              id="content"
+                              name="content"
+                              rows="3"
+                              maxlength="500"
+                              placeholder="Nhập mô tả danh mục">${category.content}</textarea>
+                    <p class="help-text">Tối đa 500 ký tự.</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="imageUrl">
+                        Đường dẫn hình ảnh
+                    </label>
+                    <input type="text"
+                           class="form-control"
+                           id="imageUrl"
+                           name="imageUrl"
+                           value="${category.imageUrl}"
+                           placeholder="images/categories/example.png"
+                           maxlength="255">
+                    <p class="help-text">Ví dụ: images/categories/iphone.png. Hình ảnh đặt trong thư mục src/main/webapp/images/categories/</p>
+                </div>
+
                 <div class="form-actions">
                     <button type="submit" class="btn btn-primary">
                         ${isEdit ? 'Cập nhật' : 'Thêm danh mục'}
