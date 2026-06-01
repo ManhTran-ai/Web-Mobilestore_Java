@@ -281,8 +281,8 @@ DROP TABLE IF EXISTS `otp_tokens`;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `otp_tokens` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `otp_code` varchar(6) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `otp_code` varchar(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `expired_at` datetime NOT NULL,
   `is_used` tinyint(1) NOT NULL DEFAULT '0',
@@ -714,4 +714,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-06-01 10:05:25
+-- Dump completed on 2026-06-01 22:30:23
