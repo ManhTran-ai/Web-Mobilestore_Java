@@ -10,20 +10,8 @@
     <title>${product.productName} - Mobile Store</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/user-layout.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; background: #fff; color: #1a1a1a; }
-        .container { max-width: 1345px; margin: 0 auto; padding: 0 24px; }
-        .header { background: #1a1a1a; height: 72px; padding: 0; position: sticky; top: 0; z-index: 100; }
-        .header-content { display: flex; justify-content: space-between; align-items: center; height: 100%; }
-        .logo { font-size: 1.5rem; font-weight: 600; color: #fff; letter-spacing: -0.5px; display: flex; align-items: center; height: 72px; }
-        .nav { display: flex; gap: 2rem; align-items: center; }
-        .nav a { color: #fff; text-decoration: none; font-size: 0.95rem; font-weight: 400; transition: opacity 0.2s; display: inline-flex; align-items: center; height: 72px; line-height: normal; }
-        .nav a:hover { opacity: 0.7; }
-        .user-pill { display: inline-flex; align-items: center; gap: 8px; padding: 8px 10px; }
-        .user-pill:hover { background: rgba(255,255,255,0.15); }
-        .user-avatar { width: 26px; height: 26px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.35); display: inline-flex; align-items: center; justify-content: center; font-size: 13px; }
-        .user-name { font-weight: 600; }
         .product-detail { padding: 2rem 0; display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
         .product-image-section { border: 1px solid #e5e5ea; border-radius: 12px; padding: 2rem; background: #fff; text-align: center; position: sticky; top: 90px; }
         #mainProductImage { max-width: 100%; height: 400px; object-fit: contain; display: block; margin: 0 auto; }
@@ -61,10 +49,6 @@
         .product-description h3 { font-size: 1.2rem; font-weight: 600; margin-bottom: 1rem; color: #1a1a1a; }
         .product-description p { line-height: 1.6; color: #333; }
         .actions { display: flex; gap: 1rem; align-items: center; }
-        .btn { display: inline-block; padding: 0.75rem 1.5rem; border-radius: 8px; background: #000 !important; color: #fff !important; text-decoration: none; font-weight: 500; transition: opacity 0.2s; border: none; cursor: pointer; font-size: 1rem; }
-        .btn:hover { opacity: 0.8; }
-        .btn.secondary { background: #e5e5ea !important; color: #1a1a1a !important; }
-        .btn:disabled { background: #ccc !important; cursor: not-allowed; }
         .related-products { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid #e5e5ea; }
         .related-products h2 { font-size: 1.5rem; font-weight: 600; margin-bottom: 1.5rem; color: #1a1a1a; }
         .related-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; }
@@ -85,56 +69,6 @@
             .related-grid { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
         }
 
-        .wishlist-btn {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            background: rgba(255, 255, 255, 0.9);
-            border: 1px solid #eee;
-            border-radius: 50%;
-            width: 36px;
-            height: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 20px;
-            color: #ccc;
-            transition: all 0.3s ease;
-            z-index: 10;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .wishlist-btn:hover {
-            transform: scale(1.1);
-            color: #ff3b30;
-        }
-        .wishlist-btn.active {
-            color: #ff3b30;
-        }
-        #toast-container {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .toast {
-            background: #000;
-            color: #fff;
-            padding: 12px 24px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            font-size: 14px;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.3s ease;
-        }
-        .toast.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
         .review-section {
             margin-top: 3rem;
             padding-top: 2rem;
@@ -416,37 +350,11 @@
         }
     </style>
 </head>
+<c:set var="activePage" value="products" scope="request"/>
 <body>
-<header class="header">
-    <div class="container">
-        <div class="header-content">
-            <div class="logo">Mobile Store</div>
-            <nav class="nav">
-                <a href="${pageContext.request.contextPath}/">Trang Chủ</a>
-                <a href="${pageContext.request.contextPath}/products" style="color:#fff; font-weight:600;">Sản Phẩm</a>
-                <a href="${pageContext.request.contextPath}/cart">Giỏ Hàng(<span id="cartCount">0</span>)</a>
-                <c:choose>
-                    <c:when test="${not empty sessionScope.user}">
-                        <c:if test="${sessionScope.user.roleName == 'ADMIN'}">
-                            <a href="${pageContext.request.contextPath}/admin/products" style="color:#0071e3;">Trang Quản Lý</a>
-                        </c:if>
-                        <a class="user-pill" href="${pageContext.request.contextPath}/profile">
-                            <span class="user-avatar">👤</span>
-                            <span class="user-name">${sessionScope.user.username}</span>
-                        </a>
-                        <a href="${pageContext.request.contextPath}/logout">Đăng Xuất</a>
-                    </c:when>
-                    <c:otherwise>
-                        <a href="${pageContext.request.contextPath}/register">Đăng Ký</a>
-                        <a href="${pageContext.request.contextPath}/login">Đăng Nhập</a>
-                    </c:otherwise>
-                </c:choose>
-            </nav>
-        </div>
-    </div>
-</header>
+<jsp:include page="/views/common/header.jsp"/>
 
-<main class="container">
+<main class="container" style="padding-top: 2rem;">
     <div class="product-detail">
         <div class="product-image-section" style="position: relative;">
             <c:set var="isLiked" value="false" />
@@ -652,11 +560,11 @@
                     </c:if>
                     <div class="review-edit-form" id="review-edit-${r.id}" style="display:none;">
                         <div class="star-picker" id="edit-star-${r.id}">
-                            <input type="radio" name="editRating${r.id}" id="edit-star5-${r.id}" value="5"><label for="edit-star5-${r.id}" title="5 sao">&#9733;</label>
-                            <input type="radio" name="editRating${r.id}" id="edit-star4-${r.id}" value="4"><label for="edit-star4-${r.id}" title="4 sao">&#9733;</label>
-                            <input type="radio" name="editRating${r.id}" id="edit-star3-${r.id}" value="3"><label for="edit-star3-${r.id}" title="3 sao">&#9733;</label>
-                            <input type="radio" name="editRating${r.id}" id="edit-star2-${r.id}" value="2"><label for="edit-star2-${r.id}" title="2 sao">&#9733;</label>
                             <input type="radio" name="editRating${r.id}" id="edit-star1-${r.id}" value="1"><label for="edit-star1-${r.id}" title="1 sao">&#9733;</label>
+                            <input type="radio" name="editRating${r.id}" id="edit-star2-${r.id}" value="2"><label for="edit-star2-${r.id}" title="2 sao">&#9733;</label>
+                            <input type="radio" name="editRating${r.id}" id="edit-star3-${r.id}" value="3"><label for="edit-star3-${r.id}" title="3 sao">&#9733;</label>
+                            <input type="radio" name="editRating${r.id}" id="edit-star4-${r.id}" value="4"><label for="edit-star4-${r.id}" title="4 sao">&#9733;</label>
+                            <input type="radio" name="editRating${r.id}" id="edit-star5-${r.id}" value="5"><label for="edit-star5-${r.id}" title="5 sao">&#9733;</label>
                         </div>
                         <textarea id="edit-comment-${r.id}" placeholder="Chia sẻ trải nghiệm của bạn..." maxlength="1000">${r.comment}</textarea>
                         <div style="display:flex;gap:8px;margin-top:8px;">
@@ -675,33 +583,7 @@
     </div>
 </main>
 
-<footer class="text-light pt-5 pb-3 mt-5" style="background-color: #000000;">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-3 col-md-6 mb-4">
-                <h5 class="text-uppercase fw-bold mb-4">Mobile Store</h5>
-                <p><i class="fas fa-map-marker-alt me-2"></i> 123 Đường ABC, Quận 1, TP.HCM</p>
-                <p><i class="fas fa-phone-alt me-2"></i> Hotline: 1800.1234</p>
-                <p><i class="fas fa-envelope me-2"></i> support@mobilestore.com</p>
-            </div>
-            <div class="col-lg-3 col-md-6 mb-4">
-                <h5 class="text-uppercase fw-bold mb-4">Chính sách hỗ trợ</h5>
-                <ul class="list-unstyled">
-                    <li class="mb-2"><a href="#" class="text-secondary text-decoration-none">Chính sách bảo hành</a></li>
-                    <li class="mb-2"><a href="#" class="text-secondary text-decoration-none">Chính sách đổi trả</a></li>
-                    <li class="mb-2"><a href="#" class="text-secondary text-decoration-none">Chính sách vận chuyển</a></li>
-                    <li class="mb-2"><a href="#" class="text-secondary text-decoration-none">Bảo mật thông tin</a></li>
-                </ul>
-            </div>
-        </div>
-        <hr class="my-4 border-secondary">
-        <div class="row align-items-center">
-            <div class="col-md-12 text-center">
-                <p class="mb-0 text-secondary">&copy; 2026 Mobile Store. Thiết kế bởi Sinh viên IT.</p>
-            </div>
-        </div>
-    </div>
-</footer>
+<jsp:include page="/views/common/footer.jsp"/>
 
 <div id="toast-container"></div>
 <script>

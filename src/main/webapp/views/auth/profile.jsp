@@ -7,105 +7,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hồ sơ cá nhân</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/user-layout.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
             background: #f4f5f7;
-            color: #1a1a1a;
-            line-height: 1.6;
-            min-height: 100vh;
-        }
-
-        .header {
-            background: #1a1a1a;
-            border-bottom: none;
-            height: 72px;
-            padding: 0;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .container {
-            max-width: 1343px;
-            margin: 0 auto;
-            padding: 0 24px;
-        }
-
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            height: 100%;
-        }
-
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #ffffff;
-            letter-spacing: -0.5px;
-            display: flex;
-            align-items: center;
-            height: 72px;
-            text-decoration: none;
-        }
-
-        .nav {
-            display: flex;
-            gap: 2rem;
-            align-items: center;
-        }
-
-        .nav a {
-            color: #ffffff;
-            text-decoration: none;
-            font-size: 0.95rem;
-            font-weight: 400;
-            transition: opacity 0.2s;
-            display: inline-flex;
-            align-items: center;
-            height: 72px;
-            line-height: normal;
-        }
-
-        .nav a:hover {
-            opacity: 0.7;
-        }
-
-        .user-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 10px;
-            color: #fff;
-            text-decoration: none;
-            transition: background-color 0.2s;
-        }
-
-        .user-pill:hover {
-            background: rgba(255, 255, 255, 0.15);
-            opacity: 1;
-        }
-
-        .user-avatar {
-            width: 26px;
-            height: 26px;
-            border-radius: 50%;
-            border: 1px solid rgba(255, 255, 255, 0.35);
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 13px;
-        }
-
-        .user-name {
-            font-weight: 600;
         }
 
         .page {
@@ -693,65 +600,13 @@
             background: #fecaca;
         }
 
-        #toast-container {
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .toast {
-            background: #1a1a1a;
-            color: #fff;
-            padding: 12px 20px;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            opacity: 0;
-            transform: translateY(12px);
-            transition: all 0.25s ease;
-            max-width: 360px;
-        }
-
-        .toast.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
     </style>
 </head>
+<c:set var="activePage" value="profile" scope="request"/>
 <body>
-    <header class="header">
-        <div class="container">
-            <div class="header-content">
-                <a href="${pageContext.request.contextPath}/" class="logo">Mobile Store</a>
-                <nav class="nav">
-                    <a href="${pageContext.request.contextPath}/">Trang Chủ</a>
-                    <a href="${pageContext.request.contextPath}/products">Sản Phẩm</a>
-                    <a href="${pageContext.request.contextPath}/cart">Giỏ Hàng(<span id="cartCount">0</span>)</a>
-                    <c:choose>
-                        <c:when test="${not empty sessionScope.user}">
-                            <c:if test="${sessionScope.user.roleName == 'ADMIN'}">
-                                <a href="${pageContext.request.contextPath}/admin/products">Trang Quản Lý</a>
-                            </c:if>
-                            <a class="user-pill" href="${pageContext.request.contextPath}/profile">
-                                <span class="user-avatar">👤</span>
-                                <span class="user-name">${sessionScope.user.username}</span>
-                            </a>
-                            <a href="${pageContext.request.contextPath}/logout">Đăng Xuất</a>
-                        </c:when>
-                        <c:otherwise>
-                            <a href="${pageContext.request.contextPath}/register" style="color:#fff; font-weight:600;">Đăng Ký</a>
-                            <a href="${pageContext.request.contextPath}/login">Đăng Nhập</a>
-                        </c:otherwise>
-                    </c:choose>
-                </nav>
-            </div>
-        </div>
-    </header>
+<jsp:include page="/views/common/header.jsp"/>
 
-    <section class="page">
+<section class="page">
         <div class="profile-layout">
             <aside class="sidebar">
                 <div class="user-card">
@@ -785,12 +640,14 @@
 
                     <nav class="tab-nav">
                         <button type="button" class="tab-btn active" data-tab="info">Thông tin chung</button>
-                        <button type="button" class="tab-btn" data-tab="orders">Đơn hàng</button>
+                        <button type="button" class="tab-btn" data-tab="orders">
+                            Đơn hàng
                             <c:if test="${not empty userOrders}">
                                 <span class="badge-count">${userOrders.size()}</span>
                             </c:if>
                         </button>
-                        <button type="button" class="tab-btn" data-tab="favorites">Yêu thích</button>
+                        <button type="button" class="tab-btn" data-tab="favorites">
+                            Yêu thích
                             <c:if test="${not empty favoriteProducts}">
                                 <span class="badge-count">${favoriteProducts.size()}</span>
                             </c:if>
@@ -1018,7 +875,9 @@
         <div id="serverErrorMessage" style="display:none;"><c:out value="${errorMessage}"/></div>
     </c:if>
 
-    <script>
+<jsp:include page="/views/common/footer.jsp"/>
+
+<script>
         function toggleOrder(header) {
             const body = header.nextElementSibling;
             const icon = header.querySelector('.expand-icon');

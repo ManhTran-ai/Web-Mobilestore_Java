@@ -74,6 +74,13 @@ public class OrderConfirmationServlet extends HttpServlet {
             order.setShippingCost(0.0);
         }
 
+        double productSubtotal = 0.0;
+        if (order.getDetails() != null) {
+            for (var d : order.getDetails()) {
+                productSubtotal += (d.getPrice() != null ? d.getPrice() : 0.0) * d.getQuantity();
+            }
+        }
+        req.setAttribute("productSubtotal", productSubtotal);
         req.setAttribute("confirmedOrder", order);
         req.getRequestDispatcher("/views/auth/order-confirmation.jsp").forward(req, resp);
     }
