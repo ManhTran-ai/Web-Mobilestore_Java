@@ -8,6 +8,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Xác nhận đơn hàng - Mobile Store</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/user-layout.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body {
             background: #f4f5f7;
@@ -488,27 +490,26 @@
             </div>
             <div class="order-card-body">
                 <div class="summary-row">
-                    <span class="summary-label">Giá sản phẩm</span>
+                    <span class="summary-label">Tạm tính</span>
                     <span class="summary-value">
-                        <fmt:formatNumber value="${productSubtotal}" type="number" groupingUsed="true"/> đ
+                        <fmt:formatNumber value="${(confirmedOrder.totalAmount != null ? confirmedOrder.totalAmount : 0) - (confirmedOrder.shippingCost != null ? confirmedOrder.shippingCost : 0)}" type="number" groupingUsed="true"/> đ
                     </span>
                 </div>
                 <div class="summary-row">
-                    <span class="summary-label">Giá cước vận chuyển</span>
+                    <span class="summary-label">Phí vận chuyển</span>
                     <span class="summary-value">
-                        <fmt:formatNumber value="${confirmedOrder.shippingCost != null ? confirmedOrder.shippingCost : 0}" type="number" groupingUsed="true"/> đ
-                    </span>
-                </div>
-                <div class="summary-row">
-                    <span class="summary-label">Ưu đãi vận chuyển</span>
-                    <span class="summary-value" style="color: #2e7d32; font-weight: 600;">
-                        -<fmt:formatNumber value="${confirmedOrder.shippingCost != null ? confirmedOrder.shippingCost : 0}" type="number" groupingUsed="true"/> đ
+                        <c:choose>
+                            <c:when test="${confirmedOrder.shippingCost != null && confirmedOrder.shippingCost > 0}">
+                                <fmt:formatNumber value="${confirmedOrder.shippingCost}" type="number" groupingUsed="true"/> đ
+                            </c:when>
+                            <c:otherwise>Miễn phí</c:otherwise>
+                        </c:choose>
                     </span>
                 </div>
                 <div class="summary-row total">
                     <span class="summary-label">Thành tiền</span>
                     <span class="summary-value">
-                        <fmt:formatNumber value="${productSubtotal}" type="number" groupingUsed="true"/> đ
+                        <fmt:formatNumber value="${confirmedOrder.totalAmount != null ? confirmedOrder.totalAmount : 0}" type="number" groupingUsed="true"/> đ
                     </span>
                 </div>
             </div>
