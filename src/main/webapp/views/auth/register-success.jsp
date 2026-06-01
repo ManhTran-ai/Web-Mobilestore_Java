@@ -6,72 +6,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Đăng ký thành công – MobileStore</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/user-layout.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
-            line-height: 1.6;
-            color: #1a1a1a;
-            background-color: #ffffff;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .header {
-            background: #1a1a1a;
-            height: 72px;
-            padding: 0;
-        }
-
-        .container {
-            max-width: 976px;
-            margin: 0 auto;
-            padding: 0 24px;
-        }
-
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            height: 100%;
-        }
-
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #ffffff;
-            letter-spacing: -0.5px;
-            display: flex;
-            align-items: center;
-            height: 72px;
-        }
-
-        .nav {
-            display: flex;
-            gap: 2rem;
-            align-items: center;
-        }
-
-        .nav a {
-            color: #ffffff;
-            text-decoration: none;
-            font-size: 0.95rem;
-            font-weight: 400;
-            transition: opacity 0.2s;
-            display: inline-flex;
-            align-items: center;
-            height: 72px;
-            line-height: normal;
-        }
-
-        .nav a:hover { opacity: 0.7; }
-
         .page {
             flex: 1;
             display: flex;
@@ -233,19 +171,9 @@
         }
     </style>
 </head>
+<c:set var="activePage" value="register-success" scope="request"/>
 <body>
-<header class="header">
-    <div class="container">
-        <div class="header-content">
-            <div class="logo">Mobile Store</div>
-            <nav class="nav">
-                <a href="${pageContext.request.contextPath}/">Trang Chủ</a>
-                <a href="${pageContext.request.contextPath}/products">Sản Phẩm</a>
-                <a href="${pageContext.request.contextPath}/cart">Giỏ Hàng(<span id="cartCount">0</span>)</a>
-            </nav>
-        </div>
-    </div>
-</header>
+<jsp:include page="/views/common/header.jsp"/>
 
 <section class="page">
     <div class="success-card">
@@ -283,6 +211,8 @@
         </p>
     </div>
 </section>
+
+<jsp:include page="/views/common/footer.jsp"/>
 
 <script>
     let seconds = 3;

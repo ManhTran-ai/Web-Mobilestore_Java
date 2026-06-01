@@ -9,106 +9,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <title>Thanh toán - Mobile Store</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/user-layout.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
-            background: #fff;
-            color: #1a1a1a;
-        }
-
-        .container {
-            max-width: 976px;
-            margin: 2rem auto;
-            padding: 0 16px;
-        }
-
-        .header {
-            background: #1a1a1a;
-            border-bottom: none;
-            height: 72px;
-            padding: 0;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            height: 100%;
-            max-width: 1320px;
-            margin: 0 auto;
-            padding: 0 12px;
-        }
-
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #ffffff;
-            letter-spacing: -0.5px;
-            display: flex;
-            align-items: center;
-            height: 72px;
-        }
-
-        .nav {
-            display: flex;
-            gap: 2rem;
-            align-items: center;
-        }
-
-        .nav a {
-            color: #ffffff;
-            text-decoration: none;
-            font-size: 0.95rem;
-            font-weight: 400;
-            transition: opacity 0.2s;
-            display: inline-flex;
-            align-items: center;
-            height: 72px;
-            line-height: normal;
-        }
-
-        .nav a:hover {
-            opacity: 0.7;
-        }
-
-        .user-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 10px;
-            background: rgba(255, 255, 255, 0.08);
-            color: #fff;
-            text-decoration: none;
-        }
-
-        .user-pill:hover {
-            background: rgba(255, 255, 255, 0.15);
-        }
-
-        .user-avatar {
-            width: 26px;
-            height: 26px;
-            border-radius: 50%;
-            border: 1px solid rgba(255, 255, 255, 0.35);
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 13px;
-        }
-
-        .user-name {
-            font-weight: 600;
-        }
-
         .checkout-grid {
             display: grid;
             grid-template-columns: 1fr 380px;
@@ -191,6 +93,11 @@
         textarea.form-control {
             resize: vertical;
             min-height: 80px;
+        }
+
+        textarea.form-control.error {
+            border-color: #dc3545;
+            box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
         }
 
         .order-summary {
@@ -394,24 +301,8 @@
                 grid-template-columns: 1fr;
             }
 
-            .header-content {
-                padding: 0 12px;
-            }
-
-            .nav {
-                gap: 1rem;
-            }
-
-            .nav a {
-                font-size: 0.9rem;
-            }
-
             .container {
                 padding: 0 12px;
-            }
-
-            main.container {
-                padding-top: 80px;
             }
 
             table {
@@ -433,36 +324,11 @@
         }
     </style>
 </head>
+<c:set var="activePage" value="cart" scope="request"/>
 <body>
-<header class="header">
-    <div class="header-content">
-        <div class="logo">Mobile Store</div>
-        <nav class="nav">
-            <a href="${pageContext.request.contextPath}/">Trang Chủ</a>
-            <a href="${pageContext.request.contextPath}/products">Sản Phẩm</a>
-            <a href="${pageContext.request.contextPath}/cart">Giỏ Hàng(<span id="cartCount">0</span>)</a>
-            <c:choose>
-                <c:when test="${not empty sessionScope.user}">
-                    <c:if test="${sessionScope.user.roleName == 'ADMIN'}">
-                        <a href="${pageContext.request.contextPath}/admin/products" style="color:#0071e3;">Trang Quản
-                            Lý</a>
-                    </c:if>
-                    <a class="user-pill" href="${pageContext.request.contextPath}/profile">
-                        <span class="user-avatar">👤</span>
-                        <span class="user-name">${sessionScope.user.username}</span>
-                    </a>
-                    <a href="${pageContext.request.contextPath}/logout">Đăng Xuất</a>
-                </c:when>
-                <c:otherwise>
-                    <a href="${pageContext.request.contextPath}/register">Đăng Ký</a>
-                    <a href="${pageContext.request.contextPath}/login">Đăng Nhập</a>
-                </c:otherwise>
-            </c:choose>
-        </nav>
-    </div>
-</header>
+<jsp:include page="/views/common/header.jsp"/>
 
-<main class="container" style="padding-top: 100px;">
+<main class="container">
     <div style="padding: 2rem 0;">
         <a href="${pageContext.request.contextPath}/cart" class="back-link">← Quay lại giỏ hàng</a>
         <h1 style="font-size: 2rem; font-weight: 600; margin-bottom: 2rem;">Thanh toán</h1>
@@ -524,7 +390,7 @@
 
                                 <div class="form-group" id="addressGroup">
                                     <label class="form-label" for="shippingAddress">
-                                        Địa chỉ nhận hàng <span class="required">*</span>
+                                        <span id="addressLabel">Địa chỉ nhận hàng <span class="required">*</span></span>
                                     </label>
                                     <div class="address-dropdowns" style="display:grid; gap:12px; margin-bottom:12px;">
                                         <div>
@@ -546,9 +412,8 @@
                                     <input type="hidden" id="districtIdField" name="districtId" value="${sessionScope.user.districtId}"/>
                                     <input type="hidden" id="wardCodeField" name="wardCode" value="${sessionScope.user.wardCode}"/>
                                     <textarea id="shippingAddress" name="shippingAddress" class="form-control"
-                                              required minlength="10" maxlength="500"
-                                              placeholder="Số nhà, tên đường (không bắt buộc)">${sessionScope.user.shippingAddress != null ? sessionScope.user.shippingAddress : ''}</textarea>
-                                    <div class="error-message" id="addressError">Vui lòng nhập địa chỉ giao hàng</div>
+                                              placeholder="Số nhà, tên đường"></textarea>
+                                    <div class="error-message" id="addressError">Vui lòng nhập số nhà, tên đường (tối thiểu 5 ký tự)</div>
                                 </div>
 
                                 <div class="form-group">
@@ -624,88 +489,103 @@
 </main>
 
 
-<footer class="text-light pt-5 pb-3 mt-5" style="background-color: #000000;">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-3 col-md-6 mb-4">
-                <h5 class="text-uppercase fw-bold mb-4">Mobile Store</h5>
-                <p><i class="fas fa-map-marker-alt me-2"></i> 123 Đường ABC, Quận 1, TP.HCM</p>
-                <p><i class="fas fa-phone-alt me-2"></i> Hotline: 1800.1234</p>
-                <p><i class="fas fa-envelope me-2"></i> support@mobilestore.com</p>
-                <div class="mt-3">
-                    <a href="#" class="text-light me-3"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" class="text-light me-3"><i class="fab fa-youtube"></i></a>
-                    <a href="#" class="text-light me-3"><i class="fab fa-tiktok"></i></a>
-                </div>
-            </div>
-
-            <div class="col-lg-3 col-md-6 mb-4">
-                <h5 class="text-uppercase fw-bold mb-4">Chính sách hỗ trợ</h5>
-                <ul class="list-unstyled">
-                    <li class="mb-2"><a href="policy.jsp?type=warranty" class="text-secondary text-decoration-none">Chính
-                        sách bảo hành</a></li>
-                    <li class="mb-2"><a href="policy.jsp?type=return" class="text-secondary text-decoration-none">Chính
-                        sách đổi trả</a></li>
-                    <li class="mb-2"><a href="policy.jsp?type=shipping" class="text-secondary text-decoration-none">Chính
-                        sách vận chuyển</a></li>
-                    <li class="mb-2"><a href="policy.jsp?type=privacy" class="text-secondary text-decoration-none">Bảo
-                        mật thông tin</a></li>
-                </ul>
-            </div>
-        </div>
-
-        <hr class="my-4 border-secondary">
-
-        <div class="row align-items-center">
-            <div class="col-md-12 text-center">
-                <p class="mb-0 text-secondary">&copy; 2026 Mobile Store. Thiết kế bởi Sinh viên IT.</p>
-            </div>
-        </div>
-    </div>
-</footer>
+<jsp:include page="/views/common/footer.jsp"/>
 
 <script>
-    function refreshCartCount() {
-        fetch('${pageContext.request.contextPath}/cart/count')
-            .then(r => r.json())
-            .then(data => {
-                const el = document.getElementById('cartCount');
-                if (el) el.textContent = data.count;
-            }).catch(() => {
-        });
-    }
-
     const ctx = '${pageContext.request.contextPath}';
     const provinceSel = document.getElementById('provinceSelect');
     const districtSel = document.getElementById('districtSelect');
-    const wardSel     = document.getElementById('wardSelect');
+    const wardSel = document.getElementById('wardSelect');
     const hiddenDistrict = document.getElementById('districtIdField');
-    const hiddenWard    = document.getElementById('wardCodeField');
+    const hiddenWard = document.getElementById('wardCodeField');
+    const addressTextarea = document.getElementById('shippingAddress');
+    const addressGroup = document.getElementById('addressGroup');
 
     const savedDistrictId = '${sessionScope.user.districtId}';
-    const savedWardCode   = '${sessionScope.user.wardCode}';
+    const savedWardCode = '${sessionScope.user.wardCode}';
+    const hasFullSavedAddress = savedDistrictId && savedDistrictId.trim() !== ''
+        && savedWardCode && savedWardCode.trim() !== '';
 
+    const districtsCache = {};
+    const wardsCache = {};
     let cartTotal = ${total};
 
     async function loadProvinces() {
         const res = await fetch(ctx + '/api/ghn/provinces');
         const json = await res.json();
         if (json.success) {
-            json.data.forEach(p => {
-                const opt = document.createElement('option');
-                opt.value = p.ProvinceID;
-                opt.textContent = p.NameExtension
-                    ? p.NameExtension.find(n => n && n.trim()) || p.NameExtension[0] || p.ProvinceName
-                    : p.ProvinceName;
-                provinceSel.appendChild(opt);
-            });
-            if (savedDistrictId) {
+            json.data.forEach(p => provinceSel.appendChild(createProvinceOption(p)));
+            const batches = chunk(json.data, 5);
+            for (const batch of batches) {
+                await Promise.all(batch.map(p => prefetchDistricts(p.ProvinceID)));
+            }
+            if (hasFullSavedAddress) {
                 await resolveAndPrefill(savedDistrictId, savedWardCode);
             }
         }
     }
 
+    function prefillAddressFromProfile() {
+        const savedAddress = '${sessionScope.user.shippingAddress != null ? sessionScope.user.shippingAddress : ""}';
+        if (savedAddress && savedAddress.trim() !== '') {
+            addressTextarea.value = savedAddress.trim();
+        }
+    }
+
+    function chunk(arr, size) {
+        const result = [];
+        for (let i = 0; i < arr.length; i += size) {
+            result.push(arr.slice(i, i + size));
+        }
+        return result;
+    }
+
+    function createProvinceOption(p) {
+        const opt = document.createElement('option');
+        opt.value = p.ProvinceID;
+        opt.textContent = p.NameExtension
+            ? p.NameExtension.find(n => n && n.trim()) || p.ProvinceName
+            : p.ProvinceName;
+        return opt;
+    }
+
+    function createDistrictOption(d) {
+        const opt = document.createElement('option');
+        opt.value = d.DistrictID;
+        opt.textContent = d.NameExtension
+            ? d.NameExtension.find(n => n && n.trim()) || d.DistrictName
+            : d.DistrictName;
+        return opt;
+    }
+
+    function createWardOption(w) {
+        const opt = document.createElement('option');
+        opt.value = w.WardCode;
+        opt.textContent = w.NameExtension
+            ? w.NameExtension.find(n => n && n.trim()) || w.WardName
+            : w.WardName;
+        return opt;
+    }
+
+    async function prefetchDistricts(provinceId) {
+        try {
+            const res = await fetch(ctx + '/api/ghn/districts?province_id=' + provinceId);
+            const j = await res.json();
+            if (j.success) {
+                districtsCache[provinceId] = j.data;
+            }
+        } catch (_) {}
+    }
+
     async function resolveAndPrefill(districtId, wardCode) {
+        for (const [provinceId, districts] of Object.entries(districtsCache)) {
+            if (districts.find(d => String(d.DistrictID) === String(districtId))) {
+                provinceSel.value = provinceId;
+                await loadDistricts(provinceId, parseInt(districtId), wardCode);
+                prefillAddressFromProfile();
+                return;
+            }
+        }
         for (const opt of provinceSel.options) {
             if (!opt.value) continue;
             const dRes = await fetch(ctx + '/api/ghn/districts?province_id=' + opt.value);
@@ -714,7 +594,8 @@
                 const found = dJson.data.find(d => String(d.DistrictID) === String(districtId));
                 if (found) {
                     provinceSel.value = opt.value;
-                    await loadDistricts(opt.value, districtId, wardCode);
+                    await loadDistricts(opt.value, parseInt(districtId), wardCode);
+                    prefillAddressFromProfile();
                     return;
                 }
             }
@@ -726,27 +607,26 @@
         districtSel.disabled = true;
         wardSel.innerHTML = '<option value="">-- Chọn Phường / Xã --</option>';
         wardSel.disabled = true;
-
         if (!provinceId) {
             districtSel.innerHTML = '<option value="">-- Chọn Tỉnh trước --</option>';
             return;
         }
-
+        if (districtsCache[provinceId]) {
+            districtSel.innerHTML = '<option value="">-- Chọn Quận / Huyện --</option>';
+            districtsCache[provinceId].forEach(d => districtSel.appendChild(createDistrictOption(d)));
+            districtSel.disabled = false;
+            if (preselectId) {
+                districtSel.value = preselectId;
+                await loadWards(preselectId, preselectWard);
+            }
+            return;
+        }
         const res = await fetch(ctx + '/api/ghn/districts?province_id=' + provinceId);
         const json = await res.json();
         districtSel.innerHTML = '<option value="">-- Chọn Quận / Huyện --</option>';
-
         if (json.success) {
-            json.data.forEach(d => {
-                const opt = document.createElement('option');
-                opt.value = d.DistrictID;
-                opt.textContent = d.NameExtension
-                    ? d.NameExtension.find(n => n && n.trim()) || d.DistrictName
-                    : d.DistrictName;
-                districtSel.appendChild(opt);
-            });
+            json.data.forEach(d => districtSel.appendChild(createDistrictOption(d)));
             districtSel.disabled = false;
-
             if (preselectId) {
                 districtSel.value = preselectId;
                 await loadWards(preselectId, preselectWard);
@@ -757,34 +637,38 @@
     async function loadWards(districtId, preselectCode) {
         wardSel.innerHTML = '<option value="">-- Đang tải... --</option>';
         wardSel.disabled = true;
-
         if (!districtId) {
             wardSel.innerHTML = '<option value="">-- Chọn Quận trước --</option>';
             return;
         }
-
-        const res = await fetch(ctx + '/api/ghn/wards?district_id=' + districtId);
-        const json = await res.json();
-        wardSel.innerHTML = '<option value="">-- Chọn Phường / Xã --</option>';
-
-        if (json.success) {
-            json.data.forEach(w => {
-                const opt = document.createElement('option');
-                opt.value = w.WardCode;
-                opt.textContent = w.NameExtension
-                    ? w.NameExtension.find(n => n && n.trim()) || w.WardName
-                    : w.WardName;
-                wardSel.appendChild(opt);
-            });
+        if (wardsCache[districtId]) {
+            wardSel.innerHTML = '<option value="">-- Chọn Phường / Xã --</option>';
+            wardsCache[districtId].forEach(w => wardSel.appendChild(createWardOption(w)));
             wardSel.disabled = false;
-
             if (preselectCode) {
                 wardSel.value = preselectCode;
                 hiddenDistrict.value = districtId;
                 hiddenWard.value = preselectCode;
                 await calculateShippingFee();
             } else {
-                updateShippingDisplay(0, districtId, preselectCode || wardSel.value);
+                updateShippingDisplay(0, parseInt(districtId), wardSel.value);
+            }
+            return;
+        }
+        const res = await fetch(ctx + '/api/ghn/wards?district_id=' + districtId);
+        const json = await res.json();
+        wardSel.innerHTML = '<option value="">-- Chọn Phường / Xã --</option>';
+        if (json.success) {
+            json.data.forEach(w => wardSel.appendChild(createWardOption(w)));
+            wardSel.disabled = false;
+            wardsCache[districtId] = json.data;
+            if (preselectCode) {
+                wardSel.value = preselectCode;
+                hiddenDistrict.value = districtId;
+                hiddenWard.value = preselectCode;
+                await calculateShippingFee();
+            } else {
+                updateShippingDisplay(0, parseInt(districtId), wardSel.value);
             }
         }
     }
@@ -792,24 +676,20 @@
     async function calculateShippingFee() {
         const districtId = districtSel.value;
         const wardCode = wardSel.value;
-
         if (!districtId || !wardCode) {
             updateShippingDisplay(0, parseInt(districtId) || null, wardCode || null);
             return;
         }
-
         const body = {
             to_district_id: parseInt(districtId),
             to_ward_code: wardCode
         };
-
         const res = await fetch(ctx + '/api/ghn/calculate-fee', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(body)
         });
         const json = await res.json();
-
         const fee = json.success && json.fee ? json.fee : 0;
         updateShippingDisplay(fee, body.to_district_id, body.to_ward_code);
     }
@@ -817,29 +697,15 @@
     function updateShippingDisplay(fee, districtId, wardCode) {
         if (districtId) hiddenDistrict.value = districtId;
         if (wardCode) hiddenWard.value = wardCode;
-
         const shippingEl = document.getElementById('shippingFeeDisplay');
         const totalEl = document.getElementById('totalAmountDisplay');
-
-        if (shippingEl) {
-            shippingEl.textContent = 'Miễn phí';
-        }
-        if (totalEl) {
-            totalEl.textContent = new Intl.NumberFormat('vi-VN').format(cartTotal) + '₫';
-        }
+        if (shippingEl) shippingEl.textContent = 'Miễn phí';
+        if (totalEl) totalEl.textContent = new Intl.NumberFormat('vi-VN').format(cartTotal) + '₫';
     }
 
-    provinceSel.addEventListener('change', () => {
-        loadDistricts(provinceSel.value, null, null);
-    });
-
-    districtSel.addEventListener('change', () => {
-        loadWards(districtSel.value, null);
-    });
-
-    wardSel.addEventListener('change', () => {
-        calculateShippingFee();
-    });
+    provinceSel.addEventListener('change', () => loadDistricts(provinceSel.value, null, null));
+    districtSel.addEventListener('change', () => loadWards(districtSel.value, null));
+    wardSel.addEventListener('change', () => calculateShippingFee());
 
     loadProvinces();
 
@@ -895,16 +761,22 @@
             wardSel.style.borderColor = '';
         }
 
+        if (!addressTextarea.value.trim() || addressTextarea.value.trim().length < 5) {
+            addressTextarea.classList.add('error');
+            addressGroup.classList.add('error');
+            isValid = false;
+        } else {
+            addressTextarea.classList.remove('error');
+            addressGroup.classList.remove('error');
+        }
+
         return isValid;
     }
 
     function payWithVNPay() {
         if (!validateForm()) {
-            const firstError = document.querySelector('.form-group.error') ||
-                document.querySelector('select[style*="borderColor: rgb(220, 53, 69)"]');
-            if (firstError) {
-                firstError.scrollIntoView({behavior: 'smooth', block: 'center'});
-            }
+            const firstError = document.querySelector('.form-group.error, select[style*="borderColor"], textarea.form-control.error');
+            if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
             return;
         }
         const form = document.getElementById('checkoutForm');
@@ -922,10 +794,8 @@
     document.getElementById('checkoutForm').addEventListener('submit', function (e) {
         if (!validateForm()) {
             e.preventDefault();
-            const firstError = document.querySelector('.form-group.error, select[style*="borderColor"]');
-            if (firstError) {
-                firstError.scrollIntoView({behavior: 'smooth', block: 'center'});
-            }
+            const firstError = document.querySelector('.form-group.error, select[style*="borderColor"], textarea.form-control.error');
+            if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
     });
 
@@ -934,12 +804,18 @@
             this.classList.remove('error');
             const group = this.closest('.form-group');
             if (group) group.classList.remove('error');
-            if (this.tagName === 'SELECT') {
-                this.style.borderColor = '';
-            }
+            if (this.tagName === 'SELECT') this.style.borderColor = '';
         });
     });
 
+    function refreshCartCount() {
+        fetch(ctx + '/cart/count')
+            .then(r => r.json())
+            .then(data => {
+                const el = document.getElementById('cartCount');
+                if (el) el.textContent = data.count;
+            }).catch(() => {});
+    }
     refreshCartCount();
 </script>
 </body>
