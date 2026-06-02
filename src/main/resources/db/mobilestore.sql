@@ -91,7 +91,7 @@ CREATE TABLE `categories` (
   `content` varchar(500) DEFAULT NULL,
   `image_url` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`category_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -100,103 +100,8 @@ CREATE TABLE `categories` (
 
 LOCK TABLES `categories` WRITE;
 /*!40000 ALTER TABLE `categories` DISABLE KEYS */;
-INSERT INTO `categories` VALUES (1,'Mobile','Tuyệt tác công nghệ và nhiếp ảnh','images/categories/iPhone.png'),(2,'Ipad','Đa năng, mỏng nhẹ và mạnh mẽ','images/categories/iPad.png'),(3,'MacBook','Đỉnh cao hiệu năng và sáng tạo','images/categories/macbook.png');
+INSERT INTO `categories` VALUES (1,'Mobile','Tuyệt tác công nghệ và nhiếp ảnh','images/categories/5771efb3-e342-4af8-b63d-17f88caecbe3.png'),(2,'Ipad','Đa năng, mỏng nhẹ và mạnh mẽ','images/categories/iPad.png'),(3,'MacBook','Đỉnh cao hiệu năng và sáng tạo','images/categories/macbook.png');
 /*!40000 ALTER TABLE `categories` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `category`
---
-
-DROP TABLE IF EXISTS `category`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `category` (
-  `category_id` int NOT NULL AUTO_INCREMENT,
-  `category_name` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`category_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `category`
---
-
-LOCK TABLES `category` WRITE;
-/*!40000 ALTER TABLE `category` DISABLE KEYS */;
-/*!40000 ALTER TABLE `category` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `order`
---
-
-DROP TABLE IF EXISTS `order`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `order` (
-  `order_id` int NOT NULL AUTO_INCREMENT,
-  `customer_phone` varchar(255) DEFAULT NULL,
-  `district_id` int DEFAULT NULL,
-  `note` varchar(255) DEFAULT NULL,
-  `order_date` date DEFAULT NULL,
-  `order_status` varchar(255) DEFAULT NULL,
-  `payment_method` varchar(255) DEFAULT NULL,
-  `payment_status` varchar(255) DEFAULT NULL,
-  `shipping_address` varchar(255) DEFAULT NULL,
-  `shipping_cost` double DEFAULT NULL,
-  `total_amount` double DEFAULT NULL,
-  `tracking_number` varchar(255) DEFAULT NULL,
-  `vnp_order_id` varchar(255) DEFAULT NULL,
-  `vnp_transaction_id` varchar(255) DEFAULT NULL,
-  `ward_code` varchar(255) DEFAULT NULL,
-  `user_id` int DEFAULT NULL,
-  PRIMARY KEY (`order_id`),
-  KEY `FKcpl0mjoeqhxvgeeeq5piwpd3i` (`user_id`),
-  CONSTRAINT `FKcpl0mjoeqhxvgeeeq5piwpd3i` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `order`
---
-
-LOCK TABLES `order` WRITE;
-/*!40000 ALTER TABLE `order` DISABLE KEYS */;
-/*!40000 ALTER TABLE `order` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `order_detail`
---
-
-DROP TABLE IF EXISTS `order_detail`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `order_detail` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `price` double DEFAULT NULL,
-  `quantity` int DEFAULT NULL,
-  `order_id` int DEFAULT NULL,
-  `product_id` int DEFAULT NULL,
-  `variant_id` int DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `FKlb8mofup9mi791hraxt9wlj5u` (`order_id`),
-  KEY `FKb8bg2bkty0oksa3wiq5mp5qnc` (`product_id`),
-  KEY `FKbefv6bj4521cnkru5r9iwdvml` (`variant_id`),
-  CONSTRAINT `FKb8bg2bkty0oksa3wiq5mp5qnc` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`),
-  CONSTRAINT `FKbefv6bj4521cnkru5r9iwdvml` FOREIGN KEY (`variant_id`) REFERENCES `product_variant` (`variant_id`),
-  CONSTRAINT `FKlb8mofup9mi791hraxt9wlj5u` FOREIGN KEY (`order_id`) REFERENCES `order` (`order_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `order_detail`
---
-
-LOCK TABLES `order_detail` WRITE;
-/*!40000 ALTER TABLE `order_detail` DISABLE KEYS */;
-/*!40000 ALTER TABLE `order_detail` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -307,34 +212,6 @@ INSERT INTO `otp_tokens` VALUES (1,'hothanhhai879@gmail.com','131019','2026-05-2
 UNLOCK TABLES;
 
 --
--- Table structure for table `password_reset_token`
---
-
-DROP TABLE IF EXISTS `password_reset_token`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `password_reset_token` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `created_at` datetime(6) DEFAULT NULL,
-  `email` varchar(255) DEFAULT NULL,
-  `expires_at` datetime(6) DEFAULT NULL,
-  `token` varchar(255) DEFAULT NULL,
-  `used` bit(1) NOT NULL,
-  `user_id` int DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `password_reset_token`
---
-
-LOCK TABLES `password_reset_token` WRITE;
-/*!40000 ALTER TABLE `password_reset_token` DISABLE KEYS */;
-/*!40000 ALTER TABLE `password_reset_token` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `password_reset_tokens`
 --
 
@@ -364,66 +241,6 @@ LOCK TABLES `password_reset_tokens` WRITE;
 /*!40000 ALTER TABLE `password_reset_tokens` DISABLE KEYS */;
 INSERT INTO `password_reset_tokens` VALUES (1,'7011a61cd08847b2a5f5de5274470af2',13,'manht7000@gmail.com','2026-03-15 16:08:47',1,'2026-03-15 15:38:46');
 /*!40000 ALTER TABLE `password_reset_tokens` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `product`
---
-
-DROP TABLE IF EXISTS `product`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `product` (
-  `product_id` int NOT NULL AUTO_INCREMENT,
-  `discount` bigint DEFAULT '0',
-  `manufacturer` varchar(255) DEFAULT NULL,
-  `product_condition` varchar(255) DEFAULT NULL,
-  `product_info` text,
-  `product_name` varchar(255) DEFAULT NULL,
-  `category_id` int DEFAULT NULL,
-  PRIMARY KEY (`product_id`),
-  KEY `FK1mtsbur82frn64de7balymq9s` (`category_id`),
-  CONSTRAINT `FK1mtsbur82frn64de7balymq9s` FOREIGN KEY (`category_id`) REFERENCES `category` (`category_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `product`
---
-
-LOCK TABLES `product` WRITE;
-/*!40000 ALTER TABLE `product` DISABLE KEYS */;
-/*!40000 ALTER TABLE `product` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `product_variant`
---
-
-DROP TABLE IF EXISTS `product_variant`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `product_variant` (
-  `variant_id` int NOT NULL AUTO_INCREMENT,
-  `color` varchar(255) DEFAULT NULL,
-  `price` bigint DEFAULT NULL,
-  `quantity_in_stock` int DEFAULT NULL,
-  `storage` varchar(255) DEFAULT NULL,
-  `variant_image` text,
-  `product_id` int DEFAULT NULL,
-  PRIMARY KEY (`variant_id`),
-  KEY `FKgrbbs9t374m9gg43l6tq1xwdj` (`product_id`),
-  CONSTRAINT `FKgrbbs9t374m9gg43l6tq1xwdj` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `product_variant`
---
-
-LOCK TABLES `product_variant` WRITE;
-/*!40000 ALTER TABLE `product_variant` DISABLE KEYS */;
-/*!40000 ALTER TABLE `product_variant` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -491,41 +308,6 @@ INSERT INTO `products` VALUES (10,'APPLE','iPhone 17 Pro','Mới','iPhone 17 Pro
 UNLOCK TABLES;
 
 --
--- Table structure for table `review`
---
-
-DROP TABLE IF EXISTS `review`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `review` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `admin_reply` text,
-  `admin_reply_at` datetime(6) DEFAULT NULL,
-  `comment` varchar(255) DEFAULT NULL,
-  `created_at` datetime(6) DEFAULT NULL,
-  `is_approved` bit(1) DEFAULT NULL,
-  `rating` int DEFAULT NULL,
-  `updated_at` datetime(6) DEFAULT NULL,
-  `product_id` int DEFAULT NULL,
-  `user_id` int DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `FKiyof1sindb9qiqr9o8npj8klt` (`product_id`),
-  KEY `FKiyf57dy48lyiftdrf7y87rnxi` (`user_id`),
-  CONSTRAINT `FKiyf57dy48lyiftdrf7y87rnxi` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
-  CONSTRAINT `FKiyof1sindb9qiqr9o8npj8klt` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `review`
---
-
-LOCK TABLES `review` WRITE;
-/*!40000 ALTER TABLE `review` DISABLE KEYS */;
-/*!40000 ALTER TABLE `review` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `reviews`
 --
 
@@ -587,31 +369,6 @@ CREATE TABLE `shipping_step` (
 LOCK TABLES `shipping_step` WRITE;
 /*!40000 ALTER TABLE `shipping_step` DISABLE KEYS */;
 /*!40000 ALTER TABLE `shipping_step` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `slider_image`
---
-
-DROP TABLE IF EXISTS `slider_image`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `slider_image` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `display_order` int DEFAULT NULL,
-  `image_url` text,
-  `is_active` bit(1) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `slider_image`
---
-
-LOCK TABLES `slider_image` WRITE;
-/*!40000 ALTER TABLE `slider_image` DISABLE KEYS */;
-/*!40000 ALTER TABLE `slider_image` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -716,4 +473,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-06-02  1:02:16
+-- Dump completed on 2026-06-02  1:33:16

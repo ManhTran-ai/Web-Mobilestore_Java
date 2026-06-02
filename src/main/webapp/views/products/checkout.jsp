@@ -509,6 +509,7 @@
     const districtsCache = {};
     const wardsCache = {};
     let cartTotal = ${total};
+    let isUserEditingAddress = false;
 
     async function loadProvinces() {
         const res = await fetch(ctx + '/api/ghn/provinces');
@@ -521,6 +522,7 @@
             }
             if (hasFullSavedAddress) {
                 await resolveAndPrefill(savedDistrictId, savedWardCode);
+                buildFullAddress();
             }
         }
     }
@@ -528,6 +530,7 @@
     function prefillAddressFromProfile() {
         const savedAddress = '${sessionScope.user.shippingAddress != null ? sessionScope.user.shippingAddress : ""}';
         if (savedAddress && savedAddress.trim() !== '') {
+            isUserEditingAddress = true;
             addressTextarea.value = savedAddress.trim();
         }
     }
@@ -650,9 +653,8 @@
                 hiddenDistrict.value = districtId;
                 hiddenWard.value = preselectCode;
                 await calculateShippingFee();
-            } else {
-                updateShippingDisplay(0, parseInt(districtId), wardSel.value);
             }
+            buildFullAddress();
             return;
         }
         const res = await fetch(ctx + '/api/ghn/wards?district_id=' + districtId);
@@ -667,9 +669,8 @@
                 hiddenDistrict.value = districtId;
                 hiddenWard.value = preselectCode;
                 await calculateShippingFee();
-            } else {
-                updateShippingDisplay(0, parseInt(districtId), wardSel.value);
             }
+            buildFullAddress();
         }
     }
 
@@ -701,6 +702,18 @@
         const totalEl = document.getElementById('totalAmountDisplay');
         if (shippingEl) shippingEl.textContent = 'Miễn phí';
         if (totalEl) totalEl.textContent = new Intl.NumberFormat('vi-VN').format(cartTotal) + '₫';
+    }
+
+    function buildFullAddress() {
+        if (isUserEditingAddress) return;
+        const houseNumber = addressTextarea.value.trim();
+        const provinceName = provinceSel.options[provinceSel.selectedIndex]?.text || '';
+        const districtName = districtSel.options[districtSel.selectedIndex]?.text || '';
+        const wardName = wardSel.options[wardSel.selectedIndex]?.text || '';
+        const fullParts = [houseNumber, wardName, districtName, provinceName]
+            .filter(p => p && p.trim() !== '' && !p.trim().startsWith('--'));
+        const fullAddress = fullParts.join(', ');
+        addressTextarea.value = fullAddress;
     }
 
     provinceSel.addEventListener('change', () => loadDistricts(provinceSel.value, null, null));
@@ -807,6 +820,9 @@
             if (this.tagName === 'SELECT') this.style.borderColor = '';
         });
     });
+
+    addressTextarea.addEventListener('focus', () => { isUserEditingAddress = true; });
+    addressTextarea.addEventListener('blur', () => { isUserEditingAddress = false; buildFullAddress(); });
 
     function refreshCartCount() {
         fetch(ctx + '/cart/count')
