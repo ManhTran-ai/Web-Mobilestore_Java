@@ -39,3 +39,8 @@ Thumbs.db
 # Application properties (nếu chứa thông tin nhạy cảm)
 # src/main/resources/application.properties
 /src/main/java/com/mobilestore/controller/ImageServlet.java
+
+# Environment variables
+.env
+.env.local
+.env.*.local
