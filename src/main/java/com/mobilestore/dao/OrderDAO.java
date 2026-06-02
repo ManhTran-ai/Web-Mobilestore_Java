@@ -108,7 +108,7 @@ public class OrderDAO {
     public List<OrderDetail> findDetailsByOrderId(int orderId) {
         List<OrderDetail> list = new ArrayList<>();
         String sql = "SELECT od.id, od.price, od.quantity, od.variant_id, " +
-                "p.product_name, p.product_id, pv.color, pv.storage " +
+                "p.product_name, p.product_id, pv.color, pv.storage, pv.variant_image " +
                 "FROM order_details od " +
                 "LEFT JOIN product_variants pv ON od.variant_id = pv.variant_id " +
                 "LEFT JOIN products p ON pv.product_id = p.product_id " +
@@ -134,6 +134,7 @@ public class OrderDAO {
                         pv.setVariantId(variantId);
                         pv.setColor(rs.getString("color"));
                         pv.setStorage(rs.getString("storage"));
+                        pv.setVariantImage(rs.getString("variant_image"));
                         od.setVariant(pv);
                     }
 
