@@ -236,8 +236,8 @@ public class OrderDAO {
                             for (CartItem item : items) {
                                 ProductVariant variant = item.getVariant();
                                 Product product = item.getProduct();
-
-                                psDetail.setDouble(1, variant != null ? variant.getPrice() : product.getDisplayPrice());
+                                long unitPrice = (variant != null && variant.getPrice() != null) ? variant.getPrice() : (product.getDisplayPrice() != null ? product.getDisplayPrice() : 0L);
+                                psDetail.setDouble(1, unitPrice);
                                 psDetail.setInt(2, item.getQuantity());
                                 psDetail.setInt(3, orderId);
                                 if (variant != null) {
@@ -324,8 +324,8 @@ public class OrderDAO {
                             for (CartItem item : items) {
                                 ProductVariant variant = item.getVariant();
                                 Product product = item.getProduct();
-
-                                psDetail.setDouble(1, variant != null ? variant.getPrice() : product.getDisplayPrice());
+                                long unitPrice = (variant != null && variant.getPrice() != null) ? variant.getPrice() : (product.getDisplayPrice() != null ? product.getDisplayPrice() : 0L);
+                                psDetail.setDouble(1, unitPrice);
                                 psDetail.setInt(2, item.getQuantity());
                                 psDetail.setInt(3, orderId);
                                 if (variant != null) {
