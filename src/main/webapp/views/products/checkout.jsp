@@ -736,6 +736,18 @@
         addressTextarea.value = fullAddress;
     }
 
+    function buildFullAddress() {
+        if (isUserEditingAddress) return;
+        const houseNumber = addressTextarea.value.trim();
+        const provinceName = provinceSel.options[provinceSel.selectedIndex]?.text || '';
+        const districtName = districtSel.options[districtSel.selectedIndex]?.text || '';
+        const wardName = wardSel.options[wardSel.selectedIndex]?.text || '';
+        const fullParts = [houseNumber, wardName, districtName, provinceName]
+            .filter(p => p && p.trim() !== '' && !p.trim().startsWith('--'));
+        const fullAddress = fullParts.join(', ');
+        addressTextarea.value = fullAddress;
+    }
+
     provinceSel.addEventListener('change', () => loadDistricts(provinceSel.value, null, null));
     districtSel.addEventListener('change', () => loadWards(districtSel.value, null));
     wardSel.addEventListener('change', () => calculateShippingFee());
