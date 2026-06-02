@@ -673,16 +673,16 @@
                                 <div>
                                     <label for="email">Email</label>
                                     <input type="email" id="email" name="email" value="${profileUser.email}"
-                                           placeholder="email@domain.com"/>
+                                           placeholder="email@domain.com" required/>
                                 </div>
                                 <div>
                                     <label for="customerPhone">Số điện thoại</label>
                                     <input type="text" id="customerPhone" name="customerPhone"
-                                           value="${profileUser.customerPhone}" placeholder="Nhập số điện thoại"/>
+                                           value="${profileUser.customerPhone}" placeholder="Nhập số điện thoại" required/>
                                 </div>
                                 <div>
                                     <label for="provinceId">Tỉnh / Thành phố</label>
-                                    <select id="provinceId" name="provinceId">
+                                    <select id="provinceId" name="provinceId" required>
                                         <option value="">-- Chọn Tỉnh / Thành phố --</option>
                                     </select>
                                 </div>
@@ -699,9 +699,9 @@
                                     </select>
                                 </div>
                                 <div style="grid-column:1/-1;">
-                                    <label for="shippingAddress">Địa chỉ chi tiết</label>
+                                    <label for="shippingAddress">Địa chỉ chi tiết <span style="color:red;">*</span></label>
                                     <textarea id="shippingAddress" name="shippingAddress"
-                                              placeholder="Số nhà, tên đường (không bắt buộc)">${profileUser.shippingAddress}</textarea>
+                                              placeholder="Số nhà, tên đường" required>${profileUser.shippingAddress}</textarea>
                                 </div>
                                 <div style="grid-column:1/-1;">
                                     <label for="note">Ghi chú</label>
@@ -710,17 +710,6 @@
                                 </div>
                                 <input type="hidden" id="districtIdHidden" name="districtId" value="${profileUser.districtId}"/>
                                 <input type="hidden" id="wardCodeHiddenField" name="wardCode" value="${profileUser.wardCode}"/>
-                                <div>
-                                    <label for="newPassword">Mật khẩu mới</label>
-                                    <input type="password" id="newPassword" name="newPassword"
-                                           placeholder="Để trống nếu không đổi" minlength="6"/>
-                                    <div class="note-text">Tối thiểu 6 ký tự. Chỉ cần nhập khi muốn đổi mật khẩu.</div>
-                                </div>
-                                <div>
-                                    <label for="confirmPassword">Xác nhận mật khẩu</label>
-                                    <input type="password" id="confirmPassword" name="confirmPassword"
-                                           placeholder="Nhập lại mật khẩu mới" minlength="6"/>
-                                </div>
                             </div>
 
                             <div class="actions">

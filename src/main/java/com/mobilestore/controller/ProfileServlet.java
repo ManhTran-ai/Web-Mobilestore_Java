@@ -101,8 +101,6 @@ public class ProfileServlet extends HttpServlet {
         String shippingAddress = trimToNull(req.getParameter("shippingAddress"));
         String customerPhone = trimToNull(req.getParameter("customerPhone"));
         String note = trimToNull(req.getParameter("note"));
-        String newPassword = req.getParameter("newPassword");
-        String confirmPassword = req.getParameter("confirmPassword");
         String districtIdParam = trimToNull(req.getParameter("districtId"));
         String wardCode = trimToNull(req.getParameter("wardCode"));
 
@@ -110,30 +108,32 @@ public class ProfileServlet extends HttpServlet {
             errors.add("Họ tên cần ít nhất 3 ký tự");
         }
 
-        if (email != null && !EMAIL_PATTERN.matcher(email).matches()) {
+        if (email == null || email.isBlank()) {
+            errors.add("Email là bắt buộc");
+        } else if (!EMAIL_PATTERN.matcher(email).matches()) {
             errors.add("Email không hợp lệ");
         }
 
-        if (customerPhone != null && !PHONE_PATTERN.matcher(customerPhone).matches()) {
+        if (customerPhone == null || customerPhone.isBlank()) {
+            errors.add("Số điện thoại là bắt buộc");
+        } else if (!PHONE_PATTERN.matcher(customerPhone).matches()) {
             errors.add("Số điện thoại không hợp lệ");
         }
 
-        boolean wantsPasswordChange = newPassword != null && !newPassword.trim().isEmpty();
-        if (wantsPasswordChange) {
-            if (newPassword.length() < 6) {
-                errors.add("Mật khẩu mới phải từ 6 ký tự trở lên");
-            }
-            if (!newPassword.equals(confirmPassword)) {
-                errors.add("Xác nhận mật khẩu không khớp");
-            }
+        if (districtIdParam == null || districtIdParam.isBlank()) {
+            errors.add("Vui lòng chọn Quận / Huyện");
+        }
+        if (wardCode == null || wardCode.isBlank()) {
+            errors.add("Vui lòng chọn Phường / Xã");
+        }
+        if (shippingAddress == null || shippingAddress.isBlank()) {
+            errors.add("Địa chỉ chi tiết là bắt buộc");
         }
 
         Integer districtId = null;
-        if (districtIdParam != null && !districtIdParam.isBlank()) {
-            try {
-                districtId = Integer.parseInt(districtIdParam);
-            } catch (NumberFormatException ignored) {
-            }
+        try {
+            districtId = Integer.parseInt(districtIdParam);
+        } catch (NumberFormatException ignored) {
         }
 
         User userFromDb = userService.getById(sessionUser.getId());
@@ -165,12 +165,8 @@ public class ProfileServlet extends HttpServlet {
         userFromDb.setWardCode(wardCode);
 
         boolean profileUpdated = userService.updateProfile(userFromDb);
-        boolean passwordUpdated = true;
-        if (profileUpdated && wantsPasswordChange) {
-            passwordUpdated = userService.updatePassword(userFromDb.getId(), newPassword);
-        }
 
-        if (profileUpdated && passwordUpdated) {
+        if (profileUpdated) {
             User refreshed = userService.getById(userFromDb.getId());
             session.setAttribute("user", refreshed);
             req.setAttribute("successMessage", "Cập nhật hồ sơ thành công");
