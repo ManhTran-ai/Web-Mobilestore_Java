@@ -389,7 +389,7 @@
                                 </div>
 
                                 <div class="form-group" id="addressGroup">
-                                    <label class="form-label" for="shippingAddress">
+                                    <label class="form-label" for="streetAddressInput">
                                         <span id="addressLabel">Địa chỉ nhận hàng <span class="required">*</span></span>
                                     </label>
                                     <div class="address-dropdowns" style="display:grid; gap:12px; margin-bottom:12px;">
@@ -411,8 +411,11 @@
                                     </div>
                                     <input type="hidden" id="districtIdField" name="districtId" value="${sessionScope.user.districtId}"/>
                                     <input type="hidden" id="wardCodeField" name="wardCode" value="${sessionScope.user.wardCode}"/>
-                                    <textarea id="shippingAddress" name="shippingAddress" class="form-control"
-                                              placeholder="Số nhà, tên đường"></textarea>
+                                    <input type="hidden" id="streetAddressField" name="streetAddress" value=""/>
+                                    <input type="text" id="streetAddressInput" class="form-control"
+                                           placeholder="Số nhà, tên đường" maxlength="255">
+                                    <textarea id="shippingAddress" name="shippingAddress" class="form-control" style="margin-top:12px;"
+                                              placeholder="Địa chỉ đầy đủ" readonly></textarea>
                                     <div class="error-message" id="addressError">Vui lòng nhập số nhà, tên đường (tối thiểu 5 ký tự)</div>
                                 </div>
 
@@ -462,26 +465,12 @@
                                     <span><fmt:formatNumber value="${total}" type="number" groupingUsed="true"/>₫</span>
                                 </div>
                                 <div class="order-total-row">
-                                    <span>Phí vận chuyển:</span>
-                                    <c:choose>
-                                        <c:when test="${shippingCost != null && shippingCost > 0}">
-                                            <span id="shippingFeeDisplay"><fmt:formatNumber value="${shippingCost}" type="number" groupingUsed="true"/>₫</span>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <span id="shippingFeeDisplay">Miễn phí</span>
-                                        </c:otherwise>
-                                    </c:choose>
+                                    <span>Phí vận chuyển: <span id="shippingFeeDisplay">Miễn phí</span></span>
                                 </div>
-                                <c:if test="${shippingCost != null && shippingCost > 0}">
-                                    <div class="order-total-row" style="color:#2e7d32;">
-                                        <span>Ưu đãi phí vận chuyển</span>
-                                        <span>-<fmt:formatNumber value="${shippingCost}" type="number" groupingUsed="true"/>₫</span>
-                                    </div>
-                                </c:if>
                                 <div class="order-total-row final">
                                     <span>Tổng cộng:</span>
                                     <span class="amount" id="totalAmountDisplay"><fmt:formatNumber value="${total}" type="number"
-                                                                           groupingUsed="true"/>₫</span>
+                                                                                                   groupingUsed="true"/>₫</span>
                                 </div>
                             </div>
 
@@ -512,7 +501,9 @@
     const wardSel = document.getElementById('wardSelect');
     const hiddenDistrict = document.getElementById('districtIdField');
     const hiddenWard = document.getElementById('wardCodeField');
+    const hiddenStreet = document.getElementById('streetAddressField');
     const addressTextarea = document.getElementById('shippingAddress');
+    const streetAddressInput = document.getElementById('streetAddressInput');
     const addressGroup = document.getElementById('addressGroup');
 
     const savedDistrictId = '${sessionScope.user.districtId}';
@@ -536,6 +527,7 @@
             }
             if (hasFullSavedAddress) {
                 await resolveAndPrefill(savedDistrictId, savedWardCode);
+                prefillAddressFromProfile();
                 buildFullAddress();
             }
         }
@@ -544,8 +536,7 @@
     function prefillAddressFromProfile() {
         const savedAddress = '${sessionScope.user.shippingAddress != null ? sessionScope.user.shippingAddress : ""}';
         if (savedAddress && savedAddress.trim() !== '') {
-            isUserEditingAddress = true;
-            addressTextarea.value = savedAddress.trim();
+            streetAddressInput.value = savedAddress.trim();
         }
     }
 
@@ -599,7 +590,6 @@
             if (districts.find(d => String(d.DistrictID) === String(districtId))) {
                 provinceSel.value = provinceId;
                 await loadDistricts(provinceId, parseInt(districtId), wardCode);
-                prefillAddressFromProfile();
                 return;
             }
         }
@@ -612,7 +602,6 @@
                 if (found) {
                     provinceSel.value = opt.value;
                     await loadDistricts(opt.value, parseInt(districtId), wardCode);
-                    prefillAddressFromProfile();
                     return;
                 }
             }
@@ -714,42 +703,27 @@
         if (wardCode) hiddenWard.value = wardCode;
         const shippingEl = document.getElementById('shippingFeeDisplay');
         const totalEl = document.getElementById('totalAmountDisplay');
-        if (fee > 0) {
-            if (shippingEl) shippingEl.textContent = new Intl.NumberFormat('vi-VN').format(fee) + '₫';
-            if (totalEl) totalEl.textContent = new Intl.NumberFormat('vi-VN').format(cartTotal) + '₫';
-        } else {
-            if (shippingEl) shippingEl.textContent = 'Miễn phí';
-            if (totalEl) totalEl.textContent = new Intl.NumberFormat('vi-VN').format(cartTotal) + '₫';
-        }
+        if (shippingEl) shippingEl.textContent = 'Miễn phí';
+        if (totalEl) totalEl.textContent = new Intl.NumberFormat('vi-VN').format(cartTotal) + '₫';
     }
 
     function buildFullAddress() {
         if (isUserEditingAddress) return;
-        const houseNumber = addressTextarea.value.trim();
+        const streetValue = streetAddressInput.value.trim();
         const provinceName = provinceSel.options[provinceSel.selectedIndex]?.text || '';
         const districtName = districtSel.options[districtSel.selectedIndex]?.text || '';
         const wardName = wardSel.options[wardSel.selectedIndex]?.text || '';
-        const fullParts = [houseNumber, wardName, districtName, provinceName]
+        const fullParts = [streetValue, wardName, districtName, provinceName]
             .filter(p => p && p.trim() !== '' && !p.trim().startsWith('--'));
         const fullAddress = fullParts.join(', ');
         addressTextarea.value = fullAddress;
-    }
-
-    function buildFullAddress() {
-        if (isUserEditingAddress) return;
-        const houseNumber = addressTextarea.value.trim();
-        const provinceName = provinceSel.options[provinceSel.selectedIndex]?.text || '';
-        const districtName = districtSel.options[districtSel.selectedIndex]?.text || '';
-        const wardName = wardSel.options[wardSel.selectedIndex]?.text || '';
-        const fullParts = [houseNumber, wardName, districtName, provinceName]
-            .filter(p => p && p.trim() !== '' && !p.trim().startsWith('--'));
-        const fullAddress = fullParts.join(', ');
-        addressTextarea.value = fullAddress;
+        hiddenStreet.value = fullAddress;
     }
 
     provinceSel.addEventListener('change', () => loadDistricts(provinceSel.value, null, null));
     districtSel.addEventListener('change', () => loadWards(districtSel.value, null));
-    wardSel.addEventListener('change', () => calculateShippingFee());
+    wardSel.addEventListener('change', () => { calculateShippingFee(); buildFullAddress(); });
+    streetAddressInput.addEventListener('input', () => buildFullAddress());
 
     loadProvinces();
 
@@ -805,12 +779,12 @@
             wardSel.style.borderColor = '';
         }
 
-        if (!addressTextarea.value.trim() || addressTextarea.value.trim().length < 5) {
-            addressTextarea.classList.add('error');
+        if (!streetAddressInput.value.trim() || streetAddressInput.value.trim().length < 5) {
+            streetAddressInput.classList.add('error');
             addressGroup.classList.add('error');
             isValid = false;
         } else {
-            addressTextarea.classList.remove('error');
+            streetAddressInput.classList.remove('error');
             addressGroup.classList.remove('error');
         }
 
@@ -852,8 +826,8 @@
         });
     });
 
-    addressTextarea.addEventListener('focus', () => { isUserEditingAddress = true; });
-    addressTextarea.addEventListener('blur', () => { isUserEditingAddress = false; buildFullAddress(); });
+    streetAddressInput.addEventListener('focus', () => { isUserEditingAddress = true; });
+    streetAddressInput.addEventListener('blur', () => { isUserEditingAddress = false; buildFullAddress(); });
 
     function refreshCartCount() {
         fetch(ctx + '/cart/count')
