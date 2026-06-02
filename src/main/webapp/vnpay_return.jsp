@@ -38,6 +38,7 @@
 
         if (totalAmount != null && cart != null && userId != null) {
             OrderDAO orderDAO = new OrderDAO();
+            double shippingDiscount = shippingFee != null ? shippingFee : 0.0;
             orderId = orderDAO.createOrderWithPayment(
                 userId,
                 totalAmount,
@@ -46,6 +47,7 @@
                 customerPhone != null ? customerPhone : "",
                 note != null ? note : "",
                 shippingFee != null ? shippingFee : 0.0,
+                shippingDiscount,
                 districtId,
                 wardCode,
                 vnp_TransactionNo,
@@ -57,10 +59,10 @@
                         + " | UserId=" + userId
                         + " | DistrictId=" + districtId
                         + " | WardCode=" + wardCode
-                        + " | PhiShipThucTe=" + (shippingFee != null ? Math.round(shippingFee) : 0L) + " VND"
-                        + " | PhiShipUserTra=0 VND (Freeship)"
-                        + " | TongTruocShip=" + Math.round(totalAmount) + " VND"
-                        + " | TongSauShip=" + Math.round(totalAmount + (shippingFee != null ? shippingFee : 0.0)) + " VND"
+                        + " | PhiShipGHN=" + (shippingFee != null ? Math.round(shippingFee) : 0L) + " VND"
+                        + " | UuDaiShip=" + Math.round(shippingDiscount) + " VND"
+                        + " | TamTinh=" + Math.round(totalAmount) + " VND"
+                        + " | TongThanhToan=" + Math.round(totalAmount) + " VND"
                         + " | PaymentMethod=VNPAY"
                         + " | VNPayTxnRef=" + vnp_TxnRef
                         + " | VNPayTransNo=" + vnp_TransactionNo);

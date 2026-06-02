@@ -433,6 +433,7 @@
                             <c:forEach var="item" items="${cartItems}">
                                 <c:set var="itemDiscount" value="${item.product != null ? item.product.discount : 0}"/>
                                 <c:set var="itemPrice" value="${item.variant != null ? item.variant.price : item.product.displayPrice}"/>
+                                <c:set var="itemDiscountedPrice" value="${itemPrice * (100 - itemDiscount) / 100}"/>
                                 <c:set var="itemImg" value="${item.variant != null ? item.variant.variantImage : item.product.displayImage}"/>
                                 <div class="order-item">
                                     <img src="${pageContext.request.contextPath}/${itemImg}"
@@ -448,12 +449,12 @@
                                     </div>
                                     <div class="order-item-price">
                                         <fmt:formatNumber
-                                                value="${itemPrice * item.quantity}"
+                                                value="${itemDiscountedPrice * item.quantity}"
                                                 type="number" groupingUsed="true"/>₫
                                     </div>
                                 </div>
                                 <c:set var="total"
-                                       value="${total + (itemPrice * item.quantity)}"/>
+                                       value="${total + (itemDiscountedPrice * item.quantity)}"/>
                             </c:forEach>
 
                             <div class="order-totals">
@@ -462,8 +463,22 @@
                                     <span><fmt:formatNumber value="${total}" type="number" groupingUsed="true"/>₫</span>
                                 </div>
                                 <div class="order-total-row">
-                                    <span>Phí vận chuyển: <span id="shippingFeeDisplay">Miễn phí</span></span>
+                                    <span>Phí vận chuyển:</span>
+                                    <c:choose>
+                                        <c:when test="${shippingCost != null && shippingCost > 0}">
+                                            <span id="shippingFeeDisplay"><fmt:formatNumber value="${shippingCost}" type="number" groupingUsed="true"/>₫</span>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <span id="shippingFeeDisplay">Miễn phí</span>
+                                        </c:otherwise>
+                                    </c:choose>
                                 </div>
+                                <c:if test="${shippingCost != null && shippingCost > 0}">
+                                    <div class="order-total-row" style="color:#2e7d32;">
+                                        <span>Ưu đãi phí vận chuyển</span>
+                                        <span>-<fmt:formatNumber value="${shippingCost}" type="number" groupingUsed="true"/>₫</span>
+                                    </div>
+                                </c:if>
                                 <div class="order-total-row final">
                                     <span>Tổng cộng:</span>
                                     <span class="amount" id="totalAmountDisplay"><fmt:formatNumber value="${total}" type="number"
@@ -700,8 +715,25 @@
         if (wardCode) hiddenWard.value = wardCode;
         const shippingEl = document.getElementById('shippingFeeDisplay');
         const totalEl = document.getElementById('totalAmountDisplay');
-        if (shippingEl) shippingEl.textContent = 'Miễn phí';
-        if (totalEl) totalEl.textContent = new Intl.NumberFormat('vi-VN').format(cartTotal) + '₫';
+        if (fee > 0) {
+            if (shippingEl) shippingEl.textContent = new Intl.NumberFormat('vi-VN').format(fee) + '₫';
+            if (totalEl) totalEl.textContent = new Intl.NumberFormat('vi-VN').format(cartTotal) + '₫';
+        } else {
+            if (shippingEl) shippingEl.textContent = 'Miễn phí';
+            if (totalEl) totalEl.textContent = new Intl.NumberFormat('vi-VN').format(cartTotal) + '₫';
+        }
+    }
+
+    function buildFullAddress() {
+        if (isUserEditingAddress) return;
+        const houseNumber = addressTextarea.value.trim();
+        const provinceName = provinceSel.options[provinceSel.selectedIndex]?.text || '';
+        const districtName = districtSel.options[districtSel.selectedIndex]?.text || '';
+        const wardName = wardSel.options[wardSel.selectedIndex]?.text || '';
+        const fullParts = [houseNumber, wardName, districtName, provinceName]
+            .filter(p => p && p.trim() !== '' && !p.trim().startsWith('--'));
+        const fullAddress = fullParts.join(', ');
+        addressTextarea.value = fullAddress;
     }
 
     function buildFullAddress() {
