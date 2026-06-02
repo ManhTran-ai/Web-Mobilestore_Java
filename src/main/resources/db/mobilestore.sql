@@ -100,7 +100,7 @@ CREATE TABLE `categories` (
 
 LOCK TABLES `categories` WRITE;
 /*!40000 ALTER TABLE `categories` DISABLE KEYS */;
-INSERT INTO `categories` VALUES (1,'Mobile','Tuyệt tác công nghệ và nhiếp ảnh','images/categories/5771efb3-e342-4af8-b63d-17f88caecbe3.png'),(2,'Ipad','Đa năng, mỏng nhẹ và mạnh mẽ','images/categories/iPad.png'),(3,'MacBook','Đỉnh cao hiệu năng và sáng tạo','images/categories/macbook.png');
+INSERT INTO `categories` VALUES (1,'Mobile','Tuyệt tác công nghệ và nhiếp ảnh','images/categories/iPhone.png'),(2,'Ipad','Đa năng, mỏng nhẹ và mạnh mẽ','images/categories/iPad.png'),(3,'MacBook','Đỉnh cao hiệu năng và sáng tạo','images/categories/macbook.png');
 /*!40000 ALTER TABLE `categories` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -157,6 +157,7 @@ CREATE TABLE `orders` (
   `vnp_transaction_id` varchar(100) DEFAULT NULL,
   `vnp_order_id` varchar(100) DEFAULT NULL,
   `shipping_cost` decimal(10,2) DEFAULT '0.00',
+  `shipping_discount` decimal(10,2) DEFAULT '0.00',
   `district_id` int DEFAULT NULL,
   `ward_code` varchar(20) DEFAULT NULL,
   `tracking_number` varchar(100) DEFAULT NULL,
