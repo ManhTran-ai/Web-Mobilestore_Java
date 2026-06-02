@@ -111,8 +111,7 @@ public class CheckoutServlet extends HttpServlet {
             }
             ProductVariant variant = it.getVariant();
             long price = (variant != null && variant.getPrice() > 0) ? variant.getPrice() : it.getProduct().getDisplayPrice();
-            long discount = it.getProduct().getDiscount() != null ? it.getProduct().getDiscount() : 0L;
-            cartTotal += (price * (100 - discount) / 100.0) * it.getQuantity();
+            cartTotal += price * it.getQuantity();
         }
 
         double shippingDiscount = (double) actualShippingFee;
