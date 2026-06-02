@@ -157,7 +157,6 @@ CREATE TABLE `orders` (
   `vnp_transaction_id` varchar(100) DEFAULT NULL,
   `vnp_order_id` varchar(100) DEFAULT NULL,
   `shipping_cost` decimal(10,2) DEFAULT '0.00',
-  `shipping_discount` decimal(10,2) DEFAULT '0.00',
   `district_id` int DEFAULT NULL,
   `ward_code` varchar(20) DEFAULT NULL,
   `tracking_number` varchar(100) DEFAULT NULL,
