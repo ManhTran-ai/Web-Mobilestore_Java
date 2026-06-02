@@ -115,12 +115,12 @@ public class CheckoutServlet extends HttpServlet {
             cartTotal += (price * (100 - discount) / 100.0) * it.getQuantity();
         }
 
-        double total = cartTotal + actualShippingFee;
+        double shippingDiscount = (double) actualShippingFee;
 
         Integer orderId = orderService.createOrder(
                 user.getId(), cartTotal, cart,
                 shippingAddress, customerPhone, note,
-                (double) actualShippingFee, districtId, wardCode
+                (double) actualShippingFee, shippingDiscount, districtId, wardCode
         );
 
         if (orderId != null) {
@@ -128,10 +128,10 @@ public class CheckoutServlet extends HttpServlet {
                     + " | UserId=" + user.getId()
                     + " | DistrictId=" + districtId
                     + " | WardCode=" + wardCode
-                    + " | PhiShipThucTe=" + (long) actualShippingFee + " VND"
-                    + " | PhiShipUserTra=" + (long) actualShippingFee + " VND"
-                    + " | TongTruocShip=" + (long) cartTotal + " VND"
-                    + " | TongSauShip=" + (long) total + " VND");
+                    + " | PhiShipGHN=" + (long) actualShippingFee + " VND"
+                    + " | UuDaiShip=" + (long) shippingDiscount + " VND"
+                    + " | TamTinh=" + (long) cartTotal + " VND"
+                    + " | TongThanhToan=" + (long) cartTotal + " VND");
             request.getSession().removeAttribute("cart");
             cartService.clearCartByUser(user.getId());
             response.sendRedirect(request.getContextPath() + "/order-confirmation?id=" + orderId);

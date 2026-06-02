@@ -1,5 +1,6 @@
 package com.mobilestore.service;
 
+import com.mobilestore.config.EnvConfig;
 import com.mobilestore.util.EmailTemplateBuilder;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
@@ -18,8 +19,6 @@ import java.util.UUID;
 public class EmailService {
 
     private static final String BREVO_API_URL = "https://api.brevo.com/v3/smtp/email";
-    private static final String FROM_EMAIL = "manht7000@gmail.com";
-    private static final String FROM_NAME = "MobileStore";
 
     public void sendPasswordResetEmail(String toEmail, String username, String resetToken, HttpServletRequest request) {
         String baseUrl = getBaseUrl(request);
@@ -74,13 +73,15 @@ public class EmailService {
         System.out.println("[EMAIL-SERVICE] To     : " + toEmail);
         System.out.println("[EMAIL-SERVICE] Subject: " + subject);
 
-        String apiKey = getApiKey();
+        String apiKey = EnvConfig.get("BREVO_API_KEY");
         if (apiKey == null || apiKey.isBlank()) {
             logDemoEmail(toEmail, subject, htmlContent);
             return;
         }
 
-        String jsonPayload = buildBrevoPayload(toEmail, subject, htmlContent);
+        String fromEmail = EnvConfig.get("FROM_EMAIL", "admin@mobilestore.vn");
+        String fromName = EnvConfig.get("FROM_NAME", "MobileStore");
+        String jsonPayload = buildBrevoPayload(toEmail, subject, htmlContent, fromEmail, fromName);
 
         try (CloseableHttpClient client = HttpClients.createDefault()) {
             HttpPost request = new HttpPost(BREVO_API_URL);
@@ -112,11 +113,12 @@ public class EmailService {
         }
     }
 
-    private String buildBrevoPayload(String toEmail, String subject, String htmlContent) {
+    private String buildBrevoPayload(String toEmail, String subject, String htmlContent,
+                                    String fromEmail, String fromName) {
         com.google.gson.JsonObject payload = new com.google.gson.JsonObject();
         com.google.gson.JsonObject sender = new com.google.gson.JsonObject();
-        sender.addProperty("name", FROM_NAME);
-        sender.addProperty("email", FROM_EMAIL);
+        sender.addProperty("name", fromName);
+        sender.addProperty("email", fromEmail);
         payload.add("sender", sender);
 
         com.google.gson.JsonArray to = new com.google.gson.JsonArray();
@@ -129,18 +131,6 @@ public class EmailService {
         payload.addProperty("htmlContent", htmlContent);
 
         return new com.google.gson.Gson().toJson(payload);
-    }
-
-    private String getApiKey() {
-        String apiKey = System.getenv("BREVO_API_KEY");
-        if (apiKey != null && !apiKey.isBlank()) {
-            return apiKey;
-        }
-        String configKey = System.getenv("BREVO_API_KEY_CONFIG");
-        if (configKey != null && !configKey.isBlank()) {
-            return configKey;
-        }
-        return null;
     }
 
     private void logDemoEmail(String toEmail, String subject, String htmlContent) {

@@ -267,6 +267,18 @@
             color: #c0392b;
         }
 
+        .summary-row.shipping-discount {
+            color: #2e7d32;
+        }
+
+        .summary-row.shipping-discount .summary-label {
+            color: #2e7d32;
+        }
+
+        .summary-row.shipping-discount .summary-value {
+            color: #2e7d32;
+        }
+
         .btn-row {
             display: flex;
             gap: 12px;
@@ -502,7 +514,7 @@
                 <div class="summary-row">
                     <span class="summary-label">Tạm tính</span>
                     <span class="summary-value">
-                        <fmt:formatNumber value="${(confirmedOrder.totalAmount != null ? confirmedOrder.totalAmount : 0) - (confirmedOrder.shippingCost != null ? confirmedOrder.shippingCost : 0)}" type="number" groupingUsed="true"/> đ
+                        <fmt:formatNumber value="${confirmedOrder.totalAmount != null ? confirmedOrder.totalAmount : 0}" type="number" groupingUsed="true"/> đ
                     </span>
                 </div>
                 <div class="summary-row">
@@ -516,6 +528,12 @@
                         </c:choose>
                     </span>
                 </div>
+                <c:if test="${confirmedOrder.shippingDiscount != null && confirmedOrder.shippingDiscount > 0}">
+                    <div class="summary-row shipping-discount">
+                        <span class="summary-label">Ưu đãi phí vận chuyển</span>
+                        <span class="summary-value">-<fmt:formatNumber value="${confirmedOrder.shippingDiscount}" type="number" groupingUsed="true"/> đ</span>
+                    </div>
+                </c:if>
                 <div class="summary-row total">
                     <span class="summary-label">Thành tiền</span>
                     <span class="summary-value">

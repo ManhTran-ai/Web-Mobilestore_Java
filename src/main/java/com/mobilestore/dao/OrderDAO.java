@@ -17,8 +17,9 @@ public class OrderDAO {
     public List<Order> findAll() {
         List<Order> orders = new ArrayList<>();
         String sql = "SELECT o.order_id, o.order_status, o.order_date, o.total_amount, o.user_id, " +
-                "u.username, o.shipping_address, o.customer_phone, o.note, o.shipping_cost, " +
-                "o.district_id, o.ward_code, o.tracking_number " +
+                "u.username, u.email, o.shipping_address, o.customer_phone, o.note, o.shipping_cost, " +
+                "o.shipping_discount, " +
+                "o.district_id, o.ward_code, o.tracking_number, o.payment_method, o.payment_status " +
                 "FROM orders o LEFT JOIN users u ON o.user_id = u.id ORDER BY o.order_id DESC";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
@@ -33,6 +34,7 @@ public class OrderDAO {
                 }
                 o.setTotalAmount(rs.getDouble("total_amount"));
                 o.setShippingCost(rs.getObject("shipping_cost") != null ? rs.getDouble("shipping_cost") : 0.0);
+                o.setShippingDiscount(rs.getObject("shipping_discount") != null ? rs.getDouble("shipping_discount") : 0.0);
                 o.setShippingAddress(rs.getString("shipping_address"));
                 o.setCustomerPhone(rs.getString("customer_phone"));
                 o.setNote(rs.getString("note"));
@@ -45,6 +47,7 @@ public class OrderDAO {
                     User u = new User();
                     u.setId(uid);
                     u.setUsername(rs.getString("username"));
+                    u.setEmail(rs.getString("email"));
                     o.setUser(u);
                 }
                 orders.add(o);
@@ -58,7 +61,8 @@ public class OrderDAO {
 
     public Order findById(int orderId) {
         String sql = "SELECT o.order_id, o.order_status, o.order_date, o.total_amount, o.user_id, " +
-                "u.username, o.shipping_address, o.customer_phone, o.note, o.shipping_cost, " +
+                "u.username, u.email, o.shipping_address, o.customer_phone, o.note, o.shipping_cost, " +
+                "o.shipping_discount, " +
                 "o.district_id, o.ward_code, o.tracking_number, o.payment_method, o.payment_status, " +
                 "o.vnp_transaction_id, o.vnp_order_id " +
                 "FROM orders o LEFT JOIN users u ON o.user_id = u.id WHERE o.order_id = ?";
@@ -76,6 +80,7 @@ public class OrderDAO {
                     }
                     o.setTotalAmount(rs.getDouble("total_amount"));
                     o.setShippingCost(rs.getObject("shipping_cost") != null ? rs.getDouble("shipping_cost") : 0.0);
+                    o.setShippingDiscount(rs.getObject("shipping_discount") != null ? rs.getDouble("shipping_discount") : 0.0);
                     o.setShippingAddress(rs.getString("shipping_address"));
                     o.setCustomerPhone(rs.getString("customer_phone"));
                     o.setNote(rs.getString("note"));
@@ -92,6 +97,7 @@ public class OrderDAO {
                         User u = new User();
                         u.setId(uid);
                         u.setUsername(rs.getString("username"));
+                        u.setEmail(rs.getString("email"));
                         o.setUser(u);
                     }
                     o.setDetails(findDetailsByOrderId(orderId));
@@ -190,15 +196,16 @@ public class OrderDAO {
 
     public Integer createOrder(int userId, double totalAmount, List<CartItem> items,
                                String shippingAddress, String customerPhone, String note,
-                               double shippingCost, Integer districtId, String wardCode) {
+                               double shippingCost, double shippingDiscount, Integer districtId, String wardCode) {
         String orderSql = "INSERT INTO orders (order_status, order_date, total_amount, user_id, " +
-                "shipping_address, customer_phone, note, shipping_cost, district_id, ward_code) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "shipping_address, customer_phone, note, shipping_cost, shipping_discount, district_id, ward_code) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         String detailSql = "INSERT INTO order_details (price, quantity, order_id, variant_id) VALUES (?, ?, ?, ?)";
         String updateVariantSql = "UPDATE product_variants SET quantity_in_stock = quantity_in_stock - ? WHERE variant_id = ?";
 
         if (totalAmount < 0) totalAmount = 0;
         if (shippingCost < 0) shippingCost = 0;
+        if (shippingDiscount < 0) shippingDiscount = 0;
 
         try (Connection conn = DatabaseConnection.getConnection()) {
             conn.setAutoCommit(false);
@@ -211,12 +218,13 @@ public class OrderDAO {
                 psOrder.setString(6, customerPhone);
                 psOrder.setString(7, note);
                 psOrder.setDouble(8, shippingCost);
+                psOrder.setDouble(9, shippingDiscount);
                 if (districtId != null) {
-                    psOrder.setInt(9, districtId);
+                    psOrder.setInt(10, districtId);
                 } else {
-                    psOrder.setNull(9, Types.INTEGER);
+                    psOrder.setNull(10, Types.INTEGER);
                 }
-                psOrder.setString(10, wardCode);
+                psOrder.setString(11, wardCode);
                 psOrder.executeUpdate();
 
                 try (ResultSet rs = psOrder.getGeneratedKeys()) {
@@ -269,18 +277,19 @@ public class OrderDAO {
     public Integer createOrderWithPayment(int userId, double totalAmount,
                                           List<CartItem> items,
                                           String shippingAddress, String customerPhone, String note,
-                                          double shippingCost, Integer districtId, String wardCode,
+                                          double shippingCost, double shippingDiscount, Integer districtId, String wardCode,
                                           String vnpTransactionId, String vnpOrderId) {
 
         String orderSql = "INSERT INTO orders (order_status, order_date, total_amount, user_id, " +
-                "shipping_address, customer_phone, note, shipping_cost, district_id, ward_code, " +
+                "shipping_address, customer_phone, note, shipping_cost, shipping_discount, district_id, ward_code, " +
                 "vnp_transaction_id, vnp_order_id, payment_method, payment_status) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         String detailSql = "INSERT INTO order_details (price, quantity, order_id, variant_id) VALUES (?, ?, ?, ?)";
         String updateVariantSql = "UPDATE product_variants SET quantity_in_stock = quantity_in_stock - ? WHERE variant_id = ?";
 
         if (totalAmount < 0) totalAmount = 0;
         if (shippingCost < 0) shippingCost = 0;
+        if (shippingDiscount < 0) shippingDiscount = 0;
 
         try (Connection conn = DatabaseConnection.getConnection()) {
             conn.setAutoCommit(false);
@@ -293,16 +302,17 @@ public class OrderDAO {
                 psOrder.setString(6, customerPhone);
                 psOrder.setString(7, note);
                 psOrder.setDouble(8, shippingCost);
+                psOrder.setDouble(9, shippingDiscount);
                 if (districtId != null) {
-                    psOrder.setInt(9, districtId);
+                    psOrder.setInt(10, districtId);
                 } else {
-                    psOrder.setNull(9, Types.INTEGER);
+                    psOrder.setNull(10, Types.INTEGER);
                 }
-                psOrder.setString(10, wardCode);
-                psOrder.setString(11, vnpTransactionId);
-                psOrder.setString(12, vnpOrderId);
-                psOrder.setString(13, "VNPAY");
-                psOrder.setString(14, "PAID");
+                psOrder.setString(11, wardCode);
+                psOrder.setString(12, vnpTransactionId);
+                psOrder.setString(13, vnpOrderId);
+                psOrder.setString(14, "VNPAY");
+                psOrder.setString(15, "PAID");
                 psOrder.executeUpdate();
 
                 try (ResultSet rs = psOrder.getGeneratedKeys()) {
@@ -355,7 +365,7 @@ public class OrderDAO {
     public List<Order> findByUserId(int userId) {
         List<Order> orders = new ArrayList<>();
         String sql = "SELECT o.order_id, o.order_status, o.order_date, o.total_amount, o.user_id, " +
-                "o.shipping_address, o.customer_phone, o.note, o.shipping_cost, o.payment_method, " +
+                "o.shipping_address, o.customer_phone, o.note, o.shipping_cost, o.shipping_discount, o.payment_method, " +
                 "o.district_id, o.ward_code, o.tracking_number " +
                 "FROM orders o WHERE o.user_id = ? ORDER BY o.order_date DESC";
         try (Connection conn = DatabaseConnection.getConnection();
@@ -372,6 +382,7 @@ public class OrderDAO {
                     }
                     o.setTotalAmount(rs.getDouble("total_amount"));
                     o.setShippingCost(rs.getObject("shipping_cost") != null ? rs.getDouble("shipping_cost") : 0.0);
+                    o.setShippingDiscount(rs.getObject("shipping_discount") != null ? rs.getDouble("shipping_discount") : 0.0);
                     o.setShippingAddress(rs.getString("shipping_address"));
                     o.setCustomerPhone(rs.getString("customer_phone"));
                     o.setNote(rs.getString("note"));
@@ -393,7 +404,7 @@ public class OrderDAO {
 
     public Order findByIdAndUserId(int orderId, int userId) {
         String sql = "SELECT o.order_id, o.order_status, o.order_date, o.total_amount, o.user_id, " +
-                "o.shipping_address, o.customer_phone, o.note, o.shipping_cost, o.payment_method, " +
+                "o.shipping_address, o.customer_phone, o.note, o.shipping_cost, o.shipping_discount, o.payment_method, " +
                 "o.district_id, o.ward_code, o.tracking_number, o.vnp_transaction_id, o.vnp_order_id " +
                 "FROM orders o WHERE o.order_id = ? AND o.user_id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
@@ -411,6 +422,7 @@ public class OrderDAO {
                     }
                     o.setTotalAmount(rs.getDouble("total_amount"));
                     o.setShippingCost(rs.getObject("shipping_cost") != null ? rs.getDouble("shipping_cost") : 0.0);
+                    o.setShippingDiscount(rs.getObject("shipping_discount") != null ? rs.getDouble("shipping_discount") : 0.0);
                     o.setShippingAddress(rs.getString("shipping_address"));
                     o.setCustomerPhone(rs.getString("customer_phone"));
                     o.setNote(rs.getString("note"));

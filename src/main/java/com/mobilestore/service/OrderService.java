@@ -12,10 +12,10 @@ public interface OrderService {
     boolean delete(Integer id);
     Integer createOrder(Integer userId, Double totalAmount, List<CartItem> items,
                        String shippingAddress, String customerPhone, String note,
-                       Double shippingCost, Integer districtId, String wardCode);
+                       Double shippingCost, Double shippingDiscount, Integer districtId, String wardCode);
     Integer createOrderWithPayment(Integer userId, Double totalAmount, List<CartItem> items,
                                   String shippingAddress, String customerPhone, String note,
-                                  Double shippingCost, Integer districtId, String wardCode,
+                                  Double shippingCost, Double shippingDiscount, Integer districtId, String wardCode,
                                   String vnpTransactionId, String vnpOrderId);
     Integer createOfflineOrder(int variantId, int quantity, long price, String customerPhone, String note);
     List<Order> findByUserId(Integer userId);
