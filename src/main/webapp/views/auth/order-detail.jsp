@@ -402,7 +402,17 @@
                             <c:forEach var="item" items="${userOrder.details}">
                                 <li class="product-item">
                                     <div class="product-thumb">
-                                        <div class="placeholder">📱</div>
+                                        <c:choose>
+                                            <c:when test="${item.variant != null && not empty item.variant.variantImage}">
+                                                <img src="${pageContext.request.contextPath}/${item.variant.variantImage}" 
+                                                     alt="${item.product.productName}"
+                                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                                <div class="placeholder" style="display:none;">📱</div>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <div class="placeholder">📱</div>
+                                            </c:otherwise>
+                                        </c:choose>
                                     </div>
                                     <div class="product-info">
                                         <div class="product-name">${item.product != null ? item.product.productName : 'Sản phẩm'}</div>

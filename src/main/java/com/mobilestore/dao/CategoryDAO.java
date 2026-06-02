@@ -10,7 +10,7 @@ import java.util.List;
 public class CategoryDAO {
     
     public Category findById(Integer id) {
-        String sql = "SELECT category_id, category_name FROM categories WHERE category_id = ?";
+        String sql = "SELECT category_id, category_name, content, image_url FROM categories WHERE category_id = ?";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -31,7 +31,7 @@ public class CategoryDAO {
     
 
     public Category findByName(String name) {
-        String sql = "SELECT category_id, category_name FROM categories WHERE category_name = ?";
+        String sql = "SELECT category_id, category_name, content, image_url FROM categories WHERE category_name = ?";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -52,7 +52,7 @@ public class CategoryDAO {
     
     public List<Category> findAll() {
         List<Category> categories = new ArrayList<>();
-        String sql = "SELECT category_id, category_name FROM categories ORDER BY category_name";
+        String sql = "SELECT category_id, category_name, content, image_url FROM categories ORDER BY category_id";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
@@ -69,12 +69,14 @@ public class CategoryDAO {
     }
     
     public Category create(Category category) {
-        String sql = "INSERT INTO categories (category_name) VALUES (?)";
+        String sql = "INSERT INTO categories (category_name, content, image_url) VALUES (?, ?, ?)";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             
             ps.setString(1, category.getCategoryName());
+            ps.setString(2, category.getContent());
+            ps.setString(3, category.getImageUrl());
             
             int affectedRows = ps.executeUpdate();
             
@@ -94,13 +96,15 @@ public class CategoryDAO {
     }
     
     public boolean update(Category category) {
-        String sql = "UPDATE categories SET category_name = ? WHERE category_id = ?";
+        String sql = "UPDATE categories SET category_name = ?, content = ?, image_url = ? WHERE category_id = ?";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             
             ps.setString(1, category.getCategoryName());
-            ps.setInt(2, category.getCategoryId());
+            ps.setString(2, category.getContent());
+            ps.setString(3, category.getImageUrl());
+            ps.setInt(4, category.getCategoryId());
             
             int affectedRows = ps.executeUpdate();
             return affectedRows > 0;
@@ -131,6 +135,8 @@ public class CategoryDAO {
         Category category = new Category();
         category.setCategoryId(rs.getInt("category_id"));
         category.setCategoryName(rs.getString("category_name"));
+        category.setContent(rs.getString("content"));
+        category.setImageUrl(rs.getString("image_url"));
         return category;
     }
 }
