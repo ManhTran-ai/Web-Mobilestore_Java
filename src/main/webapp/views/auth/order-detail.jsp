@@ -264,6 +264,18 @@
             color: #c0392b;
         }
 
+        .summary-row.shipping-discount {
+            color: #2e7d32;
+        }
+
+        .summary-row.shipping-discount .summary-label {
+            color: #2e7d32;
+        }
+
+        .summary-row.shipping-discount .summary-value {
+            color: #2e7d32;
+        }
+
         .address-block {
             font-size: 0.95rem;
             color: #6e6e73;
@@ -529,15 +541,26 @@
                         <div class="summary-row">
                             <span class="summary-label">Tạm tính</span>
                             <span class="summary-value">
-                                <fmt:formatNumber value="${userOrder.totalAmount - (userOrder.shippingCost != null ? userOrder.shippingCost : 0)}" type="number" groupingUsed="true"/> đ
+                                <fmt:formatNumber value="${userOrder.totalAmount != null ? userOrder.totalAmount : 0}" type="number" groupingUsed="true"/> đ
                             </span>
                         </div>
                         <div class="summary-row">
                             <span class="summary-label">Phí vận chuyển</span>
                             <span class="summary-value">
-                                <fmt:formatNumber value="${userOrder.shippingCost != null ? userOrder.shippingCost : 0}" type="number" groupingUsed="true"/> đ
+                                <c:choose>
+                                    <c:when test="${userOrder.shippingCost != null && userOrder.shippingCost > 0}">
+                                        <fmt:formatNumber value="${userOrder.shippingCost}" type="number" groupingUsed="true"/> đ
+                                    </c:when>
+                                    <c:otherwise>Miễn phí</c:otherwise>
+                                </c:choose>
                             </span>
                         </div>
+                        <c:if test="${userOrder.shippingDiscount != null && userOrder.shippingDiscount > 0}">
+                            <div class="summary-row shipping-discount">
+                                <span class="summary-label">Ưu đãi phí vận chuyển</span>
+                                <span class="summary-value">-<fmt:formatNumber value="${userOrder.shippingDiscount}" type="number" groupingUsed="true"/> đ</span>
+                            </div>
+                        </c:if>
                         <div class="summary-row total">
                             <span class="summary-label">Thành tiền</span>
                             <span class="summary-value">
