@@ -1,5 +1,6 @@
 package com.mobilestore.controller;
 
+import com.mobilestore.constant.UserAccountStatus;
 import com.mobilestore.entity.User;
 import com.mobilestore.service.AuthService;
 import com.mobilestore.service.GoogleOAuthService;
@@ -16,6 +17,13 @@ public class LoginServlet extends HttpServlet {
     private final AuthService authService = new AuthService();
     private final GoogleOAuthService googleOAuthService = new GoogleOAuthService();
 
+    private boolean isAccountActive(User user) {
+        if (user == null) {
+            return false;
+        }
+        return UserAccountStatus.fromCode(user.getAccountStatus()) == UserAccountStatus.ACTIVE;
+    }
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.getRequestDispatcher("/views/auth/login.jsp").forward(req, resp);
@@ -28,6 +36,11 @@ public class LoginServlet extends HttpServlet {
         if (idToken != null && !idToken.isEmpty()) {
             User user = googleOAuthService.verifyAndGetUser(idToken);
             if (user != null) {
+                if (!isAccountActive(user)) {
+                    req.setAttribute("error", "Tài khoản của bạn đang ngưng hoạt động.");
+                    req.getRequestDispatcher("/views/auth/login.jsp").forward(req, resp);
+                    return;
+                }
                 HttpSession session = req.getSession(true);
                 session.setAttribute("user", user);
                 resp.sendRedirect(req.getContextPath() + "/");
@@ -44,6 +57,11 @@ public class LoginServlet extends HttpServlet {
 
         User user = authService.authenticate(username, password);
         if (user != null) {
+            if (!isAccountActive(user)) {
+                req.setAttribute("error", "Tài khoản của bạn đang ngưng hoạt động.");
+                req.getRequestDispatcher("/views/auth/login.jsp").forward(req, resp);
+                return;
+            }
             HttpSession session = req.getSession(true);
             session.setAttribute("user", user);
             resp.sendRedirect(req.getContextPath() + "/");
