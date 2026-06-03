@@ -197,6 +197,9 @@
         </div>
 
         <div class="action-buttons">
+            <a href="${pageContext.request.contextPath}/order-print?id=${order.orderId}" class="btn btn-primary" style="background:#28a745;border-color:#28a745;">
+                <i class="fas fa-file-pdf"></i> Xuất hóa đơn PDF
+            </a>
             <a href="${pageContext.request.contextPath}/admin/orders" class="btn btn-secondary">
                 ← Quay lại danh sách
             </a>

@@ -491,6 +491,16 @@
                                     </c:choose>
                                 </span>
                             </div>
+                            <div class="meta-row">
+                                <span class="meta-label"></span>
+                                <span class="meta-value">
+                                    <a href="${pageContext.request.contextPath}/order-print?id=${userOrder.orderId}" 
+                                       class="btn btn-back" 
+                                       style="padding: 8px 16px; font-size: 0.85rem; text-decoration: none;">
+                                        <i class="fas fa-file-pdf"></i> Tải PDF
+                                    </a>
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </div>
