@@ -442,7 +442,6 @@
         <div class="page-header">
             <div>
                 <h1>Dashboard quản trị</h1>
-                <p>Tổng quan nhanh dữ liệu kinh doanh theo thời gian thực (giao diện giai đoạn 1)</p>
             </div>
         </div>
 
@@ -453,7 +452,7 @@
                 <div class="metric-subtext">Ước tính trong tháng hiện tại</div>
             </article>
             <article class="metric-card metric-orders">
-                <div class="metric-label">�ơn hàng mới</div>
+                <div class="metric-label">Đơn hàng mới</div>
                 <div class="metric-value">${newOrdersToday}</div>
                 <div class="metric-subtext">Đơn phát sinh hôm nay</div>
             </article>
