@@ -47,7 +47,7 @@ public class AdminDashboardDAO {
 
     public double revenueToday() {
         String sql = "SELECT COALESCE(SUM(total_amount), 0) AS total FROM orders " +
-                "WHERE UPPER(order_status) = 'COMPLETED' " +
+                "WHERE UPPER(order_status) = 'DELIVERED' " +
                 "AND order_date >= CURDATE() " +
                 "AND order_date < DATE_ADD(CURDATE(), INTERVAL 1 DAY)";
         return queryDouble(sql);
@@ -55,14 +55,14 @@ public class AdminDashboardDAO {
 
     public double revenueWeek() {
         String sql = "SELECT COALESCE(SUM(total_amount), 0) AS total FROM orders " +
-                "WHERE UPPER(order_status) = 'COMPLETED' " +
+                "WHERE UPPER(order_status) = 'DELIVERED' " +
                 "AND YEARWEEK(order_date, 1) = YEARWEEK(CURDATE(), 1)";
         return queryDouble(sql);
     }
 
     public double revenueMonth() {
         String sql = "SELECT COALESCE(SUM(total_amount), 0) AS total FROM orders " +
-                "WHERE UPPER(order_status) = 'COMPLETED' " +
+                "WHERE UPPER(order_status) = 'DELIVERED' " +
                 "AND YEAR(order_date) = YEAR(CURDATE()) " +
                 "AND MONTH(order_date) = MONTH(CURDATE())";
         return queryDouble(sql);
@@ -70,7 +70,7 @@ public class AdminDashboardDAO {
 
     public double revenueQuarter() {
         String sql = "SELECT COALESCE(SUM(total_amount), 0) AS total FROM orders " +
-                "WHERE UPPER(order_status) = 'COMPLETED' " +
+                "WHERE UPPER(order_status) = 'DELIVERED' " +
                 "AND YEAR(order_date) = YEAR(CURDATE()) " +
                 "AND QUARTER(order_date) = QUARTER(CURDATE())";
         return queryDouble(sql);
@@ -78,7 +78,7 @@ public class AdminDashboardDAO {
 
     public double revenueYear() {
         String sql = "SELECT COALESCE(SUM(total_amount), 0) AS total FROM orders " +
-                "WHERE UPPER(order_status) = 'COMPLETED' " +
+                "WHERE UPPER(order_status) = 'DELIVERED' " +
                 "AND YEAR(order_date) = YEAR(CURDATE())";
         return queryDouble(sql);
     }
@@ -112,7 +112,7 @@ public class AdminDashboardDAO {
 
         String sql = "SELECT YEAR(order_date) AS y, MONTH(order_date) AS m, COALESCE(SUM(total_amount), 0) AS total " +
                 "FROM orders " +
-            "WHERE UPPER(order_status) = 'COMPLETED' " +
+            "WHERE UPPER(order_status) = 'DELIVERED' " +
             "AND order_date >= ? " +
                 "GROUP BY YEAR(order_date), MONTH(order_date) " +
                 "ORDER BY YEAR(order_date), MONTH(order_date)";
