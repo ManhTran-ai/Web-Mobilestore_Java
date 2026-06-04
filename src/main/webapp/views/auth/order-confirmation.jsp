@@ -544,11 +544,12 @@
         </div>
 
         <div class="btn-row">
+            <a href="${pageContext.request.contextPath}/order-print?id=${confirmedOrder.orderId}"
+               class="btn btn-secondary" style="background:#28a745;color:#fff;border-color:#28a745;">
+                <i class="fas fa-file-pdf"></i> Tải hóa đơn PDF
+            </a>
             <a href="${pageContext.request.contextPath}/profile?tab=orders" class="btn btn-primary">
                 Xem đơn hàng của tôi
-            </a>
-            <a href="${pageContext.request.contextPath}/" class="btn btn-secondary">
-                Quay trở lại trang chủ
             </a>
         </div>
     </section>
