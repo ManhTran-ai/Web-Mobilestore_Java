@@ -431,6 +431,30 @@
                 max-width: 38px;
             }
         }
+
+        .btn-export-pdf {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #dc3545;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+
+        .btn-export-pdf:hover {
+            background: #c82333;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
     </style>
 </head>
 <body>
@@ -442,6 +466,11 @@
         <div class="page-header">
             <div>
                 <h1>Dashboard quản trị</h1>
+            </div>
+            <div>
+                <a href="${pageContext.request.contextPath}/admin/dashboard-pdf" class="btn-export-pdf" target="_blank">
+                    <i class="fas fa-file-pdf"></i> Xuất PDF
+                </a>
             </div>
         </div>
 
