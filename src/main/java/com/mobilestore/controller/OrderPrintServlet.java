@@ -181,11 +181,15 @@ public class OrderPrintServlet extends HttpServlet {
         summaryTable.setWidthPercentage(50);
         summaryTable.setHorizontalAlignment(Element.ALIGN_RIGHT);
 
-        double subtotal = order.getTotalAmount() - (order.getShippingCost() != null ? order.getShippingCost() : 0);
+        double subtotal = order.getTotalAmount();
         double shippingCost = order.getShippingCost() != null ? order.getShippingCost() : 0;
 
         addSummaryRow(summaryTable, "Tạm tính:", formatCurrency(subtotal));
         addSummaryRow(summaryTable, "Phí vận chuyển:", formatCurrency(shippingCost));
+
+        if (order.getShippingDiscount() != null && order.getShippingDiscount() > 0) {
+            addDiscountSummaryRow(summaryTable, "Ưu đãi phí vận chuyển:", formatCurrency(shippingCost));
+        }
 
         PdfPCell labelCell = new PdfPCell(new Phrase("TỔNG CỘNG:", HEADER_FONT));
         labelCell.setBorder(Rectangle.TOP);
@@ -253,6 +257,23 @@ public class OrderPrintServlet extends HttpServlet {
         labelCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
 
         PdfPCell valueCell = new PdfPCell(new Phrase(value, NORMAL_FONT));
+        valueCell.setBorder(Rectangle.NO_BORDER);
+        valueCell.setPadding(4);
+        valueCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+
+        table.addCell(labelCell);
+        table.addCell(valueCell);
+    }
+
+    private void addDiscountSummaryRow(PdfPTable table, String label, String value) {
+        Font discountFont = new Font(Font.HELVETICA, 10, Font.NORMAL, new Color(46, 125, 50));
+
+        PdfPCell labelCell = new PdfPCell(new Phrase(label, discountFont));
+        labelCell.setBorder(Rectangle.NO_BORDER);
+        labelCell.setPadding(4);
+        labelCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+
+        PdfPCell valueCell = new PdfPCell(new Phrase("-" + value, discountFont));
         valueCell.setBorder(Rectangle.NO_BORDER);
         valueCell.setPadding(4);
         valueCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
